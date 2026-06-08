@@ -139,23 +139,29 @@ export default function Home() {
       <section className="py-20 px-4 bg-gray-50">
         <div className="container max-w-7xl mx-auto">
           <h2 className="display-text mb-12 text-center">Destaques</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white border-2 border-black hover:shadow-lg transition-shadow">
-                <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4">
-                  Produto {i}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Camiseta Autoral</h3>
-                  <p className="text-gray-600 text-xs mb-4">O Pix é Nosso</p>
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-lg">R$ 89,90</span>
-                    <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
-                      +
-                    </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[
+              { color: 'Preto', image: '/manus-storage/preto_0_5670725_4dfeab40.png' },
+              { color: 'Branco', image: '/manus-storage/branco_1_5670725_20ab6eee.png' },
+              { color: 'Azul Royal', image: '/manus-storage/azul-royal_3_5670725_76dadc65.png' },
+              { color: 'Verde Bandeira', image: '/manus-storage/verde-bandeira_4_5670725_325033a0.png' },
+              { color: 'Amarelo Canário', image: '/manus-storage/amarelo-canario_2_5670725_c8a4e9f8.png' },
+            ].map((product) => (
+              <Link key={product.color} href="/camiseta-pix">
+                <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow">
+                  <img src={product.image} alt={product.color} className="w-full h-64 object-cover" />
+                  <div className="p-4">
+                    <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Camiseta Autoral</h3>
+                    <p className="text-gray-600 text-xs mb-4">O Pix é Nosso - {product.color}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-lg">R$ 99,90</span>
+                      <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
+                        +
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </a>
+              </Link>
             ))}
           </div>
         </div>

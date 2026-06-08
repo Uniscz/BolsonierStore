@@ -96,7 +96,7 @@ export default function CamisetaPix() {
       color: currentColor.name,
       size: selectedSize,
       quantity,
-      price: 89.9,
+      price: 99.9,
     };
     addItem(item);
     setShowCartNotification(true);
@@ -177,7 +177,7 @@ export default function CamisetaPix() {
             {/* Informações do Produto */}
             <div>
               <h1 className="display-text mb-2">Camiseta O Pix é Nosso</h1>
-              <p className="text-2xl font-bold text-pink-shock mb-6 uppercase tracking-wider">R$ 89,90</p>
+              <p className="text-2xl font-bold text-pink-shock mb-6 uppercase tracking-wider">R$ 99,90</p>
 
               {/* Descrição */}
               <div className="mb-8 space-y-4 text-gray-700 leading-relaxed">
