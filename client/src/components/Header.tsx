@@ -8,6 +8,7 @@ export default function Header() {
   const menuItems = [
     { label: 'Loja', href: '/loja' },
     { label: 'O Pix é Nosso', href: '/colecao-pix' },
+    { label: 'A Bastilha', href: '/colecao-bastilha' },
     { label: 'Coleções', href: '/colecoes' },
     { label: 'Camisetas', href: '/camisetas' },
     { label: 'Croppeds', href: '/croppeds' },

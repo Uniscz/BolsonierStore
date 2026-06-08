@@ -88,6 +88,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PIX Payment Section */}
+      <section className="py-20 px-4 bg-black text-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="max-w-3xl">
+            <h2 className="display-text mb-6 text-lime-acid">Pagamento Exclusivo via PIX</h2>
+            <p className="text-2xl font-bold mb-4 uppercase tracking-wider">O PIX É NOSSO</p>
+            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+              Nosso modelo de negocio é simples e direto: você escolhe, paga via PIX, e nós produzimos especialmente para você. Sem intermediarios. Sem taxas abusivas. Apenas qualidade, criatividade e velocidade.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="border-2 border-lime-acid p-6">
+                <h3 className="text-xl font-bold mb-3 uppercase">1. Escolha</h3>
+                <p className="text-sm text-gray-300">Navegue pela loja e escolha a peca que mais combina com seu estilo.</p>
+              </div>
+              <div className="border-2 border-lime-acid p-6">
+                <h3 className="text-xl font-bold mb-3 uppercase">2. Pague via PIX</h3>
+                <p className="text-sm text-gray-300">Confirme seu pedido e receba a chave PIX para pagamento instantaneo.</p>
+              </div>
+              <div className="border-2 border-lime-acid p-6">
+                <h3 className="text-xl font-bold mb-3 uppercase">3. Receba</h3>
+                <p className="text-sm text-gray-300">Apos confirmacao do pagamento, produzimos e enviamos sua peca.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* About Brand */}
       <section className="py-20 px-4 bg-white relative">
         <div

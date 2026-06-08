@@ -10,6 +10,11 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold tracking-wider mb-4 uppercase">Bolsonier Store</h3>
             <p className="text-sm text-gray-300 mb-4">Streetwear autoral. Edição limitada. Feito no Brasil.</p>
+            <p className="text-sm text-gray-300 mb-2">
+              <a href="mailto:contato@bolsonier.com.br" className="hover:text-lime-acid transition-colors">
+                contato@bolsonier.com.br
+              </a>
+            </p>
             <div className="flex gap-4">
               <a href="#" className="hover:text-lime-acid transition-colors">
                 <Instagram size={20} />
@@ -29,6 +34,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/loja" className="hover:text-lime-acid transition-colors">Todos os Produtos</Link></li>
               <li><Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">O Pix é Nosso</Link></li>
+              <li><Link href="/colecao-bastilha" className="hover:text-lime-acid transition-colors">A Bastilha</Link></li>
               <li><Link href="/camisetas" className="hover:text-lime-acid transition-colors">Camisetas</Link></li>
               <li><Link href="/croppeds" className="hover:text-lime-acid transition-colors">Croppeds</Link></li>
               <li><Link href="/bodies" className="hover:text-lime-acid transition-colors">Bodies</Link></li>
@@ -59,7 +65,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-          <p>&copy; 2024 Bolsonier Store. Todos os direitos reservados.</p>
+          <p>&copy; 2026 Bolsonier Studios. Todos os direitos reservados.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <span>Feito no Brasil</span>
             <span>Pix é Nosso</span>

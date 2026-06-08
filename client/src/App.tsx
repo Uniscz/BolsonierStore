@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import Collection from "./pages/Collection";
+import BastilhaCollection from "./pages/BastilhaCollection";
+import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
@@ -18,7 +20,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/loja" component={Shop} />
+      <Route path="/produto/:id" component={ProductDetail} />
       <Route path="/colecao-pix" component={Collection} />
+      <Route path="/colecao-bastilha" component={BastilhaCollection} />
       <Route path="/colecoes" component={Shop} />
       <Route path="/camisetas" component={Shop} />
       <Route path="/croppeds" component={Shop} />

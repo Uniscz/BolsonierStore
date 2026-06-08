@@ -43,7 +43,10 @@ export default function Shop() {
               <Link key={product.id} href={`/produto/${product.id}`}>
                 <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow group">
                   <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4 group-hover:from-lime-acid group-hover:to-pink-shock transition-all duration-300">
-                    {product.name}
+                    <div>
+                      <p className="text-sm uppercase tracking-wider">Frente da Peca</p>
+                      <p className="text-xs mt-2">{product.name}</p>
+                    </div>
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-gray-500 mb-2 uppercase tracking-wider">{product.collection}</p>
