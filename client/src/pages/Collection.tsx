@@ -79,7 +79,28 @@ export default function Collection() {
         <div className="container max-w-7xl mx-auto">
           <h2 className="display-text mb-12">Pecas da Colecao</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {/* Camiseta O Pix é Nosso */}
+            <Link href="/camiseta-pix">
+              <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow group">
+                <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4 group-hover:from-lime-acid group-hover:to-pink-shock transition-all duration-300">
+                  <div>
+                    <p className="text-sm uppercase tracking-wider">Camiseta</p>
+                    <p className="text-xs mt-1">O Pix é Nosso</p>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Camiseta O Pix é Nosso</h3>
+                  <p className="text-gray-600 text-xs mb-4">5 cores disponíveis</p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-lg">R$ 89,90</span>
+                    <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
+                      +
+                    </button>
+                  </div>
+                </div>
+              </a>
+            </Link>
+            {[1, 2, 3, 4, 5].map((i) => (
               <Link key={i} href={`/produto/${i}`}>
                 <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow group">
                   <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4 group-hover:from-lime-acid group-hover:to-pink-shock transition-all duration-300">

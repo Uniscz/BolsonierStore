@@ -12,7 +12,7 @@ import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
-import Legal from "./pages/Legal";
+import CamisetaPix from "./pages/CamisetaPix";
 
 
 function Router() {
@@ -30,10 +30,7 @@ function Router() {
       <Route path="/sobre" component={About} />
       <Route path="/contato" component={Contact} />
       <Route path="/faq" component={FAQ} />
-      <Route path="/politica-privacidade" component={Legal} />
-      <Route path="/politica-trocas" component={Legal} />
-      <Route path="/prazo-envio" component={Legal} />
-      <Route path="/termos" component={Legal} />
+      <Route path="/camiseta-pix" component={CamisetaPix} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
