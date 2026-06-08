@@ -5,13 +5,13 @@ import { Filter } from 'lucide-react';
 
 export default function Shop() {
   const products = [
-    { id: 1, name: 'Camiseta O Pix eh Nosso', price: 89.90, category: 'camiseta', collection: 'O Pix eh Nosso' },
-    { id: 2, name: 'Camiseta Urbana', price: 89.90, category: 'camiseta', collection: 'O Pix eh Nosso' },
-    { id: 3, name: 'Cropped Grafite', price: 79.90, category: 'cropped', collection: 'O Pix eh Nosso' },
-    { id: 4, name: 'Body Autoral', price: 99.90, category: 'body', collection: 'O Pix eh Nosso' },
+    { id: 1, name: 'Camiseta O Pix é Nosso', price: 89.90, category: 'camiseta', collection: 'O Pix é Nosso' },
+    { id: 2, name: 'Camiseta Urbana', price: 89.90, category: 'camiseta', collection: 'O Pix é Nosso' },
+    { id: 3, name: 'Cropped Grafite', price: 79.90, category: 'cropped', collection: 'O Pix é Nosso' },
+    { id: 4, name: 'Body Autoral', price: 99.90, category: 'body', collection: 'O Pix é Nosso' },
     { id: 5, name: 'Camiseta Preta', price: 89.90, category: 'camiseta', collection: 'Classicos' },
     { id: 6, name: 'Camiseta Branca', price: 89.90, category: 'camiseta', collection: 'Classicos' },
-    { id: 7, name: 'Cropped Rosa', price: 79.90, category: 'cropped', collection: 'O Pix eh Nosso' },
+    { id: 7, name: 'Cropped Rosa', price: 79.90, category: 'cropped', collection: 'O Pix é Nosso' },
     { id: 8, name: 'Body Verde', price: 99.90, category: 'body', collection: 'Classicos' },
   ];
 

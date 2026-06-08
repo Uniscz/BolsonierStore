@@ -16,7 +16,7 @@ export default function Home() {
       <section className="relative w-full h-screen max-h-screen overflow-hidden bg-white">
         <img
           src={HERO_IMAGE}
-          alt="O Pix eh Nosso"
+          alt="O Pix é Nosso"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20" />
@@ -42,7 +42,7 @@ export default function Home() {
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="display-text mb-6">O Pix eh Nosso</h2>
+              <h2 className="display-text mb-6">O Pix é Nosso</h2>
               <p className="text-lg text-gray-700 mb-4 font-semibold">Drop autoral em pre-venda</p>
               <p className="text-gray-600 mb-8 leading-relaxed">
                 Pecas autorais da Bolsonier Store. Producao sob demanda. Drop inicial em edicao limitada. Cada peca carrega a energia urbana e a atitude que define a marca.
@@ -60,7 +60,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <img src={COLLECTION_IMAGE} alt="Colecao O Pix eh Nosso" className="w-full" />
+            <img src={COLLECTION_IMAGE} alt="Colecao O Pix é Nosso" className="w-full" />
           </div>
         </div>
       </section>
@@ -102,7 +102,7 @@ export default function Home() {
             <h2 className="display-text mb-6">Sobre Bolsonier</h2>
             <p className="text-lg text-gray-700 mb-4 font-semibold">Streetwear com atitude urbana</p>
             <p className="text-gray-600 leading-relaxed">
-              Bolsonier Store eh uma marca autoral de streetwear que respira a energia das ruas brasileiras. Com foco em design contemporaneo, tipografia ousada e conceito visual marcante, cada peca eh uma declaracao de estilo e presenca.
+              Bolsonier Store é uma marca autoral de streetwear que respira a energia das ruas brasileiras. Com foco em design contemporaneo, tipografia ousada e conceito visual marcante, cada peca é uma declaracao de estilo e presenca.
             </p>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function Home() {
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Camiseta Autoral</h3>
-                  <p className="text-gray-600 text-xs mb-4">O Pix eh Nosso</p>
+                  <p className="text-gray-600 text-xs mb-4">O Pix é Nosso</p>
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-lg">R$ 89,90</span>
                     <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">

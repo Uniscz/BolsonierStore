@@ -30,7 +30,7 @@ export default function Legal() {
             <div className="space-y-6">
               <h2 className="text-2xl font-bold tracking-wider uppercase mb-4">Politica de Privacidade</h2>
               <p className="text-gray-600">
-                A Bolsonier Store respeita sua privacidade e eh comprometida em proteger seus dados pessoais. Esta politica descreve como coletamos, usamos e protegemos suas informacoes.
+                A Bolsonier Store respeita sua privacidade e é comprometida em proteger seus dados pessoais. Esta politica descreve como coletamos, usamos e protegemos suas informacoes.
               </p>
               <div>
                 <h3 className="text-xl font-bold tracking-wider uppercase mb-2">Coleta de Dados</h3>
@@ -89,19 +89,19 @@ export default function Legal() {
               <div>
                 <h3 className="text-xl font-bold tracking-wider uppercase mb-2">Producao</h3>
                 <p className="text-gray-600">
-                  O prazo de producao eh de ate 15 dias uteis apos a confirmacao do pagamento. Este prazo pode variar dependendo da quantidade de pedidos.
+                  O prazo de producao é de ate 15 dias uteis apos a confirmacao do pagamento. Este prazo pode variar dependendo da quantidade de pedidos.
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-bold tracking-wider uppercase mb-2">Envio</h3>
                 <p className="text-gray-600">
-                  Apos a producao, o produto eh enviado pelos Correios. O prazo de entrega eh de ate 10 dias uteis dependendo da regiao.
+                  Apos a producao, o produto é enviado pelos Correios. O prazo de entrega é de ate 10 dias uteis dependendo da regiao.
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-bold tracking-wider uppercase mb-2">Total</h3>
                 <p className="text-gray-600">
-                  O prazo total eh de ate 25 dias uteis. Voce recebera um email com o numero de rastreamento para acompanhar seu pedido.
+                  O prazo total é de ate 25 dias uteis. Voce recebera um email com o numero de rastreamento para acompanhar seu pedido.
                 </p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function Legal() {
               <div>
                 <h3 className="text-xl font-bold tracking-wider uppercase mb-2">Licenca de Uso</h3>
                 <p className="text-gray-600">
-                  O conteudo deste site eh fornecido apenas para fins informativos e comerciais pessoais. Voce nao pode reproduzir, distribuir ou transmitir qualquer conteudo sem permissao.
+                  O conteudo deste site é fornecido apenas para fins informativos e comerciais pessoais. Voce nao pode reproduzir, distribuir ou transmitir qualquer conteudo sem permissao.
                 </p>
               </div>
               <div>

@@ -8,15 +8,15 @@ export default function FAQ() {
 
   const faqs = [
     {
-      question: 'Qual eh o prazo de producao e envio?',
-      answer: 'O prazo eh de ate 25 dias uteis a partir da confirmacao do pagamento. Este eh o prazo para producao sob demanda e envio para o endereco informado.'
+      question: 'Qual é o prazo de producao e envio?',
+      answer: 'O prazo é de ate 25 dias uteis a partir da confirmacao do pagamento. Este é o prazo para producao sob demanda e envio para o endereco informado.'
     },
     {
       question: 'Como funciona a producao sob demanda?',
-      answer: 'Cada peca eh produzida especialmente para voce, quando voce a encomendar. Isso permite que tenhamos edicoes limitadas e evitemos desperdicio. Voce recebe uma peca feita sob encomenda.'
+      answer: 'Cada peca é produzida especialmente para voce, quando voce a encomendar. Isso permite que tenhamos edicoes limitadas e evitemos desperdicio. Voce recebe uma peca feita sob encomenda.'
     },
     {
-      question: 'Qual eh a politica de trocas e devolucoes?',
+      question: 'Qual é a politica de trocas e devolucoes?',
       answer: 'Se a peca chegar com defeito ou nao corresponder a descricao, voce pode solicitar troca ou devolucao em ate 7 dias apos o recebimento. Leia nossa politica completa para mais detalhes.'
     },
     {
@@ -32,8 +32,8 @@ export default function FAQ() {
       answer: 'Sim, voce pode cancelar seu pedido em ate 24 horas apos a confirmacao do pagamento. Apos esse periodo, o pedido ja estara em producao e nao podera ser cancelado.'
     },
     {
-      question: 'Qual eh o material das pecas?',
-      answer: 'Usamos algodao premium de alta qualidade para todas as nossas pecas. O tecido eh confortavel, duravel e adequado para uso diario.'
+      question: 'Qual é o material das pecas?',
+      answer: 'Usamos algodao premium de alta qualidade para todas as nossas pecas. O tecido é confortavel, duravel e adequado para uso diario.'
     },
     {
       question: 'Como faco para entrar em contato?',

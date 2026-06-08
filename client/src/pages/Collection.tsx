@@ -13,7 +13,7 @@ export default function Collection() {
       {/* Hero */}
       <section className="py-20 px-4 bg-black text-white">
         <div className="container max-w-7xl mx-auto">
-          <h1 className="display-text mb-4">O Pix eh Nosso</h1>
+          <h1 className="display-text mb-4">O Pix é Nosso</h1>
           <p className="text-2xl font-bold mb-2">Drop Autoral - Edicao Limitada</p>
           <p className="text-lg text-gray-300">Peças que definem uma atitude. Produção sob demanda. Feito no Brasil.</p>
         </div>
@@ -22,13 +22,13 @@ export default function Collection() {
       {/* Collection Showcase */}
       <section className="py-20 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
-          <img src={COLLECTION_IMAGE} alt="O Pix eh Nosso" className="w-full mb-12" />
+          <img src={COLLECTION_IMAGE} alt="O Pix é Nosso" className="w-full mb-12" />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold tracking-wider mb-6 uppercase">Conceito</h2>
               <p className="text-gray-600 mb-4 leading-relaxed">
-                O Pix eh Nosso eh mais que uma colecao. eh uma declaracao. Uma afirmacao de que a cultura urbana brasileira eh forte, criativa e merece ser celebrada.
+                O Pix é Nosso é mais que uma colecao. é uma declaracao. Uma afirmacao de que a cultura urbana brasileira é forte, criativa e merece ser celebrada.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
                 Cada peca carrega elementos de pichacao contemporanea, tipografia ousada e design que nao passa despercebido. Porque quem usa Bolsonier nao quer passar despercebido.
@@ -81,7 +81,7 @@ export default function Collection() {
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Peca Autoral</h3>
-                  <p className="text-gray-600 text-xs mb-4">O Pix eh Nosso</p>
+                  <p className="text-gray-600 text-xs mb-4">O Pix é Nosso</p>
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-lg">R$ 89,90</span>
                     <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
