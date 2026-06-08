@@ -141,11 +141,11 @@ export default function Home() {
           <h2 className="display-text mb-12 text-center">Destaques</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
-              { color: 'Preto', image: '/manus-storage/preto_0_5670725_4dfeab40.png' },
-              { color: 'Branco', image: '/manus-storage/branco_1_5670725_20ab6eee.png' },
-              { color: 'Azul Royal', image: '/manus-storage/azul-royal_3_5670725_76dadc65.png' },
-              { color: 'Verde Bandeira', image: '/manus-storage/verde-bandeira_4_5670725_325033a0.png' },
-              { color: 'Amarelo Canário', image: '/manus-storage/amarelo-canario_2_5670725_c8a4e9f8.png' },
+              { color: 'Preto', image: '/manus-storage/preto_0_5670725_f8f5ea53.png' },
+              { color: 'Branco', image: '/manus-storage/branco_1_5670725_55ece778.png' },
+              { color: 'Azul Royal', image: '/manus-storage/azul-royal_3_5670725_6f88a1fa.png' },
+              { color: 'Verde Bandeira', image: '/manus-storage/verde-bandeira_4_5670725_89e125cf.png' },
+              { color: 'Amarelo Canário', image: '/manus-storage/amarelo-canario_2_5670725_b1bf8634.png' },
             ].map((product) => (
               <Link key={product.color} href="/camiseta-pix">
                 <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow">

@@ -17,40 +17,40 @@ const COLORS: ColorOption[] = [
     name: 'Preto',
     value: 'preto',
     images: [
-      '/manus-storage/preto_0_5670725_4dfeab40.png',
-      '/manus-storage/preto_5_5670725_599b2785.png',
+      '/manus-storage/preto_0_5670725_f8f5ea53.png',
+      '/manus-storage/preto_5_5670725_a5f1cfa9.png',
     ],
   },
   {
     name: 'Branco',
     value: 'branco',
     images: [
-      '/manus-storage/branco_1_5670725_20ab6eee.png',
-      '/manus-storage/branco_6_5670725_076b900c.png',
+      '/manus-storage/branco_1_5670725_55ece778.png',
+      '/manus-storage/branco_6_5670725_23be4458.png',
     ],
   },
   {
     name: 'Azul Royal',
     value: 'azul',
     images: [
-      '/manus-storage/azul-royal_3_5670725_76dadc65.png',
-      '/manus-storage/azul-royal_8_5670725_4de872cd.png',
+      '/manus-storage/azul-royal_3_5670725_6f88a1fa.png',
+      '/manus-storage/azul-royal_8_5670725_3cf4278a.png',
     ],
   },
   {
     name: 'Verde Bandeira',
     value: 'verde',
     images: [
-      '/manus-storage/verde-bandeira_4_5670725_325033a0.png',
-      '/manus-storage/verde-bandeira_9_5670725_432abd56.png',
+      '/manus-storage/verde-bandeira_4_5670725_89e125cf.png',
+      '/manus-storage/verde-bandeira_9_5670725_c5009cc2.png',
     ],
   },
   {
     name: 'Amarelo Canário',
     value: 'amarelo',
     images: [
-      '/manus-storage/amarelo-canario_2_5670725_cc6f955c.png',
-      '/manus-storage/amarelo-canario_7_5670725_3a4e33cf.png',
+      '/manus-storage/amarelo-canario_2_5670725_b1bf8634.png',
+      '/manus-storage/amarelo-canario_7_5670725_414a76c4.png',
     ],
   },
 ];
