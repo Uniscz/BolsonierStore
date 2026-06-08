@@ -1,0 +1,71 @@
+import { Link } from 'wouter';
+import { Instagram, Twitter, MessageCircle } from 'lucide-react';
+
+export default function Footer() {
+  return (
+    <footer className="bg-black text-white border-t-4 border-lime-acid">
+      <div className="container max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          {/* Brand */}
+          <div>
+            <h3 className="text-xl font-bold tracking-wider mb-4 uppercase">Bolsonier Store</h3>
+            <p className="text-sm text-gray-300 mb-4">Streetwear autoral. Edição limitada. Feito no Brasil.</p>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-lime-acid transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="#" className="hover:text-lime-acid transition-colors">
+                <Twitter size={20} />
+              </a>
+              <a href="#" className="hover:text-lime-acid transition-colors">
+                <MessageCircle size={20} />
+              </a>
+            </div>
+          </div>
+
+          {/* Shop */}
+          <div>
+            <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Loja</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/loja"><a className="hover:text-lime-acid transition-colors">Todos os Produtos</a></Link></li>
+              <li><Link href="/colecao-pix"><a className="hover:text-lime-acid transition-colors">O Pix é Nosso</a></Link></li>
+              <li><Link href="/camisetas"><a className="hover:text-lime-acid transition-colors">Camisetas</a></Link></li>
+              <li><Link href="/croppeds"><a className="hover:text-lime-acid transition-colors">Croppeds</a></Link></li>
+              <li><Link href="/bodies"><a className="hover:text-lime-acid transition-colors">Bodies</a></Link></li>
+            </ul>
+          </div>
+
+          {/* Info */}
+          <div>
+            <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Informações</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/sobre"><a className="hover:text-lime-acid transition-colors">Sobre</a></Link></li>
+              <li><Link href="/contato"><a className="hover:text-lime-acid transition-colors">Contato</a></Link></li>
+              <li><Link href="/faq"><a className="hover:text-lime-acid transition-colors">FAQ</a></Link></li>
+              <li><Link href="/prazo-envio"><a className="hover:text-lime-acid transition-colors">Prazo de Envio</a></Link></li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/politica-privacidade"><a className="hover:text-lime-acid transition-colors">Privacidade</a></Link></li>
+              <li><Link href="/politica-trocas"><a className="hover:text-lime-acid transition-colors">Trocas e Devoluções</a></Link></li>
+              <li><Link href="/termos"><a className="hover:text-lime-acid transition-colors">Termos de Uso</a></Link></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+          <p>&copy; 2024 Bolsonier Store. Todos os direitos reservados.</p>
+          <div className="flex gap-6 mt-4 md:mt-0">
+            <span>Feito no Brasil</span>
+            <span>Pix é Nosso</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -43,39 +45,45 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
+  /* Paleta Neo-Graffiti Urbano */
+  --color-pink-shock: #FF006E;
+  --color-lime-acid: #CCFF00;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  
+  --primary: #FF006E;
+  --primary-foreground: #FFFFFF;
+  --sidebar-primary: #FF006E;
+  --sidebar-primary-foreground: #FFFFFF;
+  --chart-1: #FF006E;
+  --chart-2: #CCFF00;
+  --chart-3: #000000;
+  --chart-4: #FF006E;
+  --chart-5: #CCFF00;
+  --radius: 0rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --popover-foreground: oklch(0 0 0);
+  --secondary: #CCFF00;
+  --secondary-foreground: #000000;
+  --muted: #F5F5F5;
+  --muted-foreground: #666666;
+  --accent: #FF006E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #FF006E;
+  --destructive-foreground: #FFFFFF;
+  --border: #E0E0E0;
+  --input: #F5F5F5;
+  --ring: #FF006E;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #000000;
+  --sidebar-accent: #FF006E;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #E0E0E0;
+  --sidebar-ring: #FF006E;
 }
 
 .dark {
@@ -119,6 +127,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .display-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 8vw, 6rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .display-text.skew {
+    transform: skewX(-15deg);
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
