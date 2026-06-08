@@ -17,40 +17,40 @@ const COLORS: ColorOption[] = [
     name: 'Preto',
     value: 'preto',
     images: [
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/preto_0_5670725_f8f5ea53.png',
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/preto_5_5670725_a5f1cfa9.png',
+      '/manus-storage/preto_0_5670725_22793c3e.png',
+      '/manus-storage/preto_5_5670725_0522f42d.png',
     ],
   },
   {
     name: 'Branco',
     value: 'branco',
     images: [
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/branco_1_5670725_55ece778.png',
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/branco_6_5670725_23be4458.png',
+      '/manus-storage/branco_1_5670725_87309e54.png',
+      '/manus-storage/branco_6_5670725_c1dc48de.png',
     ],
   },
   {
     name: 'Azul Royal',
     value: 'azul',
     images: [
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/azul-royal_3_5670725_6f88a1fa.png',
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/azul-royal_8_5670725_3cf4278a.png',
+      '/manus-storage/azul-royal_3_5670725_71912610.png',
+      '/manus-storage/azul-royal_8_5670725_ced5d006.png',
     ],
   },
   {
     name: 'Verde Bandeira',
     value: 'verde',
     images: [
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/verde-bandeira_4_5670725_89e125cf.png',
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/verde-bandeira_9_5670725_c5009cc2.png',
+      '/manus-storage/verde-bandeira_4_5670725_00d6ab28.png',
+      '/manus-storage/verde-bandeira_9_5670725_dd47f19e.png',
     ],
   },
   {
     name: 'Amarelo Canário',
     value: 'amarelo',
     images: [
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/amarelo-canario_2_5670725_b1bf8634.png',
-      'https://d2xsxph8kpxj0f.cloudfront.net/310519663381634216/matQj4Bq3p2qq2UcicK4zv/amarelo-canario_7_5670725_414a76c4.png',
+      '/manus-storage/amarelo-canario_2_5670725_66996668.png',
+      '/manus-storage/amarelo-canario_7_5670725_a01c69c9.png',
     ],
   },
 ];
