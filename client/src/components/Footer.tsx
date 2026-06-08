@@ -27,11 +27,11 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Loja</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/loja"><a className="hover:text-lime-acid transition-colors">Todos os Produtos</a></Link></li>
-              <li><Link href="/colecao-pix"><a className="hover:text-lime-acid transition-colors">O Pix é Nosso</a></Link></li>
-              <li><Link href="/camisetas"><a className="hover:text-lime-acid transition-colors">Camisetas</a></Link></li>
-              <li><Link href="/croppeds"><a className="hover:text-lime-acid transition-colors">Croppeds</a></Link></li>
-              <li><Link href="/bodies"><a className="hover:text-lime-acid transition-colors">Bodies</a></Link></li>
+              <li><Link href="/loja" className="hover:text-lime-acid transition-colors">Todos os Produtos</Link></li>
+              <li><Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">O Pix é Nosso</Link></li>
+              <li><Link href="/camisetas" className="hover:text-lime-acid transition-colors">Camisetas</Link></li>
+              <li><Link href="/croppeds" className="hover:text-lime-acid transition-colors">Croppeds</Link></li>
+              <li><Link href="/bodies" className="hover:text-lime-acid transition-colors">Bodies</Link></li>
             </ul>
           </div>
 
@@ -39,10 +39,10 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Informações</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/sobre"><a className="hover:text-lime-acid transition-colors">Sobre</a></Link></li>
-              <li><Link href="/contato"><a className="hover:text-lime-acid transition-colors">Contato</a></Link></li>
-              <li><Link href="/faq"><a className="hover:text-lime-acid transition-colors">FAQ</a></Link></li>
-              <li><Link href="/prazo-envio"><a className="hover:text-lime-acid transition-colors">Prazo de Envio</a></Link></li>
+              <li><Link href="/sobre" className="hover:text-lime-acid transition-colors">Sobre</Link></li>
+              <li><Link href="/contato" className="hover:text-lime-acid transition-colors">Contato</Link></li>
+              <li><Link href="/faq" className="hover:text-lime-acid transition-colors">FAQ</Link></li>
+              <li><Link href="/prazo-envio" className="hover:text-lime-acid transition-colors">Prazo de Envio</Link></li>
             </ul>
           </div>
 
@@ -50,9 +50,9 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/politica-privacidade"><a className="hover:text-lime-acid transition-colors">Privacidade</a></Link></li>
-              <li><Link href="/politica-trocas"><a className="hover:text-lime-acid transition-colors">Trocas e Devoluções</a></Link></li>
-              <li><Link href="/termos"><a className="hover:text-lime-acid transition-colors">Termos de Uso</a></Link></li>
+              <li><Link href="/politica-privacidade" className="hover:text-lime-acid transition-colors">Privacidade</Link></li>
+              <li><Link href="/politica-trocas" className="hover:text-lime-acid transition-colors">Trocas e Devoluções</Link></li>
+              <li><Link href="/termos" className="hover:text-lime-acid transition-colors">Termos de Uso</Link></li>
             </ul>
           </div>
         </div>
