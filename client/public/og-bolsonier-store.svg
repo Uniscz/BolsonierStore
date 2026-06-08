@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="0.3" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Diagonal stripes accent -->
+  <defs>
+    <pattern id="stripes" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#FF006E" stroke-width="2" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <rect x="800" y="0" width="400" height="630" fill="url(#stripes)"/>
+  
+  <!-- Pink accent bar -->
+  <rect x="0" y="0" width="12" height="630" fill="#FF006E"/>
+  
+  <!-- Brand name -->
+  <text x="80" y="200" font-family="Arial Black, sans-serif" font-size="120" font-weight="900" fill="#ffffff" letter-spacing="-4">BOLSONIER</text>
+  <text x="80" y="260" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" fill="#FF006E" letter-spacing="20">STORE</text>
+  
+  <!-- Tagline -->
+  <text x="80" y="360" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#CCFF00" letter-spacing="2">O PIX É NOSSO</text>
+  
+  <!-- Sub tagline -->
+  <text x="80" y="420" font-family="Arial, sans-serif" font-size="22" fill="#999999" letter-spacing="1">Streetwear autoral · Pré-venda · Produção sob demanda</text>
+  
+  <!-- URL -->
+  <text x="80" y="580" font-family="Arial, sans-serif" font-size="18" fill="#666666" letter-spacing="2">bolsonier.art</text>
+  
+  <!-- Decorative element -->
+  <circle cx="1050" cy="315" r="180" fill="none" stroke="#FF006E" stroke-width="3" opacity="0.3"/>
+  <circle cx="1050" cy="315" r="130" fill="none" stroke="#CCFF00" stroke-width="2" opacity="0.2"/>
+  <text x="1050" y="295" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="40" font-weight="900" fill="#FF006E" opacity="0.8">PIX</text>
+  <text x="1050" y="345" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" fill="#ffffff" opacity="0.6">É NOSSO</text>
+</svg>

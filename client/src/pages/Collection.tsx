@@ -1,128 +1,90 @@
-import { Link } from 'wouter';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { ArrowRight } from 'lucide-react';
-
-
+import { Link } from "wouter";
+import { ArrowRight } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { getFeaturedProducts, formatPrice } from "@/data/products";
 
 export default function Collection() {
+  const products = getFeaturedProducts().filter((p) => p.collection === "O Pix é Nosso");
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Header />
 
       {/* Hero */}
-      <section className="py-20 px-4 bg-black text-white">
-        <div className="container max-w-7xl mx-auto">
-          <h1 className="display-text mb-4">O Pix é Nosso</h1>
-          <p className="text-2xl font-bold mb-2">Drop Autoral - Edicao Limitada</p>
-          <p className="text-lg text-gray-300">Peças que definem uma atitude. Produção sob demanda. Feito no Brasil.</p>
-        </div>
-      </section>
-
-      {/* Collection Showcase */}
-      <section className="py-20 px-4 bg-white">
-        <div className="container max-w-7xl mx-auto">
-          <div className="w-full h-96 bg-gradient-to-br from-pink-shock via-black to-lime-acid flex items-center justify-center border-4 border-black mb-12">
-            <div className="text-center text-white">
-              <p className="font-bold text-2xl uppercase tracking-wider">ESPAÇO PARA LOOKBOOK</p>
-              <p className="text-sm mt-2">Imagem da coleção O Pix é Nosso</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold tracking-wider mb-6 uppercase">Conceito</h2>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                O Pix é Nosso é mais que uma colecao. é uma declaracao. Uma afirmacao de que a cultura urbana brasileira é forte, criativa e merece ser celebrada.
-              </p>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                Cada peca carrega elementos de pichacao contemporanea, tipografia ousada e design que nao passa despercebido. Porque quem usa Bolsonier nao quer passar despercebido.
-              </p>
-              <Link href="/loja">
-                <a className="inline-flex items-center gap-2 bg-pink-shock text-white px-8 py-4 font-bold tracking-wider hover:bg-black transition-colors duration-200 uppercase">
-                  Comprar Agora
-                  <ArrowRight size={20} />
-                </a>
-              </Link>
-            </div>
-            <div className="bg-gradient-to-br from-pink-shock to-lime-acid p-8 text-white border-2 border-black">
-              <h3 className="text-2xl font-bold mb-4 uppercase">Detalhes</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex gap-2">
-                  <span className="font-bold">Producao:</span>
-                  <span>Sob demanda, feita no Brasil</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Prazo:</span>
-                  <span>Ate 25 dias uteis</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Quantidade:</span>
-                  <span>Edicao limitada</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Materiais:</span>
-                  <span>Algodao premium</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Garantia:</span>
-                  <span>Satisfacao ou devolucao</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+      <section className="bg-black text-white py-20 px-4 relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(-45deg, #CCFF00 0, #CCFF00 1px, transparent 0, transparent 50%)",
+            backgroundSize: "20px 20px",
+          }}
+        />
+        <div className="container max-w-7xl mx-auto relative z-10">
+          <p
+            className="text-lime-acid font-black tracking-widest uppercase text-sm mb-4"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.3em" }}
+          >
+            Coleção
+          </p>
+          <h1
+            className="font-black uppercase mb-4 leading-none"
+            style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: "clamp(3rem, 10vw, 7rem)",
+              textShadow: "4px 4px 0px #FF006E",
+            }}
+          >
+            O PIX É NOSSO
+          </h1>
+          <p className="text-gray-300 text-lg max-w-xl leading-relaxed">
+            Streetwear autoral brasileiro. Uma peça urbana, forte e divertida, feita para quem
+            entende a piada antes de todo mundo.
+          </p>
         </div>
       </section>
 
       {/* Products */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-gray-50">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="display-text mb-12">Pecas da Colecao</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Camiseta O Pix é Nosso */}
-            <Link href="/camiseta-pix">
-              <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow group">
-                <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4 group-hover:from-lime-acid group-hover:to-pink-shock transition-all duration-300">
-                  <div>
-                    <p className="text-sm uppercase tracking-wider">Camiseta</p>
-                    <p className="text-xs mt-1">O Pix é Nosso</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((product) => (
+              <Link key={product.slug} href={`/produto/${product.slug}`}>
+                <a className="bg-white border-2 border-black hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group block">
+                  <div className="overflow-hidden">
+                    <img
+                      src={product.colors[0].images.frente}
+                      alt={product.name}
+                      className="w-full h-72 object-contain bg-gray-100 group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Camiseta O Pix é Nosso</h3>
-                  <p className="text-gray-600 text-xs mb-4">5 cores disponíveis</p>
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-lg">R$ 89,90</span>
-                    <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
-                      +
-                    </button>
-                  </div>
-                </div>
-              </a>
-            </Link>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Link key={i} href={`/produto/${i}`}>
-                <a className="bg-white border-2 border-black hover:shadow-lg transition-shadow group">
-                  <div className="w-full h-64 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center text-white font-bold text-center p-4 group-hover:from-lime-acid group-hover:to-pink-shock transition-all duration-300">
-                    <div>
-                      <p className="text-sm uppercase tracking-wider">Produto {i}</p>
-                      <p className="text-xs mt-1">Clique para detalhes</p>
-                    </div>
-                    </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-sm uppercase tracking-wider mb-2">Peça Autoral</h3>
-                    <p className="text-gray-600 text-xs mb-4">O Pix é Nosso</p>
+                    <h3 className="font-black text-sm uppercase tracking-wider mb-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-gray-500 text-xs mb-3">
+                      {product.colors.length} cores · Tamanhos P ao XGG
+                    </p>
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-lg">R$ 89,90</span>
-                      <button className="bg-pink-shock text-white px-3 py-2 font-bold text-xs hover:bg-black transition-colors">
-                        +
-                      </button>
+                      <span className="font-black text-lg text-pink-shock">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="bg-pink-shock text-white px-3 py-1.5 font-bold text-xs hover:bg-black transition-colors">
+                        Ver produto
+                      </span>
                     </div>
                   </div>
                 </a>
               </Link>
             ))}
           </div>
+
+          {products.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">Nenhum produto disponível nesta coleção.</p>
+            </div>
+          )}
         </div>
       </section>
 

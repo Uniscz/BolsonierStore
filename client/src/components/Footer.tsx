@@ -1,5 +1,6 @@
-import { Link } from 'wouter';
-import { Instagram, Twitter, MessageCircle } from 'lucide-react';
+import { Link } from "wouter";
+import { Instagram, MessageCircle } from "lucide-react";
+import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
 
 export default function Footer() {
   return (
@@ -8,21 +9,32 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold tracking-wider mb-4 uppercase">Bolsonier Store</h3>
-            <p className="text-sm text-gray-300 mb-4">Streetwear autoral. Edição limitada. Feito no Brasil.</p>
-            <p className="text-sm text-gray-300 mb-2">
-              <a href="mailto:contato@bolsonier.com.br" className="hover:text-lime-acid transition-colors">
-                contato@bolsonier.com.br
-              </a>
+            <h3
+              className="text-xl font-black tracking-wider mb-4 uppercase"
+              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            >
+              Bolsonier Store
+            </h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Streetwear autoral. Produção sob demanda. Feito no Brasil.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-lime-acid transition-colors">
+              <a
+                href="https://instagram.com/bolsonier"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-lime-acid transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="hover:text-lime-acid transition-colors">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="hover:text-lime-acid transition-colors">
+              <a
+                href={WHATSAPP_BASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-lime-acid transition-colors"
+                aria-label="WhatsApp"
+              >
                 <MessageCircle size={20} />
               </a>
             </div>
@@ -32,12 +44,26 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Loja</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/loja" className="hover:text-lime-acid transition-colors">Todos os Produtos</Link></li>
-              <li><Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">O Pix é Nosso</Link></li>
-              <li><Link href="/colecao-bastilha" className="hover:text-lime-acid transition-colors">A Bastilha</Link></li>
-              <li><Link href="/camisetas" className="hover:text-lime-acid transition-colors">Camisetas</Link></li>
-              <li><Link href="/croppeds" className="hover:text-lime-acid transition-colors">Croppeds</Link></li>
-              <li><Link href="/bodies" className="hover:text-lime-acid transition-colors">Bodies</Link></li>
+              <li>
+                <Link href="/loja" className="hover:text-lime-acid transition-colors">
+                  Todos os Produtos
+                </Link>
+              </li>
+              <li>
+                <Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">
+                  O Pix é Nosso
+                </Link>
+              </li>
+              <li>
+                <Link href="/colecao-bastilha" className="hover:text-lime-acid transition-colors">
+                  A Bastilha
+                </Link>
+              </li>
+              <li>
+                <Link href="/produto/camiseta-pix" className="hover:text-lime-acid transition-colors">
+                  Camiseta O Pix é Nosso
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -45,10 +71,26 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Informações</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/sobre" className="hover:text-lime-acid transition-colors">Sobre</Link></li>
-              <li><Link href="/contato" className="hover:text-lime-acid transition-colors">Contato</Link></li>
-              <li><Link href="/faq" className="hover:text-lime-acid transition-colors">FAQ</Link></li>
-              <li><Link href="/prazo-envio" className="hover:text-lime-acid transition-colors">Prazo de Envio</Link></li>
+              <li>
+                <Link href="/sobre" className="hover:text-lime-acid transition-colors">
+                  Sobre
+                </Link>
+              </li>
+              <li>
+                <Link href="/contato" className="hover:text-lime-acid transition-colors">
+                  Contato
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:text-lime-acid transition-colors">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/prazo-envio" className="hover:text-lime-acid transition-colors">
+                  Prazo de Envio
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -56,20 +98,40 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold tracking-wider mb-4 uppercase">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/politica-privacidade" className="hover:text-lime-acid transition-colors">Privacidade</Link></li>
-              <li><Link href="/politica-trocas" className="hover:text-lime-acid transition-colors">Trocas e Devoluções</Link></li>
-              <li><Link href="/termos" className="hover:text-lime-acid transition-colors">Termos de Uso</Link></li>
+              <li>
+                <Link href="/politica-privacidade" className="hover:text-lime-acid transition-colors">
+                  Privacidade
+                </Link>
+              </li>
+              <li>
+                <Link href="/politica-trocas" className="hover:text-lime-acid transition-colors">
+                  Trocas e Devoluções
+                </Link>
+              </li>
+              <li>
+                <Link href="/termos" className="hover:text-lime-acid transition-colors">
+                  Termos de Compra
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-          <p>&copy; 2026 Bolsonier Studios. Todos os direitos reservados.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <span>Feito no Brasil</span>
-            <span>Pix é Nosso</span>
+        <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 gap-4">
+          <div>
+            <p>© 2026 Bolsonier Store. Todos os direitos reservados.</p>
+            <p className="mt-1">Produção sob demanda no Brasil.</p>
           </div>
+          <a
+            href={WHATSAPP_BASE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors font-semibold"
+          >
+            <MessageCircle size={16} />
+            +55 47 99610-3720
+          </a>
         </div>
       </div>
     </footer>

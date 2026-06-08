@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+import CartDrawer from "./components/CartDrawer";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import Collection from "./pages/Collection";
@@ -14,7 +15,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import CamisetaPix from "./pages/CamisetaPix";
-
+import { PrazoEnvio, PoliticaTrocas, Termos, PoliticaPrivacidade } from "./pages/Legal";
 
 function Router() {
   return (
@@ -24,15 +25,15 @@ function Router() {
       <Route path="/produto/:id" component={ProductDetail} />
       <Route path="/colecao-pix" component={Collection} />
       <Route path="/colecao-bastilha" component={BastilhaCollection} />
-      <Route path="/colecoes" component={Shop} />
-      <Route path="/camisetas" component={Shop} />
-      <Route path="/croppeds" component={Shop} />
-      <Route path="/bodies" component={Shop} />
       <Route path="/sobre" component={About} />
       <Route path="/contato" component={Contact} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/prazo-envio" component={PrazoEnvio} />
+      <Route path="/politica-trocas" component={PoliticaTrocas} />
+      <Route path="/termos" component={Termos} />
+      <Route path="/politica-privacidade" component={PoliticaPrivacidade} />
+      {/* Legacy redirect */}
       <Route path="/camiseta-pix" component={CamisetaPix} />
-      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -42,13 +43,11 @@ function App() {
   return (
     <ErrorBoundary>
       <CartProvider>
-        <ThemeProvider
-          defaultTheme="light"
-          // switchable
-        >
+        <ThemeProvider defaultTheme="light">
           <TooltipProvider>
             <Toaster />
             <Router />
+            <CartDrawer />
           </TooltipProvider>
         </ThemeProvider>
       </CartProvider>

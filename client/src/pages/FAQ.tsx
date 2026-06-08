@@ -1,72 +1,98 @@
-import { useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { Link } from "wouter";
+import { ChevronDown, MessageCircle } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+
+const faqs = [
+  {
+    question: "Qual é o prazo de produção e envio?",
+    answer:
+      "O prazo é de até 25 dias úteis a partir da confirmação do pagamento. Este é o prazo para produção sob demanda e envio para o endereço informado. O prazo pode variar conforme a região de entrega.",
+  },
+  {
+    question: "Como funciona a produção sob demanda?",
+    answer:
+      "Cada peça é produzida especialmente para você, quando você a encomendar. Isso permite edições limitadas, design exclusivo e produção sem desperdício. Você recebe uma peça feita sob encomenda.",
+  },
+  {
+    question: "Como faço para comprar?",
+    answer:
+      "Escolha o produto, selecione cor, tamanho e quantidade, e finalize pelo WhatsApp. Você receberá a chave PIX para pagamento. A produção começa após a confirmação do pagamento.",
+  },
+  {
+    question: "Qual é a forma de pagamento?",
+    answer:
+      "Aceitamos exclusivamente pagamento via PIX. Após finalizar o pedido pelo WhatsApp, você receberá a chave PIX para realizar o pagamento.",
+  },
+  {
+    question: "Como é calculado o frete?",
+    answer:
+      "O frete é calculado no atendimento pelo WhatsApp antes da confirmação final do pedido. O valor varia conforme a região de entrega.",
+  },
+  {
+    question: "Quais são as opções de tamanho?",
+    answer:
+      "Oferecemos tamanhos P, M, G, GG e XGG. Consulte a tabela de medidas na página do produto para encontrar o tamanho ideal.",
+  },
+  {
+    question: "Qual é a política de trocas?",
+    answer:
+      "Trocas por defeito devem ser solicitadas em até 7 dias corridos após o recebimento. Trocas por tamanho ou cor são avaliadas caso a caso. Entre em contato pelo WhatsApp.",
+  },
+  {
+    question: "Posso acompanhar meu pedido?",
+    answer:
+      "Sim. Todo o acompanhamento é feito pelo WhatsApp. Você receberá atualizações sobre a produção e o envio do seu pedido.",
+  },
+  {
+    question: "Como entro em contato?",
+    answer:
+      "Pelo WhatsApp: +55 47 99610-3720. Respondemos pedidos, dúvidas sobre tamanhos, frete e pagamento.",
+  },
+];
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const faqs = [
-    {
-      question: 'Qual é o prazo de producao e envio?',
-      answer: 'O prazo é de ate 25 dias uteis a partir da confirmacao do pagamento. Este é o prazo para producao sob demanda e envio para o endereco informado.'
-    },
-    {
-      question: 'Como funciona a producao sob demanda?',
-      answer: 'Cada peca é produzida especialmente para voce, quando voce a encomendar. Isso permite que tenhamos edicoes limitadas e evitemos desperdicio. Voce recebe uma peca feita sob encomenda.'
-    },
-    {
-      question: 'Qual é a politica de trocas e devolucoes?',
-      answer: 'Se a peca chegar com defeito ou nao corresponder a descricao, voce pode solicitar troca ou devolucao em ate 7 dias apos o recebimento. Leia nossa politica completa para mais detalhes.'
-    },
-    {
-      question: 'Como acompanho meu pedido?',
-      answer: 'Apos a confirmacao do pagamento, voce recebera um email com o numero de rastreamento. Voce pode acompanhar seu pedido pelo site dos Correios ou por WhatsApp.'
-    },
-    {
-      question: 'Quais sao as opcoes de tamanho?',
-      answer: 'Oferecemos tamanhos P, M, G e GG. Consulte nosso guia de medidas para encontrar o tamanho ideal para voce. Temos uma tabela detalhada no site.'
-    },
-    {
-      question: 'Posso cancelar meu pedido?',
-      answer: 'Sim, voce pode cancelar seu pedido em ate 24 horas apos a confirmacao do pagamento. Apos esse periodo, o pedido ja estara em producao e nao podera ser cancelado.'
-    },
-    {
-      question: 'Qual é o material das pecas?',
-      answer: 'Usamos algodao premium de alta qualidade para todas as nossas pecas. O tecido é confortavel, duravel e adequado para uso diario.'
-    },
-    {
-      question: 'Como faco para entrar em contato?',
-      answer: 'Voce pode nos contatar por email em contato@bolsonierstore.com ou por WhatsApp em (11) 99999-9999. Respondemos em ate 24 horas.'
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
       {/* Hero */}
-      <section className="py-20 px-4 bg-black text-white">
+      <section className="py-16 px-4 bg-black text-white">
         <div className="container max-w-7xl mx-auto">
-          <h1 className="display-text mb-4">FAQ</h1>
-          <p className="text-xl">Perguntas frequentes sobre Bolsonier Store</p>
+          <h1
+            className="font-black uppercase"
+            style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: "clamp(2.5rem, 8vw, 5rem)",
+              textShadow: "3px 3px 0px #FF006E",
+            }}
+          >
+            FAQ
+          </h1>
+          <p className="text-gray-300 mt-2 text-lg">Perguntas frequentes sobre a Bolsonier Store</p>
         </div>
       </section>
 
       {/* FAQ Content */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-16 px-4 bg-white flex-1">
         <div className="container max-w-3xl mx-auto">
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div key={index} className="border-2 border-black">
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 bg-white hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between p-6 bg-white hover:bg-gray-50 transition-colors text-left"
                 >
-                  <h3 className="font-bold text-lg text-left uppercase tracking-wider">{faq.question}</h3>
+                  <h3 className="font-bold text-base uppercase tracking-wider">{faq.question}</h3>
                   <ChevronDown
-                    size={24}
-                    className={`flex-shrink-0 ml-4 transition-transform ${openIndex === index ? 'rotate-180' : ''}`}
+                    size={22}
+                    className={`flex-shrink-0 ml-4 transition-transform ${
+                      openIndex === index ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
                 {openIndex === index && (
@@ -79,11 +105,25 @@ export default function FAQ() {
           </div>
 
           {/* CTA */}
-          <div className="mt-16 p-8 bg-gradient-to-r from-pink-shock to-lime-acid text-white text-center">
-            <h2 className="text-2xl font-bold tracking-wider mb-4 uppercase">Ainda tem duvidas?</h2>
-            <p className="mb-6">Entre em contato conosco. Estamos aqui para ajudar.</p>
-            <a href="/contato" className="inline-block bg-black text-white px-8 py-3 font-bold tracking-wider hover:bg-white hover:text-black transition-colors uppercase">
-              Enviar Mensagem
+          <div className="mt-16 p-8 bg-black text-white text-center">
+            <h2
+              className="text-3xl font-black tracking-wider mb-4 uppercase"
+              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            >
+              Ainda tem dúvidas?
+            </h2>
+            <p className="mb-6 text-gray-300">
+              Entre em contato pelo WhatsApp. Respondemos rapidamente.
+            </p>
+            <a
+              href={WHATSAPP_BASE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-3 font-black uppercase tracking-wider hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"
+              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            >
+              <MessageCircle size={20} />
+              Falar no WhatsApp
             </a>
           </div>
         </div>

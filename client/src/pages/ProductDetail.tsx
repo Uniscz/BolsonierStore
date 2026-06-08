@@ -1,240 +1,345 @@
-import { useState } from 'react';
-import { useRoute } from 'wouter';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { ArrowLeft, Zap } from 'lucide-react';
-import { Link } from 'wouter';
-
-const PRODUCTS = [
-  { id: 1, name: 'Camiseta O Pix é Nosso', price: 89.90, category: 'camiseta', collection: 'O Pix é Nosso', description: 'Camiseta autoral com design exclusivo da coleção O Pix é Nosso. Produção sob demanda em edição limitada.' },
-  { id: 2, name: 'Camiseta Urbana', price: 89.90, category: 'camiseta', collection: 'O Pix é Nosso', description: 'Design urbano com tipografia ousada. Cada peça é uma declaração de estilo.' },
-  { id: 3, name: 'Cropped Grafite', price: 79.90, category: 'cropped', collection: 'O Pix é Nosso', description: 'Cropped autoral com elementos de pichação. Conforto e atitude em uma peça.' },
-  { id: 4, name: 'Body Autoral', price: 99.90, category: 'body', collection: 'O Pix é Nosso', description: 'Body exclusivo com design marcante. Perfeito para quem quer se destacar.' },
-  { id: 5, name: 'Camiseta Preta', price: 89.90, category: 'camiseta', collection: 'Classicos', description: 'Clássico que nunca sai de moda. Qualidade premium e conforto garantido.' },
-  { id: 6, name: 'Camiseta Branca', price: 89.90, category: 'camiseta', collection: 'Classicos', description: 'Branca pura com acabamento impecável. Versátil para qualquer estilo.' },
-  { id: 7, name: 'Cropped Rosa', price: 79.90, category: 'cropped', collection: 'O Pix é Nosso', description: 'Rosa choque com design autoral. Ousadia e feminilidade em uma peça.' },
-  { id: 8, name: 'Body Verde', price: 99.90, category: 'body', collection: 'Classicos', description: 'Verde ácido com design minimalista. Conforto e estilo combinados.' },
-];
-
-const SIZES = ['P', 'M', 'G', 'GG', 'XG'];
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { ArrowLeft, MessageCircle, ShoppingBag, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { getProductBySlug, formatPrice } from "@/data/products";
+import { buildWhatsAppOrderMessage, buildWhatsAppFreightMessage, openWhatsApp } from "@/lib/whatsapp";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 
 export default function ProductDetail() {
-  const [match, params] = useRoute('/produto/:id');
+  const params = useParams<{ id: string }>();
+  const slug = params.id;
+
+  const product = getProductBySlug(slug);
+
+  const [selectedColor, setSelectedColor] = useState(product?.colors[0] ?? null);
+  const [selectedSide, setSelectedSide] = useState<"frente" | "costas">("frente");
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [showSizeTable, setShowSizeTable] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [cep, setCep] = useState("");
 
-  if (!match) return null;
-
-  const product = PRODUCTS.find(p => p.id === parseInt(params?.id || '0'));
+  const { addItem, openCart } = useCart();
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="display-text mb-4">Produto não encontrado</h1>
-            <Link href="/loja">
-              <a className="bg-pink-shock text-white px-6 py-3 font-bold tracking-wider hover:bg-black transition-colors uppercase">
-                Voltar para Loja
-              </a>
-            </Link>
-          </div>
+        <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
+          <h1 className="text-4xl font-black uppercase mb-4">Produto não encontrado</h1>
+          <p className="text-gray-500 mb-8">Este produto não existe ou foi removido.</p>
+          <Link href="/loja">
+            <a className="bg-pink-shock text-white px-6 py-3 font-black uppercase tracking-wider hover:bg-black transition-colors">
+              Ver loja
+            </a>
+          </Link>
         </div>
         <Footer />
       </div>
     );
   }
 
+  const currentImage = selectedColor
+    ? selectedColor.images[selectedSide]
+    : product.colors[0].images[selectedSide];
+
+  const handleAddToCart = () => {
+    if (!selectedColor) {
+      toast.error("Selecione uma cor antes de continuar.");
+      return;
+    }
+    if (!selectedSize) {
+      toast.error("Selecione um tamanho antes de continuar.");
+      return;
+    }
+
+    addItem({
+      productSlug: product.slug,
+      name: product.name,
+      color: selectedColor.name,
+      size: selectedSize,
+      quantity,
+      price: product.price,
+      image: selectedColor.images.frente,
+    });
+
+    toast.success("Produto adicionado ao carrinho.", {
+      action: {
+        label: "Ver carrinho",
+        onClick: openCart,
+      },
+    });
+  };
+
+  const handleBuyNowWhatsApp = () => {
+    if (!selectedColor) {
+      toast.error("Selecione uma cor antes de continuar.");
+      return;
+    }
+    if (!selectedSize) {
+      toast.error("Selecione um tamanho antes de continuar.");
+      return;
+    }
+
+    const url = buildWhatsAppOrderMessage(
+      [
+        {
+          name: product.name,
+          color: selectedColor.name,
+          size: selectedSize,
+          quantity,
+          price: product.price,
+        },
+      ],
+      product.price * quantity
+    );
+    openWhatsApp(url);
+  };
+
+  const handleFreightWhatsApp = () => {
+    const url = buildWhatsAppFreightMessage(cep || undefined);
+    openWhatsApp(url);
+  };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Header />
 
       {/* Breadcrumb */}
-      <section className="py-4 px-4 bg-gray-50 border-b border-gray-200">
-        <div className="container max-w-7xl mx-auto">
-          <Link href="/loja">
-            <a className="flex items-center gap-2 text-sm font-bold uppercase hover:text-pink-shock transition-colors">
-              <ArrowLeft size={16} />
-              Voltar para Loja
-            </a>
+      <div className="container max-w-7xl mx-auto px-4 py-4">
+        <nav className="flex items-center gap-2 text-sm text-gray-500">
+          <Link href="/">
+            <a className="hover:text-pink-shock transition-colors">Início</a>
           </Link>
-        </div>
-      </section>
+          <span>/</span>
+          <Link href="/loja">
+            <a className="hover:text-pink-shock transition-colors">Loja</a>
+          </Link>
+          <span>/</span>
+          <span className="text-black font-semibold">{product.name}</span>
+        </nav>
+      </div>
 
-      {/* Product Detail */}
-      <section className="py-12 px-4 bg-white flex-1">
+      {/* Product */}
+      <section className="py-8 px-4">
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Product Images */}
-            <div className="space-y-4">
-              {/* Main Image */}
-              <div className="w-full h-96 bg-gradient-to-br from-pink-shock to-lime-acid flex items-center justify-center border-2 border-black">
-                <div className="text-center text-white">
-                  <p className="font-bold text-lg uppercase tracking-wider">FRENTE DA PEÇA</p>
-                  <p className="text-sm mt-2">{product.name}</p>
-                </div>
+            {/* Gallery */}
+            <div>
+              {/* Main image */}
+              <div className="border-2 border-black mb-4 bg-gray-50 flex items-center justify-center overflow-hidden"
+                style={{ minHeight: "400px" }}>
+                <img
+                  src={currentImage}
+                  alt={`${product.name} - ${selectedColor?.name} - ${selectedSide}`}
+                  className="w-full max-h-[500px] object-contain"
+                />
               </div>
 
-              {/* Thumbnail Images */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="h-24 bg-gradient-to-br from-lime-acid to-pink-shock flex items-center justify-center border-2 border-black cursor-pointer hover:shadow-lg transition-shadow">
-                  <p className="text-xs font-bold text-white uppercase text-center">Costas</p>
-                </div>
-                <div className="h-24 bg-gradient-to-br from-pink-shock via-black to-lime-acid flex items-center justify-center border-2 border-black cursor-pointer hover:shadow-lg transition-shadow">
-                  <p className="text-xs font-bold text-white uppercase text-center">No Modelo</p>
-                </div>
-                <div className="h-24 bg-gradient-to-br from-black to-pink-shock flex items-center justify-center border-2 border-black cursor-pointer hover:shadow-lg transition-shadow">
-                  <p className="text-xs font-bold text-white uppercase text-center">Detalhe</p>
-                </div>
+              {/* Side toggle */}
+              <div className="flex gap-2 mb-4">
+                {(["frente", "costas"] as const).map((side) => (
+                  <button
+                    key={side}
+                    onClick={() => setSelectedSide(side)}
+                    className={`px-4 py-2 font-bold uppercase text-xs tracking-wider border-2 transition-colors ${
+                      selectedSide === side
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border-black hover:bg-gray-100"
+                    }`}
+                  >
+                    {side === "frente" ? "Frente" : "Costas"}
+                  </button>
+                ))}
               </div>
+
+              {/* Color thumbnails */}
+              {selectedColor && (
+                <div className="grid grid-cols-5 gap-2">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color.key}
+                      onClick={() => setSelectedColor(color)}
+                      className={`border-2 overflow-hidden transition-all ${
+                        selectedColor.key === color.key
+                          ? "border-pink-shock scale-105"
+                          : "border-gray-200 hover:border-black"
+                      }`}
+                    >
+                      <img
+                        src={color.images[selectedSide]}
+                        alt={color.name}
+                        className="w-full h-16 object-contain bg-gray-50"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
-            <div className="flex flex-col justify-between">
-              <div>
-                {/* Collection Badge */}
-                <div className="inline-block mb-4">
-                  <span className="bg-lime-acid text-black px-3 py-1 font-bold text-xs uppercase tracking-wider">
-                    {product.collection}
-                  </span>
-                </div>
+            <div>
+              <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">
+                {product.collection}
+              </p>
+              <h1
+                className="font-black uppercase mb-4 leading-tight"
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "clamp(2rem, 5vw, 3rem)",
+                }}
+              >
+                {product.name}
+              </h1>
+              <p className="text-3xl font-black text-pink-shock mb-6">
+                {formatPrice(product.price)}
+              </p>
 
-                {/* Title and Price */}
-                <h1 className="display-text mb-2">{product.name}</h1>
-                <p className="text-3xl font-bold mb-6">R$ {product.price.toFixed(2)}</p>
+              <p className="text-gray-600 leading-relaxed mb-8">{product.description}</p>
 
-                {/* Description */}
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  {product.description}
-                </p>
-
-                {/* Size Selection */}
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <label className="font-bold uppercase tracking-wider text-sm">Tamanho</label>
+              {/* Color selection */}
+              <div className="mb-6">
+                <label className="font-black uppercase tracking-wider text-sm block mb-3">
+                  Cor:{" "}
+                  <span className="text-pink-shock">{selectedColor?.name ?? "Selecione"}</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((color) => (
                     <button
-                      onClick={() => setShowSizeTable(true)}
-                      className="text-xs font-bold text-pink-shock hover:text-black transition-colors uppercase underline"
+                      key={color.key}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 font-bold text-sm border-2 transition-all ${
+                        selectedColor?.key === color.key
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-black border-black hover:bg-gray-100"
+                      }`}
                     >
-                      Ver Tabela de Medidas
+                      {color.name}
                     </button>
-                  </div>
-
-                  <div className="grid grid-cols-5 gap-3">
-                    {SIZES.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`py-3 font-bold uppercase tracking-wider border-2 transition-all duration-200 ${
-                          selectedSize === size
-                            ? 'bg-pink-shock text-white border-pink-shock'
-                            : 'border-black text-black hover:bg-lime-acid'
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quantity */}
-                <div className="mb-8">
-                  <label className="font-bold uppercase tracking-wider text-sm block mb-4">Quantidade</label>
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-12 h-12 border-2 border-black font-bold text-lg hover:bg-black hover:text-white transition-colors"
-                    >
-                      −
-                    </button>
-                    <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-12 h-12 border-2 border-black font-bold text-lg hover:bg-black hover:text-white transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {/* PIX Info */}
-                <div className="mb-8 p-4 bg-pink-shock text-white border-2 border-pink-shock">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap size={20} className="text-lime-acid" />
-                    <span className="font-bold uppercase tracking-wider">Pagamento Exclusivo via PIX</span>
-                  </div>
-                  <p className="text-sm">O PIX É NOSSO. Após confirmar seu pedido, você receberá a chave PIX para pagamento. Produção inicia após confirmação.</p>
+                  ))}
                 </div>
               </div>
 
+              {/* Size selection */}
+              <div className="mb-6">
+                <label className="font-black uppercase tracking-wider text-sm block mb-3">
+                  Tamanho:{" "}
+                  <span className="text-pink-shock">{selectedSize ?? "Selecione"}</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-12 h-12 font-black text-sm border-2 transition-all ${
+                        selectedSize === size
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-black border-black hover:bg-gray-100"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quantity */}
+              <div className="mb-8">
+                <label className="font-black uppercase tracking-wider text-sm block mb-3">
+                  Quantidade
+                </label>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-12 h-12 border-2 border-black font-bold text-lg hover:bg-black hover:text-white transition-colors"
+                  >
+                    −
+                  </button>
+                  <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-12 h-12 border-2 border-black font-bold text-lg hover:bg-black hover:text-white transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* PIX Info */}
+              <div className="mb-6 p-4 bg-pink-shock text-white border-2 border-pink-shock">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap size={20} className="text-lime-acid" />
+                  <span className="font-bold uppercase tracking-wider text-sm">
+                    Pagamento via PIX
+                  </span>
+                </div>
+                <p className="text-sm opacity-90">
+                  Após finalizar pelo WhatsApp, você receberá a chave PIX. A produção inicia após
+                  confirmação do pagamento.
+                </p>
+              </div>
+
               {/* CTA Buttons */}
-              <div className="space-y-3">
+              <div className="space-y-3 mb-8">
                 <button
-                  disabled={!selectedSize}
-                  className={`w-full py-4 font-bold uppercase tracking-wider text-lg transition-all duration-200 border-2 ${
-                    selectedSize
-                      ? 'bg-pink-shock text-white border-pink-shock hover:bg-black hover:border-black'
-                      : 'bg-gray-300 text-gray-600 border-gray-300 cursor-not-allowed'
-                  }`}
+                  onClick={handleAddToCart}
+                  className="w-full py-4 font-black uppercase tracking-wider text-lg transition-all duration-200 border-2 bg-black text-white border-black hover:bg-pink-shock hover:border-pink-shock flex items-center justify-center gap-2"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                 >
-                  Comprar Agora - R$ {(product.price * quantity).toFixed(2)}
+                  <ShoppingBag size={22} />
+                  Adicionar ao carrinho
                 </button>
-                <button className="w-full py-4 font-bold uppercase tracking-wider text-lg border-2 border-black text-black hover:bg-black hover:text-white transition-all duration-200">
-                  Enviar Comprovante via WhatsApp
+                <button
+                  onClick={handleBuyNowWhatsApp}
+                  className="w-full py-4 font-black uppercase tracking-wider text-lg transition-all duration-200 border-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 flex items-center justify-center gap-2"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                >
+                  <MessageCircle size={22} />
+                  Comprar agora pelo WhatsApp
                 </button>
+              </div>
+
+              {/* Freight */}
+              <div className="border-2 border-gray-200 p-4 mb-6">
+                <p className="font-bold uppercase text-sm mb-3">Consultar frete</p>
+                <p className="text-sm text-gray-600 mb-3">
+                  Frete calculado no atendimento pelo WhatsApp antes da confirmação final do pedido.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Seu CEP (opcional)"
+                    value={cep}
+                    onChange={(e) => setCep(e.target.value)}
+                    className="flex-1 border-2 border-black px-3 py-2 text-sm font-semibold focus:outline-none focus:border-pink-shock"
+                    maxLength={9}
+                  />
+                  <button
+                    onClick={handleFreightWhatsApp}
+                    className="bg-black text-white px-4 py-2 font-bold text-xs uppercase tracking-wider hover:bg-pink-shock transition-colors border-2 border-black hover:border-pink-shock whitespace-nowrap"
+                  >
+                    Consultar frete
+                  </button>
+                </div>
+              </div>
+
+              {/* Details */}
+              <div>
+                <h3 className="font-black uppercase tracking-wider text-sm mb-3">Detalhes</h3>
+                <ul className="space-y-2">
+                  {product.details.map((detail, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="text-pink-shock font-bold mt-0.5">·</span>
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Size Table Modal */}
-      <Dialog open={showSizeTable} onOpenChange={setShowSizeTable}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold uppercase">Tabela de Medidas</DialogTitle>
-            <DialogDescription>
-              Todas as medidas em centímetros (cm)
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-pink-shock text-white">
-                  <th className="border-2 border-black p-3 text-left font-bold uppercase">Tamanho</th>
-                  <th className="border-2 border-black p-3 text-left font-bold uppercase">Largura</th>
-                  <th className="border-2 border-black p-3 text-left font-bold uppercase">Comprimento</th>
-                  <th className="border-2 border-black p-3 text-left font-bold uppercase">Manga</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { size: 'P', width: '42', length: '64', sleeve: '18' },
-                  { size: 'M', width: '45', length: '67', sleeve: '19' },
-                  { size: 'G', width: '48', length: '70', sleeve: '20' },
-                  { size: 'GG', width: '51', length: '73', sleeve: '21' },
-                  { size: 'XG', width: '54', length: '76', sleeve: '22' },
-                ].map((row) => (
-                  <tr key={row.size} className="hover:bg-gray-50">
-                    <td className="border-2 border-black p-3 font-bold uppercase">{row.size}</td>
-                    <td className="border-2 border-black p-3">{row.width} cm</td>
-                    <td className="border-2 border-black p-3">{row.length} cm</td>
-                    <td className="border-2 border-black p-3">{row.sleeve} cm</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <p className="text-xs text-gray-600 mt-4">
-            * Medidas aproximadas. Pequenas variações podem ocorrer devido ao processo de produção sob demanda.
-          </p>
-        </DialogContent>
-      </Dialog>
 
       <Footer />
     </div>
