@@ -160,6 +160,56 @@
 }
 
 @layer components {
+  /* Display text - ultra bold, distorted graffiti style */
+  .display-text {
+    @apply text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    transform: skewY(-2deg);
+    text-shadow: 
+      3px 3px 0px #FF006E,
+      6px 6px 0px #CCFF00,
+      9px 9px 20px rgba(0, 0, 0, 0.3);
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Logo/Brand text */
+  .brand-text {
+    @apply font-black tracking-wider;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    text-shadow: 
+      2px 2px 0px #FF006E,
+      4px 4px 0px #CCFF00;
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Heading styles */
+  h1 {
+    @apply font-black tracking-tight;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 8vw, 4rem);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    @apply font-black tracking-wide;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    text-transform: uppercase;
+  }
+
+  h3 {
+    @apply font-bold tracking-wide;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.25rem, 4vw, 1.875rem);
+    text-transform: uppercase;
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *
