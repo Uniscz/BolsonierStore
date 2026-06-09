@@ -97,8 +97,10 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
       },
     ],
     // callback: redireciona para a página do pedido após pagamento
+    // cancelUrl é obrigatório pelo Asaas Checkout
     callback: {
-      successUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}`,
+      successUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}?payment=success`,
+      cancelUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}?payment=cancelled`,
       autoRedirect: true,
     },
   };

@@ -86,6 +86,10 @@ export default function OrderConfirmation() {
   const params = useParams<{ order_number: string }>();
   const order_number = params.order_number;
 
+  // Detectar query param ?payment=success|cancelled retornado pelo Asaas Checkout
+  const searchParams = new URLSearchParams(window.location.search);
+  const paymentParam = searchParams.get("payment"); // "success" | "cancelled" | null
+
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -250,6 +254,26 @@ export default function OrderConfirmation() {
               {order.order_number}
             </p>
           </div>
+
+          {/* Banner: payment=cancelled */}
+          {paymentParam === "cancelled" && (
+            <div className="flex items-start gap-2 bg-yellow-900/40 border-2 border-yellow-500 p-4 text-yellow-300 text-sm">
+              <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="font-semibold">
+                Pagamento não concluído. Você pode tentar novamente clicando em “Pagar Agora” abaixo.
+              </span>
+            </div>
+          )}
+
+          {/* Banner: payment=success (antes do webhook confirmar) */}
+          {paymentParam === "success" && !isPaid && (
+            <div className="flex items-start gap-2 bg-lime-900/40 border-2 border-lime-500 p-4 text-lime-300 text-sm">
+              <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="font-semibold">
+                Pagamento enviado para confirmação. Aguarde a atualização do status.
+              </span>
+            </div>
+          )}
 
           {/* Status */}
           <div className="bg-black border-2 border-gray-700 p-5">
