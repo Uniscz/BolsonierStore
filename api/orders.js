@@ -64,14 +64,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: "Método não permitido." });
   }
 
+  // Parsing robusto do body — suporta: objeto (Vercel padrão), string, e stream (mobile/Safari)
   let body = req.body;
 
-  // Suporte a body como string (alguns runtimes)
   if (typeof body === "string") {
+    try { body = JSON.parse(body); } catch { return res.status(400).json({ success: false, error: "Body inválido." }); }
+  } else if (!body || (typeof body === "object" && Object.keys(body).length === 0)) {
+    // Body vazio ou não parseado — lê o stream manualmente
     try {
-      body = JSON.parse(body);
+      const raw = await new Promise((resolve, reject) => {
+        let data = "";
+        req.on("data", (chunk) => { data += chunk.toString(); });
+        req.on("end", () => resolve(data));
+        req.on("error", reject);
+      });
+      body = raw ? JSON.parse(raw) : {};
     } catch {
-      return res.status(400).json({ success: false, error: "Body inválido." });
+      return res.status(400).json({ success: false, error: "Body inválido ou não foi possível ler o stream." });
     }
   }
 

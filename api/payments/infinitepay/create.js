@@ -132,7 +132,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: "Método não permitido." });
   }
 
-  const { order_number } = req.body || {};
+  // Parsing robusto do body — suporta objeto, string e stream (mobile/Safari)
+  let reqBody = req.body;
+  if (typeof reqBody === "string") {
+    try { reqBody = JSON.parse(reqBody); } catch { return res.status(400).json({ success: false, error: "Body inválido." }); }
+  } else if (!reqBody || (typeof reqBody === "object" && Object.keys(reqBody).length === 0)) {
+    try {
+      const raw = await new Promise((resolve, reject) => {
+        let data = "";
+        req.on("data", (chunk) => { data += chunk.toString(); });
+        req.on("end", () => resolve(data));
+        req.on("error", reject);
+      });
+      reqBody = raw ? JSON.parse(raw) : {};
+    } catch { return res.status(400).json({ success: false, error: "Body inválido." }); }
+  }
+  const { order_number } = reqBody || {};
 
   if (!order_number || typeof order_number !== "string") {
     return res.status(400).json({ success: false, error: "order_number é obrigatório." });
