@@ -37,7 +37,7 @@ function getAsaasCheckoutBaseUrl() {
   if (base.includes("sandbox")) {
     return "https://sandbox.asaas.com";
   }
-  return "https://asaas.com";
+  return "https://www.asaas.com";
 }
 
 // Formata data de vencimento como YYYY-MM-DD
@@ -124,7 +124,10 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
   }
 
   // Monta a URL pública do checkout
-  const checkoutUrl = `${checkoutPublicBase}/checkoutSession/show?id=${data.id}`;
+  // Prioridade: campo "link" retornado pelo Asaas (formato correto)
+  // Fallback: path /checkoutSession/show/${data.id} (nunca usar ?id=...)
+  const checkoutUrl = data.link || `${checkoutPublicBase}/checkoutSession/show/${data.id}`;
+  console.log(`[Asaas Checkout] URL usada: ${checkoutUrl} (fonte: ${data.link ? 'data.link' : 'fallback path'})`);
 
   return {
     checkoutId: data.id,
