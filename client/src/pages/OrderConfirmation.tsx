@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import BastilhaPaidExperience from "@/components/BastilhaPaidExperience";
 import { useParams } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -100,6 +101,8 @@ export default function OrderConfirmation() {
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [retryError, setRetryError] = useState<string | null>(null);
+  // Easter egg: exibir experiência Bastilha apenas uma vez por visita
+  const [showEasterEgg, setShowEasterEgg] = useState(true);
 
   const fetchOrder = useCallback(() => {
     if (!order_number) return;
@@ -219,12 +222,22 @@ export default function OrderConfirmation() {
   // ─── Derivações de estado ──────────────────────────────────────────────────
   const paymentLabel = PAYMENT_STATUS_LABELS[order.payment_status] ?? order.payment_status;
   const orderLabel = ORDER_STATUS_LABELS[order.order_status] ?? order.order_status;
-  const isPaid = order.payment_status === "paid";
+  const isPaid = order.payment_status === "paid" || order.order_status === "paid";
   const isFailed = order.payment_status === "failed" || order.payment_status === "overdue";
 
   // URL de pagamento: prioriza InfinityPay, fallback para Asaas legado
   const paymentUrl = order.infinitepay_payment_url || order.asaas_invoice_url || null;
   const hasPaymentUrl = Boolean(paymentUrl);
+
+  // ─── Easter egg Bastilha (apenas pedidos pagos) ────────────────────────────
+  if (isPaid && showEasterEgg) {
+    return (
+      <BastilhaPaidExperience
+        order_number={order.order_number}
+        onClose={() => setShowEasterEgg(false)}
+      />
+    );
+  }
 
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
