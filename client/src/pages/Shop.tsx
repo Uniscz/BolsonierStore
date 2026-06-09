@@ -2,7 +2,10 @@ import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductImage from "@/components/ProductImage";
-import { formatPrice, getProductBySlug } from "@/data/products";
+import { formatPrice, getProductBySlug, products, SHOW_TEST_PRODUCT } from "@/data/products";
+
+// Produto de teste (visível apenas quando SHOW_TEST_PRODUCT = true)
+const testProduct = products.find((p) => p.isTestProduct);
 
 const product = getProductBySlug("camiseta-pix");
 
@@ -256,6 +259,71 @@ export default function Shop() {
           </div>
         </div>
       </section>
+
+      {/* ── Produto de Teste (visível apenas quando SHOW_TEST_PRODUCT = true) ── */}
+      {SHOW_TEST_PRODUCT && testProduct && (
+        <section style={{ background: "#0a0a0a", padding: "2rem 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="container-shell">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
+              <span
+                style={{
+                  background: "#888",
+                  color: "#fff",
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.2em",
+                  fontWeight: 800,
+                  padding: "0.25rem 0.6rem",
+                  textTransform: "uppercase",
+                }}
+              >
+                TESTE INTERNO
+              </span>
+              <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
+                Produto de validação de pagamento — não é uma peça real
+              </span>
+            </div>
+            <Link href={`/produto/${testProduct.slug}`}>
+              <a
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1.25rem",
+                  background: "#111",
+                  border: "1px dashed #444",
+                  padding: "1.25rem",
+                  maxWidth: "420px",
+                  textDecoration: "none",
+                  color: "inherit",
+                  transition: "border-color 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#888")}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#444")}
+                aria-label="Abrir produto de teste"
+              >
+                <img
+                  src={testProduct.colors[0].images.frente}
+                  alt="Produto Teste"
+                  style={{ width: "64px", height: "80px", objectFit: "cover", opacity: 0.7, flexShrink: 0 }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "0.55rem", letterSpacing: "0.2em", color: "#888", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                    {testProduct.collection}
+                  </div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", color: "#ccc", letterSpacing: "0.05em" }}>
+                    {testProduct.name}
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.35)", marginTop: "0.25rem" }}>
+                    {testProduct.description}
+                  </div>
+                </div>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "#7CFC00", whiteSpace: "nowrap" }}>
+                  {formatPrice(testProduct.price)}
+                </div>
+              </a>
+            </Link>
+          </div>
+        </section>
+      )}
 
       <section
         style={{
