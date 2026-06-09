@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Instagram, MessageCircle, ShoppingBag } from "lucide-react";
+import { ShoppingBag, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/loja", label: "Loja" },
+  { href: "/colecao-pix", label: "O Pix É Nosso" },
   { href: "/sobre", label: "Sobre" },
   { href: "/contato", label: "Contato" },
-];
-
-const socialLinks = [
-  { href: "https://instagram.com/euinelegivel", label: "Instagram" },
-  { href: "https://www.tiktok.com/@euinelegivel", label: "TikTok" },
 ];
 
 export default function Header() {
@@ -29,15 +25,11 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location]);
+  useEffect(() => { setMenuOpen(false); }, [location]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
   return (
@@ -52,8 +44,10 @@ export default function Header() {
       >
         <div className="container-shell">
           <div className="flex items-center justify-between h-16 md:h-20">
+
+            {/* Logo */}
             <Link href="/">
-              <a className="flex flex-col leading-none hover:opacity-80 transition-opacity select-none" aria-label="Bolsonier Store">
+              <a className="flex flex-col leading-none hover:opacity-80 transition-opacity select-none">
                 <span
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
@@ -79,28 +73,35 @@ export default function Header() {
               </a>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8" aria-label="Menu principal">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
-                  <a className="nav-link" style={{ color: location === link.href ? "#FF0066" : undefined }}>
+                  <a
+                    className="nav-link"
+                    style={{ color: location === link.href ? "#FF0066" : undefined }}
+                  >
                     {link.label}
                   </a>
                 </Link>
               ))}
             </nav>
 
+            {/* Right Actions */}
             <div className="hidden md:flex items-center gap-4">
               <a
-                href="https://instagram.com/euinelegivel"
+                href="https://www.instagram.com/euinelegivel/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="nav-link flex items-center"
-                aria-label="Instagram @euinelegivel"
-                title="Instagram"
+                className="nav-link"
               >
-                <Instagram size={17} />
+                Instagram
               </a>
-              <button onClick={openCart} className="relative nav-link flex items-center gap-1" aria-label="Abrir carrinho">
+              <button
+                onClick={openCart}
+                className="relative nav-link flex items-center gap-1"
+                aria-label="Abrir carrinho"
+              >
                 <ShoppingBag size={16} />
                 {itemCount > 0 && (
                   <span
@@ -118,8 +119,14 @@ export default function Header() {
               </Link>
             </div>
 
+            {/* Mobile: cart + hambúrguer */}
             <div className="md:hidden flex items-center gap-3">
-              <button onClick={openCart} className="relative p-1" style={{ color: "#fff" }} aria-label="Abrir carrinho">
+              <button
+                onClick={openCart}
+                className="relative p-1"
+                style={{ color: "#fff" }}
+                aria-label="Abrir carrinho"
+              >
                 <ShoppingBag size={20} />
                 {itemCount > 0 && (
                   <span
@@ -153,8 +160,12 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Mobile Menu */}
         {menuOpen && (
-          <div className="md:hidden border-t" style={{ borderColor: "rgba(255,255,255,0.08)", background: "#000" }}>
+          <div
+            className="md:hidden border-t"
+            style={{ borderColor: "rgba(255,255,255,0.08)", background: "#000" }}
+          >
             <div className="container-shell py-6 flex flex-col gap-5">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
@@ -167,21 +178,6 @@ export default function Header() {
                   </a>
                 </Link>
               ))}
-
-              {socialLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link"
-                  style={{ fontSize: "0.85rem" }}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </a>
-              ))}
-
               <a
                 href={whatsappHelp}
                 target="_blank"
@@ -205,6 +201,7 @@ export default function Header() {
         )}
       </header>
 
+      {/* Spacer para compensar o header fixo */}
       <div style={{ height: "4rem" }} className="md:hidden" />
       <div style={{ height: "5rem" }} className="hidden md:block" />
     </>
