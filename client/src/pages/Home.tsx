@@ -89,9 +89,9 @@ export default function Home() {
         </div>
 
         <div className="hero-visual" aria-label="Looks editoriais da coleção O Pix É Nosso">
-          <img src="/lifestyle/pix-verde-modelo-rua.png" alt="Modelo usando camiseta verde O Pix É Nosso" className="hero-look hero-look-main" />
-          <img src="/lifestyle/pix-amarelo-modelo-rua.png" alt="Modelo usando camiseta amarela O Pix É Nosso" className="hero-look hero-look-back hero-look-yellow" />
-          <img src="/lifestyle/pix-preto-modelo-rua.png" alt="Modelo usando camiseta preta O Pix É Nosso" className="hero-look hero-look-back hero-look-black" />
+          <img src="/lifestyle/pix-mulher-modelo-rua.png" alt="Modelo usando camiseta O Pix É Nosso" className="hero-look hero-look-main" />
+          <img src="/lifestyle/pix-branco2-modelo-rua.png" alt="Modelo usando camiseta branca O Pix É Nosso" className="hero-look hero-look-back hero-look-yellow" />
+          <img src="/lifestyle/pix-azul-modelo-rua.png" alt="Modelo usando camiseta azul O Pix É Nosso" className="hero-look hero-look-back hero-look-black" />
           <div className="hero-stamp">O PIX É NOSSO</div>
         </div>
       </section>
