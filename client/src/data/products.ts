@@ -1,12 +1,12 @@
 // Arquivo único de dados de produtos da Bolsonier Store
-// Todas as páginas devem importar preço, nome, imagens, cores e tamanhos daqui.
-
 export interface ProductColor {
   name: string;
   key: string;
+  hex: string;
   images: {
     frente: string;
     costas: string;
+    detalhe: string;
   };
 }
 
@@ -29,15 +29,15 @@ export const products: Product[] = [
   {
     id: "camiseta-pix",
     slug: "camiseta-pix",
-    name: "Camiseta O Pix é Nosso",
-    collection: "O Pix é Nosso",
+    name: "Camiseta O Pix É Nosso",
+    collection: "O Pix É Nosso",
     price: 99.90,
     priceDisplay: "R$ 99,90",
     category: "camiseta",
     description:
-      "A camiseta O Pix é Nosso nasceu do caos brasileiro, da internet e da vontade de transformar meme em uniforme. Uma peça urbana, forte e divertida, feita para quem entende a piada antes de todo mundo.",
+      "A camiseta O Pix É Nosso nasceu do caos brasileiro, da internet e da vontade de transformar meme em uniforme. Uma peça urbana, forte e divertida, feita para quem entende a piada antes de todo mundo.",
     details: [
-      "Modelo unissex",
+      "Modelo unissex oversized",
       "Produção sob demanda",
       "Pré-venda limitada",
       "Prazo de produção e envio de até 25 dias úteis",
@@ -49,41 +49,51 @@ export const products: Product[] = [
       {
         name: "Preto",
         key: "preto",
+        hex: "#1a1a1a",
         images: {
-          frente: "/products/camiseta-pix/preto-frente.svg",
-          costas: "/products/camiseta-pix/preto-costas.svg",
+          frente: "/mockup-preto-1.png",
+          costas: "/mockup-preto-2.png",
+          detalhe: "/mockup-preto-3.png",
         },
       },
       {
         name: "Branco",
         key: "branco",
+        hex: "#f0f0f0",
         images: {
-          frente: "/products/camiseta-pix/branco-frente.svg",
-          costas: "/products/camiseta-pix/branco-costas.svg",
+          frente: "/mockup-branco-1.png",
+          costas: "/mockup-branco-2.png",
+          detalhe: "/mockup-branco-3.png",
         },
       },
       {
         name: "Azul Royal",
         key: "azul",
+        hex: "#1a3a8f",
         images: {
-          frente: "/products/camiseta-pix/azul-frente.svg",
-          costas: "/products/camiseta-pix/azul-costas.svg",
+          frente: "/mockup-azul-1.png",
+          costas: "/mockup-azul-2.png",
+          detalhe: "/mockup-azul-3.png",
         },
       },
       {
         name: "Verde Bandeira",
         key: "verde",
+        hex: "#006b3c",
         images: {
-          frente: "/products/camiseta-pix/verde-frente.svg",
-          costas: "/products/camiseta-pix/verde-costas.svg",
+          frente: "/mockup-verde-1.png",
+          costas: "/mockup-verde-2.png",
+          detalhe: "/mockup-verde-3.png",
         },
       },
       {
         name: "Amarelo Canário",
         key: "amarelo",
+        hex: "#f5d800",
         images: {
-          frente: "/products/camiseta-pix/amarelo-frente.svg",
-          costas: "/products/camiseta-pix/amarelo-costas.svg",
+          frente: "/mockup-amarelo-1.png",
+          costas: "/mockup-amarelo-2.png",
+          detalhe: "/mockup-amarelo-3.png",
         },
       },
     ],
@@ -91,8 +101,6 @@ export const products: Product[] = [
     featured: true,
   },
 ];
-
-// ─── Funções auxiliares ───────────────────────────────────────────────────────
 
 export function formatPrice(value: number): string {
   return value.toLocaleString("pt-BR", {

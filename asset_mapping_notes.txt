@@ -1,0 +1,43 @@
+Mapeamento confirmado em 2026-06-09
+
+Fotos de modelos confirmadas (usar na Home/carrossel/mosaico):
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_30.png -> model-black-street.png
+  Descrição: modelo masculino com camiseta preta em rua molhada/ambiente urbano.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_49.png -> model-white-graffiti.png
+  Descrição: modelo feminina com body branco e boné azul, encostada em parede.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_54.png -> model-yellow-street.png
+  Descrição: modelo masculino com camiseta amarela em avenida urbana.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_20.png -> model-yellow-body.png
+  Descrição: modelo feminina com body amarelo e calça jeans larga.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_08.png -> model-yellow-crop.png
+  Descrição: modelo feminina com cropped amarelo e saia jeans longa.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_46.png -> model-white-body.png
+  Descrição: modelo feminina com body branco e jeans largo.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_56.png -> model-gray-oversized.png
+  Descrição: modelo feminina com camiseta oversized cinza em escadaria.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_46_44.png -> model-white-oversized.png
+  Descrição: modelo masculino com camiseta branca oversized encostado em porta/grafite.
+- /home/ubuntu/upload/ChatGPTImage9dejun.de2026,06_47_18.png -> model-composition.png
+  Descrição: composição editorial panorâmica com 5 looks.
+
+Observações sobre uploads pasted_file:
+- pasted_file_1QbWgq_image.png e pasted_file_UUS8Gi_image.png são screenshots do site, não assets de arte para usar diretamente.
+
+Hero sheet analisado até agora:
+- ChatGPTImage9dejun.de2026,06_42_20(4).png = página de paleta de cores.
+- ChatGPTImage9dejun.de2026,06_42_21(5).png = página de tipografia.
+- ChatGPTImage9dejun.de2026,06_42_11.png = overview da identidade com logo, monograma B e selo O PIX É NOSSO.
+- ChatGPTImage9dejun.de2026,06_42_20(1).png = logo principal horizontal.
+- ChatGPTImage9dejun.de2026,06_42_20(2).png = monograma B com coroa.
+
+Pendência:
+- Identificar entre as demais imagens 06_42_xx qual arquivo corresponde à arte da estátua com batom para uso na seção manifesto.
+
+Estado atual do código:
+- Home.tsx reescrita para usar carrossel de modelos e seções estratégicas.
+- index.css recebeu estilos do hero, ticker, carrossel, mosaico, signature e instagram.
+- Assets de modelos copiados para /home/ubuntu/bolsonier-store/client/public.
+
+Próximo passo sugerido:
+- Identificar a arte correta da estátua nas imagens restantes do hero sheet, copiar para public e validar preview local.
+'} }
