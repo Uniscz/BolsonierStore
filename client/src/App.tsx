@@ -16,6 +16,8 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import CamisetaPix from "./pages/CamisetaPix";
 import { PrazoEnvio, PoliticaTrocas, Termos, PoliticaPrivacidade } from "./pages/Legal";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 function Router() {
   return (
@@ -32,6 +34,9 @@ function Router() {
       <Route path="/politica-trocas" component={PoliticaTrocas} />
       <Route path="/termos" component={Termos} />
       <Route path="/politica-privacidade" component={PoliticaPrivacidade} />
+      {/* Checkout e confirmação de pedido */}
+      <Route path="/checkout" component={Checkout} />
+      <Route path="/pedido/:order_number" component={OrderConfirmation} />
       {/* Legacy redirect */}
       <Route path="/camiseta-pix" component={CamisetaPix} />
       <Route component={NotFound} />

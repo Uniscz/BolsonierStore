@@ -1,5 +1,5 @@
-import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
-import { Link } from "wouter";
+import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ShoppingCart } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { buildWhatsAppOrderMessage, openWhatsApp } from "@/lib/whatsapp";
 import { formatPrice } from "@/data/products";
@@ -8,6 +8,7 @@ import ProductImage from "@/components/ProductImage";
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, clearCart, total, itemCount, isOpen, closeCart } =
     useCart();
+  const [, navigate] = useLocation();
 
   const handleFinishByWhatsApp = () => {
     if (items.length === 0) return;
@@ -22,6 +23,11 @@ export default function CartDrawer() {
       total
     );
     openWhatsApp(url);
+  };
+
+  const handleGoToCheckout = () => {
+    closeCart();
+    navigate("/checkout");
   };
 
   if (!isOpen) return null;
@@ -153,14 +159,27 @@ export default function CartDrawer() {
             <p className="text-xs text-gray-500">
               Frete calculado no atendimento pelo WhatsApp antes da confirmação final do pedido.
             </p>
+
+            {/* Botão principal: Finalizar Pedido (novo fluxo com banco) */}
+            <button
+              onClick={handleGoToCheckout}
+              className="w-full bg-pink-shock text-white py-3 font-black tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-black transition-colors border-2 border-pink-shock hover:border-black"
+              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem" }}
+            >
+              <ShoppingCart size={20} />
+              Finalizar Pedido
+            </button>
+
+            {/* Botão secundário: WhatsApp (fluxo legado mantido) */}
             <button
               onClick={handleFinishByWhatsApp}
               className="w-full bg-green-600 text-white py-3 font-black tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"
-              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem" }}
+              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem" }}
             >
-              <MessageCircle size={20} />
+              <MessageCircle size={18} />
               Finalizar pelo WhatsApp
             </button>
+
             <button
               onClick={clearCart}
               className="w-full py-2 font-bold uppercase tracking-wider text-xs border-2 border-gray-300 text-gray-500 hover:border-black hover:text-black transition-colors"
