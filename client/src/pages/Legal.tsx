@@ -1,7 +1,6 @@
-import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 import { MessageCircle } from "lucide-react";
 
 interface LegalSection {
@@ -10,6 +9,7 @@ interface LegalSection {
 }
 
 function LegalPage({ title, sections }: { title: string; sections: LegalSection[] }) {
+  const whatsappHelp = buildWhatsAppHelpMessage();
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -45,7 +45,7 @@ function LegalPage({ title, sections }: { title: string; sections: LegalSection[
           <div className="mt-12 p-6 bg-black text-white">
             <p className="font-bold mb-3">Dúvidas? Fale com a gente pelo WhatsApp.</p>
             <a
-              href={WHATSAPP_BASE_URL}
+              href={whatsappHelp}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 font-black uppercase tracking-wider hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"
@@ -116,41 +116,96 @@ export function PoliticaTrocas() {
       title="Trocas e Devoluções"
       sections={[
         {
-          title: "Trocas por defeito",
+          title: "Produção sob demanda",
           content: (
             <p>
-              Trocas por defeito de fabricação devem ser solicitadas em até{" "}
-              <strong>7 dias corridos</strong> após o recebimento do produto. O atendimento será
-              feito pelo WhatsApp.
+              A Bolsonier Store trabalha exclusivamente com <strong>produção sob demanda</strong>.
+              Cada peça é fabricada individualmente após a confirmação do pagamento. Por isso, não
+              mantemos estoque e cada pedido é único.
             </p>
           ),
         },
         {
-          title: "Trocas por tamanho ou cor",
+          title: "Trocas por defeito de fabricação",
+          content: (
+            <div className="space-y-2">
+              <p>
+                Aceitamos trocas em caso de defeito de fabricação comprovado. O prazo para
+                solicitação é de <strong>7 dias corridos</strong> após o recebimento do produto.
+              </p>
+              <p>
+                O cliente deve enviar fotos do defeito pelo WhatsApp para análise. Após confirmação
+                do defeito, a Bolsonier Store arcará com os custos de envio da peça substituta.
+              </p>
+            </div>
+          ),
+        },
+        {
+          title: "Trocas por tamanho",
+          content: (
+            <div className="space-y-2">
+              <p>
+                Como cada peça é produzida sob demanda, <strong>não garantimos troca por tamanho</strong>{" "}
+                em todos os casos. Recomendamos consultar a tabela de medidas antes de finalizar o
+                pedido.
+              </p>
+              <p>
+                Caso o produto chegue com tamanho diferente do pedido por erro nosso, realizaremos a
+                troca sem custo adicional.
+              </p>
+            </div>
+          ),
+        },
+        {
+          title: "Trocas por cor ou modelo",
           content: (
             <p>
-              Como os produtos são feitos sob demanda, trocas por tamanho, cor ou arrependimento
-              devem ser avaliadas caso a caso conforme a situação do pedido. Entre em contato pelo
-              WhatsApp para verificar a possibilidade.
+              Trocas por cor ou modelo diferente do pedido original <strong>não são aceitas</strong>{" "}
+              após a confirmação do pagamento, pois a produção é iniciada imediatamente. Verifique
+              sua escolha antes de finalizar.
             </p>
+          ),
+        },
+        {
+          title: "Direito de arrependimento",
+          content: (
+            <div className="space-y-2">
+              <p>
+                Conforme o Código de Defesa do Consumidor (Art. 49), o cliente tem direito de
+                desistir da compra em até <strong>7 dias corridos</strong> após o recebimento.
+              </p>
+              <p>
+                No entanto, por se tratar de produto personalizado e produzido sob demanda, a
+                devolução por arrependimento pode não ser aceita após o início da produção. Entre em
+                contato pelo WhatsApp o quanto antes caso queira cancelar.
+              </p>
+            </div>
           ),
         },
         {
           title: "Produtos não aceitos para troca",
           content: (
-            <p>
-              Produtos personalizados, usados, lavados ou com sinais de uso podem não ser aceitos
-              para troca ou devolução.
-            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Produtos usados, lavados ou com sinais de uso</li>
+              <li>Produtos com etiqueta removida</li>
+              <li>Produtos danificados por mau uso do cliente</li>
+              <li>Produtos com mais de 7 dias do recebimento (exceto defeito oculto)</li>
+            </ul>
           ),
         },
         {
-          title: "Como solicitar",
+          title: "Como solicitar troca ou devolução",
           content: (
-            <p>
-              Todo atendimento de trocas e devoluções é feito exclusivamente pelo WhatsApp:{" "}
-              <strong>+55 47 99610-3720</strong>.
-            </p>
+            <div className="space-y-2">
+              <p>
+                Todo atendimento de trocas e devoluções é feito exclusivamente pelo WhatsApp:{" "}
+                <strong>+55 47 99610-3720</strong>.
+              </p>
+              <p>
+                Envie uma mensagem informando: número do pedido, motivo da troca, e fotos do
+                produto. Nossa equipe responderá em até 2 dias úteis.
+              </p>
+            </div>
           ),
         },
       ]}

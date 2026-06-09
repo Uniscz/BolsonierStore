@@ -2,12 +2,13 @@ import { useState } from "react";
 import { MessageCircle, MapPin } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { buildWhatsAppContactMessage, openWhatsApp, WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppContactMessage, buildWhatsAppHelpMessage, openWhatsApp } from "@/lib/whatsapp";
 
 export default function Contact() {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
+  const whatsappHelp = buildWhatsAppHelpMessage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +56,7 @@ export default function Contact() {
                   <div>
                     <p className="font-black uppercase tracking-wider text-sm mb-1">WhatsApp</p>
                     <a
-                      href={WHATSAPP_BASE_URL}
+                      href={whatsappHelp}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-lg font-bold text-pink-shock hover:text-black transition-colors"
@@ -89,7 +90,7 @@ export default function Contact() {
                   dúvidas sobre tamanhos, frete e pagamento.
                 </p>
                 <a
-                  href={WHATSAPP_BASE_URL}
+                  href={whatsappHelp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 font-black uppercase tracking-wider hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"

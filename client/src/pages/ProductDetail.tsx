@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { ArrowLeft, MessageCircle, ShoppingBag, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageCircle, ShoppingBag, Zap } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductImage from "@/components/ProductImage";
 import { getProductBySlug, formatPrice } from "@/data/products";
 import { buildWhatsAppOrderMessage, buildWhatsAppFreightMessage, openWhatsApp } from "@/lib/whatsapp";
 import { useCart } from "@/contexts/CartContext";
@@ -128,12 +129,16 @@ export default function ProductDetail() {
             {/* Gallery */}
             <div>
               {/* Main image */}
-              <div className="border-2 border-black mb-4 bg-gray-50 flex items-center justify-center overflow-hidden"
-                style={{ minHeight: "400px" }}>
-                <img
+              <div
+                className="border-2 border-black mb-4 bg-gray-50 flex items-center justify-center overflow-hidden"
+                style={{ minHeight: "400px" }}
+              >
+                <ProductImage
                   src={currentImage}
                   alt={`${product.name} - ${selectedColor?.name} - ${selectedSide}`}
                   className="w-full max-h-[500px] object-contain"
+                  fallbackClassName="w-full"
+                  style={{ minHeight: "400px" }}
                 />
               </div>
 
@@ -167,10 +172,11 @@ export default function ProductDetail() {
                           : "border-gray-200 hover:border-black"
                       }`}
                     >
-                      <img
+                      <ProductImage
                         src={color.images[selectedSide]}
                         alt={color.name}
                         className="w-full h-16 object-contain bg-gray-50"
+                        fallbackClassName="w-full h-16"
                       />
                     </button>
                   ))}

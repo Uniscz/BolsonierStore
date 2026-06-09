@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { buildWhatsAppOrderMessage, openWhatsApp } from "@/lib/whatsapp";
 import { formatPrice } from "@/data/products";
+import ProductImage from "@/components/ProductImage";
 
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, clearCart, total, itemCount, isOpen, closeCart } =
@@ -85,10 +86,11 @@ export default function CartDrawer() {
                 >
                   {/* Image */}
                   <div className="w-16 h-16 flex-shrink-0 border border-gray-200 bg-white overflow-hidden">
-                    <img
+                    <ProductImage
                       src={item.image}
                       alt={item.name}
                       className="w-full h-full object-contain"
+                      fallbackClassName="w-16 h-16"
                     />
                   </div>
 

@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { ChevronDown, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 const faqs = [
   {
@@ -55,6 +55,7 @@ const faqs = [
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const whatsappHelp = buildWhatsAppHelpMessage();
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -116,7 +117,7 @@ export default function FAQ() {
               Entre em contato pelo WhatsApp. Respondemos rapidamente.
             </p>
             <a
-              href={WHATSAPP_BASE_URL}
+              href={whatsappHelp}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-3 font-black uppercase tracking-wider hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"

@@ -1,8 +1,10 @@
 import { Link } from "wouter";
 import { Instagram, MessageCircle } from "lucide-react";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 export default function Footer() {
+  const whatsappHelp = buildWhatsAppHelpMessage();
+
   return (
     <footer className="bg-black text-white border-t-4 border-lime-acid">
       <div className="container max-w-7xl mx-auto px-4 py-12">
@@ -18,18 +20,28 @@ export default function Footer() {
             <p className="text-sm text-gray-300 mb-4">
               Streetwear autoral. Produção sob demanda. Feito no Brasil.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <a
-                href="https://instagram.com/bolsonier"
+                href="https://instagram.com/euinelegivel"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-lime-acid transition-colors"
-                aria-label="Instagram"
+                aria-label="Instagram @euinelegivel"
               >
                 <Instagram size={20} />
               </a>
+              {/* TikTok — lucide-react não tem ícone nativo; link textual discreto */}
               <a
-                href={WHATSAPP_BASE_URL}
+                href="https://www.tiktok.com/@euinelegivel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-lime-acid transition-colors text-xs font-bold tracking-widest uppercase"
+                aria-label="TikTok @euinelegivel"
+              >
+                TikTok
+              </a>
+              <a
+                href={whatsappHelp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-lime-acid transition-colors"
@@ -46,7 +58,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/loja" className="hover:text-lime-acid transition-colors">
-                  Todos os Produtos
+                  Loja
                 </Link>
               </li>
               <li>
@@ -124,7 +136,7 @@ export default function Footer() {
             <p className="mt-1">Produção sob demanda no Brasil.</p>
           </div>
           <a
-            href={WHATSAPP_BASE_URL}
+            href={whatsappHelp}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors font-semibold"

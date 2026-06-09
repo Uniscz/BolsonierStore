@@ -2,9 +2,10 @@ import { Link } from "wouter";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 export default function BastilhaCollection() {
+  const whatsappHelp = buildWhatsAppHelpMessage();
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -68,7 +69,7 @@ export default function BastilhaCollection() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href={WHATSAPP_BASE_URL}
+                href={whatsappHelp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 font-black uppercase tracking-wider hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"

@@ -2,9 +2,10 @@ import { Link } from "wouter";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 export default function About() {
+  const whatsappHelp = buildWhatsAppHelpMessage();
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -125,7 +126,7 @@ export default function About() {
               </a>
             </Link>
             <a
-              href={WHATSAPP_BASE_URL}
+              href={whatsappHelp}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-transparent text-white px-8 py-4 font-black tracking-wider hover:bg-white hover:text-black transition-all duration-200 uppercase border-2 border-white"

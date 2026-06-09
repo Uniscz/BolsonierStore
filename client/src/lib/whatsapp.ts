@@ -11,6 +11,13 @@ export interface CartItemForMessage {
   price: number;
 }
 
+/** Mensagem genérica de ajuda — usar em Header, Footer, Home, About, Contact, FAQ, BastilhaCollection */
+export function buildWhatsAppHelpMessage(): string {
+  const text = "Olá, vim da loja Bolsonier Store e preciso de ajuda.";
+  return `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(text)}`;
+}
+
+/** Mensagem de pedido completo — usar apenas no botão "Finalizar pelo WhatsApp" do carrinho */
 export function buildWhatsAppOrderMessage(
   cartItems: CartItemForMessage[],
   total: number

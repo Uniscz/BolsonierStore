@@ -2,15 +2,14 @@ import { Link } from "wouter";
 import { ArrowRight, Zap, MessageCircle, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getFeaturedProducts, formatPrice } from "@/data/products";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
-import { useCart } from "@/contexts/CartContext";
-import { toast } from "sonner";
+import ProductImage from "@/components/ProductImage";
+import { getFeaturedProducts } from "@/data/products";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
   const mainProduct = featuredProducts[0];
-  const { openCart } = useCart();
+  const whatsappHelp = buildWhatsAppHelpMessage();
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,7 +61,7 @@ export default function Home() {
                 </a>
               </Link>
               <a
-                href={WHATSAPP_BASE_URL}
+                href={whatsappHelp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-transparent text-white px-8 py-4 font-black tracking-wider hover:bg-white hover:text-black transition-all duration-200 uppercase border-2 border-white"
@@ -95,10 +94,11 @@ export default function Home() {
                 <Link key={color.key} href="/produto/camiseta-pix">
                   <a className="bg-white border-2 border-black hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group block">
                     <div className="overflow-hidden">
-                      <img
+                      <ProductImage
                         src={color.images.frente}
                         alt={`${mainProduct.name} - ${color.name}`}
                         className="w-full h-64 object-contain bg-gray-100 group-hover:scale-105 transition-transform duration-300"
+                        fallbackClassName="w-full h-64"
                       />
                     </div>
                     <div className="p-4">

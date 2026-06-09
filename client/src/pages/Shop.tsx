@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductImage from "@/components/ProductImage";
 import { getFeaturedProducts, formatPrice } from "@/data/products";
 
 export default function Shop() {
@@ -35,10 +36,11 @@ export default function Shop() {
               <Link key={product.slug} href={`/produto/${product.slug}`}>
                 <a className="bg-white border-2 border-black hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group block">
                   <div className="overflow-hidden">
-                    <img
+                    <ProductImage
                       src={product.colors[0].images.frente}
                       alt={product.name}
                       className="w-full h-72 object-contain bg-gray-100 group-hover:scale-105 transition-transform duration-300"
+                      fallbackClassName="w-full h-72"
                     />
                   </div>
                   <div className="p-4">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { ShoppingBag, MessageCircle, Menu, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 const menuItems = [
   { label: "Loja", href: "/loja" },
@@ -15,6 +15,7 @@ const menuItems = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { itemCount, openCart } = useCart();
+  const whatsappHelp = buildWhatsAppHelpMessage();
 
   return (
     <header className="bg-white border-b-4 border-black sticky top-0 z-50">
@@ -74,7 +75,7 @@ export default function Header() {
           {/* Right Actions */}
           <div className="flex items-center gap-3">
             <a
-              href={WHATSAPP_BASE_URL}
+              href={whatsappHelp}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 bg-pink-shock text-white px-4 py-2 font-black tracking-wider hover:bg-black transition-all duration-200 uppercase text-xs border-2 border-pink-shock hover:border-black"
@@ -123,7 +124,7 @@ export default function Header() {
               </Link>
             ))}
             <a
-              href={WHATSAPP_BASE_URL}
+              href={whatsappHelp}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full mt-4 bg-pink-shock text-white px-4 py-3 font-black tracking-wider hover:bg-black transition-colors duration-200 uppercase text-sm flex items-center justify-center gap-2 border-2 border-pink-shock hover:border-black"
