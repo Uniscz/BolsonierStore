@@ -1,166 +1,209 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingBag, X, MessageCircle } from "lucide-react";
+import { ShoppingBag, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
-const menuItems = [
+const navLinks = [
   { href: "/", label: "Home" },
   { href: "/loja", label: "Loja" },
-  { href: "/colecao/o-pix-e-nosso", label: "Coleção" },
+  { href: "/colecao-pix", label: "O Pix É Nosso" },
   { href: "/sobre", label: "Sobre" },
   { href: "/contato", label: "Contato" },
 ];
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { openCart, itemCount } = useCart();
   const [location] = useLocation();
   const whatsappHelp = buildWhatsAppHelpMessage();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setIsMenuOpen(false); }, [location]);
+  useEffect(() => { setMenuOpen(false); }, [location]);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [isMenuOpen]);
+  }, [menuOpen]);
 
   return (
     <>
       <header
-        className="sticky top-0 z-50 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          background: scrolled ? "rgba(0,0,0,0.97)" : "#000000",
-          borderBottom: "3px solid #FF006E",
-          backdropFilter: scrolled ? "blur(8px)" : "none",
+          background: scrolled ? "rgba(0,0,0,0.96)" : "rgba(0,0,0,0.92)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="container-shell">
           <div className="flex items-center justify-between h-16 md:h-20">
 
             {/* Logo */}
             <Link href="/">
               <a className="flex flex-col leading-none hover:opacity-80 transition-opacity select-none">
-                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(1.4rem, 4vw, 1.9rem)", color: "#FFFFFF", letterSpacing: "0.04em", lineHeight: 1 }}>
-                  BOLSONIER
+                <span
+                  style={{
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    fontSize: "clamp(1.5rem, 4vw, 2rem)",
+                    color: "#FFFFFF",
+                    letterSpacing: "0.02em",
+                    lineHeight: 1,
+                  }}
+                >
+                  BOL<span style={{ color: "#FF0066" }}>S</span>ONIER
                 </span>
-                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(0.55rem, 1.5vw, 0.7rem)", color: "#FF006E", letterSpacing: "0.35em", lineHeight: 1 }}>
+                <span
+                  style={{
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    fontSize: "clamp(0.5rem, 1.2vw, 0.65rem)",
+                    color: "rgba(255,255,255,0.5)",
+                    letterSpacing: "0.45em",
+                    lineHeight: 1,
+                  }}
+                >
                   S&nbsp;T&nbsp;O&nbsp;R&nbsp;E
                 </span>
               </a>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {menuItems.map((item) => (
-                <Link key={item.href} href={item.href}>
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href}>
                   <a
-                    className="relative font-black uppercase tracking-widest text-xs transition-colors duration-200 group"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", color: location === item.href ? "#FF006E" : "#FFFFFF" }}
+                    className="nav-link"
+                    style={{ color: location === link.href ? "#FF0066" : undefined }}
                   >
-                    {item.label}
-                    <span className="absolute -bottom-1 left-0 h-0.5 bg-pink-shock transition-all duration-300 group-hover:w-full" style={{ width: location === item.href ? "100%" : "0%", background: "#FF006E" }} />
+                    {link.label}
                   </a>
                 </Link>
               ))}
             </nav>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden md:flex items-center gap-4">
               <a
-                href={whatsappHelp}
+                href="https://www.instagram.com/euinelegivel/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 font-black tracking-wider uppercase text-xs transition-all duration-200 border-2"
-                style={{ fontFamily: "'Bebas Neue', sans-serif", background: "#FF006E", borderColor: "#FF006E", color: "#FFFFFF", fontSize: "0.8rem" }}
+                className="nav-link"
               >
-                <MessageCircle size={15} />
-                WhatsApp
+                Instagram
               </a>
-
-              <button onClick={openCart} className="relative p-2 transition-colors duration-200" style={{ color: "#FFFFFF" }} aria-label="Abrir carrinho">
-                <ShoppingBag size={22} />
+              <button
+                onClick={openCart}
+                className="relative nav-link flex items-center gap-1"
+                aria-label="Abrir carrinho"
+              >
+                <ShoppingBag size={16} />
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 text-white text-xs font-black w-5 h-5 flex items-center justify-center rounded-full" style={{ background: "#FF006E", fontSize: "0.6rem" }}>
-                    {itemCount > 99 ? "99+" : itemCount}
+                  <span
+                    className="absolute -top-2 -right-2 text-white text-xs font-black w-4 h-4 flex items-center justify-center rounded-full"
+                    style={{ background: "#FF0066", fontSize: "0.5rem" }}
+                  >
+                    {itemCount}
                   </span>
                 )}
               </button>
+              <Link href="/loja">
+                <a className="btn-primary" style={{ padding: "0.6rem 1.4rem", fontSize: "0.6rem" }}>
+                  Ver Coleção
+                </a>
+              </Link>
+            </div>
 
-              {/* Hambúrguer animado */}
+            {/* Mobile: cart + hambúrguer */}
+            <div className="md:hidden flex items-center gap-3">
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5"
-                aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
-                aria-expanded={isMenuOpen}
+                onClick={openCart}
+                className="relative p-1"
+                style={{ color: "#fff" }}
+                aria-label="Abrir carrinho"
               >
-                <span className="block h-0.5 w-6 transition-all duration-300 origin-center" style={{ background: "#FFFFFF", transform: isMenuOpen ? "translateY(8px) rotate(45deg)" : "none" }} />
-                <span className="block h-0.5 w-6 transition-all duration-300" style={{ background: "#FF006E", opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? "scaleX(0)" : "none" }} />
-                <span className="block h-0.5 w-6 transition-all duration-300 origin-center" style={{ background: "#FFFFFF", transform: isMenuOpen ? "translateY(-8px) rotate(-45deg)" : "none" }} />
+                <ShoppingBag size={20} />
+                {itemCount > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 text-white text-xs font-black w-4 h-4 flex items-center justify-center rounded-full"
+                    style={{ background: "#FF0066", fontSize: "0.5rem" }}
+                  >
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex flex-col gap-1.5 p-2"
+                aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+              >
+                <span
+                  className="block h-px w-6 bg-white transition-all duration-300"
+                  style={{ transform: menuOpen ? "rotate(45deg) translateY(6px)" : "none" }}
+                />
+                <span
+                  className="block h-px w-6 transition-all duration-300"
+                  style={{ background: "#FF0066", opacity: menuOpen ? 0 : 1 }}
+                />
+                <span
+                  className="block h-px w-6 bg-white transition-all duration-300"
+                  style={{ transform: menuOpen ? "rotate(-45deg) translateY(-6px)" : "none" }}
+                />
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div
+            className="md:hidden border-t"
+            style={{ borderColor: "rgba(255,255,255,0.08)", background: "#000" }}
+          >
+            <div className="container-shell py-6 flex flex-col gap-5">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href}>
+                  <a
+                    className="nav-link"
+                    style={{ fontSize: "0.85rem", color: location === link.href ? "#FF0066" : undefined }}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                </Link>
+              ))}
+              <a
+                href={whatsappHelp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link flex items-center gap-2"
+                style={{ fontSize: "0.85rem" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                <MessageCircle size={14} />
+                WhatsApp
+              </a>
+              <div className="pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                <Link href="/loja">
+                  <a className="btn-primary w-full justify-center" onClick={() => setMenuOpen(false)}>
+                    Ver Coleção
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Overlay */}
-      <div
-        className="fixed inset-0 z-40 lg:hidden transition-all duration-300"
-        style={{ background: "rgba(0,0,0,0.7)", opacity: isMenuOpen ? 1 : 0, pointerEvents: isMenuOpen ? "auto" : "none" }}
-        onClick={() => setIsMenuOpen(false)}
-      />
-
-      {/* Drawer lateral */}
-      <div
-        className="fixed top-0 right-0 h-full z-50 lg:hidden flex flex-col transition-transform duration-300"
-        style={{ width: "min(320px, 85vw)", background: "#000000", borderLeft: "3px solid #FF006E", transform: isMenuOpen ? "translateX(0)" : "translateX(100%)" }}
-      >
-        <div className="flex items-center justify-between px-6 py-5 border-b-2" style={{ borderColor: "#FF006E" }}>
-          <div className="flex flex-col leading-none">
-            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "#FFF", letterSpacing: "0.04em" }}>BOLSONIER</span>
-            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.6rem", color: "#FF006E", letterSpacing: "0.35em" }}>S&nbsp;T&nbsp;O&nbsp;R&nbsp;E</span>
-          </div>
-          <button onClick={() => setIsMenuOpen(false)} className="p-2" style={{ color: "#FFFFFF" }} aria-label="Fechar menu">
-            <X size={24} />
-          </button>
-        </div>
-
-        <nav className="flex-1 px-6 py-8 flex flex-col gap-1">
-          {menuItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a
-                className="block py-4 border-b transition-all duration-200"
-                style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.6rem", letterSpacing: "0.06em", color: location === item.href ? "#FF006E" : "#FFFFFF", borderColor: "rgba(255,255,255,0.08)" }}
-              >
-                {item.label}
-              </a>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="px-6 pb-8 flex flex-col gap-3">
-          <a
-            href={whatsappHelp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-4 font-black uppercase tracking-wider border-2 transition-all duration-200"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", background: "#FF006E", borderColor: "#FF006E", color: "#FFFFFF", fontSize: "1rem" }}
-          >
-            <MessageCircle size={18} />
-            Falar no WhatsApp
-          </a>
-          <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.2em" }}>
-            FEITO NO BRASIL · EST. 24
-          </p>
-        </div>
-      </div>
+      {/* Spacer para compensar o header fixo */}
+      <div style={{ height: "4rem" }} className="md:hidden" />
+      <div style={{ height: "5rem" }} className="hidden md:block" />
     </>
   );
 }
