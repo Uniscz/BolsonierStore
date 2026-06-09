@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import BastilhaPaidExperience from "@/components/BastilhaPaidExperience";
 import { useParams } from "wouter";
 import Header from "@/components/Header";
@@ -103,26 +103,66 @@ export default function OrderConfirmation() {
   const [retryError, setRetryError] = useState<string | null>(null);
   // Easter egg: exibir experiência Bastilha apenas uma vez por visita
   const [showEasterEgg, setShowEasterEgg] = useState(true);
+  // Polling: aguardando confirmação de pagamento
+  const [polling, setPolling] = useState(false);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollingCountRef = useRef(0);
+  const MAX_POLLS = 20; // 20 × 3s = 60s máximo
 
-  const fetchOrder = useCallback(() => {
+  const fetchOrder = useCallback(async (silent = false) => {
     if (!order_number) return;
-    setLoading(true);
-    fetch(`/api/orders/${order_number}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.order) {
-          setOrder(data.order);
-        } else {
-          setError(data.error || "Pedido não encontrado.");
-        }
-      })
-      .catch(() => setError("Erro ao buscar pedido. Tente novamente."))
-      .finally(() => setLoading(false));
+    if (!silent) setLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${order_number}`);
+      const data = await res.json();
+      if (data.success && data.order) {
+        setOrder(data.order);
+        return data.order;
+      } else {
+        setError(data.error || "Pedido não encontrado.");
+      }
+    } catch {
+      setError("Erro ao buscar pedido. Tente novamente.");
+    } finally {
+      if (!silent) setLoading(false);
+    }
+    return null;
   }, [order_number]);
 
-  useEffect(() => {
-    fetchOrder();
+  // Inicia polling quando payment=success e pedido ainda pendente
+  const startPolling = useCallback(() => {
+    if (pollingRef.current) return; // já rodando
+    setPolling(true);
+    pollingCountRef.current = 0;
+    pollingRef.current = setInterval(async () => {
+      pollingCountRef.current += 1;
+      const updated = await fetchOrder(true);
+      const paid =
+        updated?.payment_status === "paid" || updated?.order_status === "paid";
+      if (paid || pollingCountRef.current >= MAX_POLLS) {
+        clearInterval(pollingRef.current!);
+        pollingRef.current = null;
+        setPolling(false);
+      }
+    }, 3000);
   }, [fetchOrder]);
+
+  // Limpa o intervalo ao desmontar
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchOrder().then((o) => {
+      // Se voltou da InfinityPay com payment=success mas ainda não está pago → polling
+      if (paymentParam === "success" && o) {
+        const paid = o.payment_status === "paid" || o.order_status === "paid";
+        if (!paid) startPolling();
+      }
+    });
+  }, [fetchOrder, paymentParam, startPolling]);
 
   // Determina o endpoint de retry conforme o provedor do pedido
   function getRetryEndpoint(provider?: string | null) {
@@ -305,9 +345,15 @@ export default function OrderConfirmation() {
           {/* Banner: payment=success (antes do webhook confirmar) */}
           {paymentParam === "success" && !isPaid && (
             <div className="flex items-start gap-2 bg-lime-900/40 border-2 border-lime-500 p-4 text-lime-300 text-sm">
-              <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" />
+              {polling ? (
+                <Loader2 size={18} className="flex-shrink-0 mt-0.5 animate-spin" />
+              ) : (
+                <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" />
+              )}
               <span className="font-semibold">
-                Pagamento enviado para confirmação. Aguarde a atualização do status.
+                {polling
+                  ? "Aguardando confirmação do pagamento..."
+                  : "Pagamento enviado. Atualize a página se o status não mudar em breve."}
               </span>
             </div>
           )}
