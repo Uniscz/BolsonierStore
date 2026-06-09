@@ -62,11 +62,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">
-                  O Pix é Nosso
-                </Link>
-              </li>
-              <li>
                 <Link href="/colecao-bastilha" className="hover:text-lime-acid transition-colors">
                   A Bastilha
                 </Link>

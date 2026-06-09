@@ -32,7 +32,7 @@ export default function About() {
             Sobre
           </h1>
           <p className="text-gray-300 text-xl max-w-xl">
-            Streetwear autoral. Atitude urbana. Feito no Brasil.
+            A história por trás da Bolsonier Store e do universo criado por André, da página @euinelegivel.
           </p>
         </div>
       </section>
@@ -40,7 +40,7 @@ export default function About() {
       {/* Brand Story */}
       <section className="py-20 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <h2
                 className="font-black uppercase mb-6"
@@ -52,20 +52,22 @@ export default function About() {
                 Bolsonier Store
               </h2>
               <p className="text-lg text-gray-700 mb-4 font-semibold">
-                Streetwear com atitude urbana
+                Um universo criado na internet para ser vestido na vida real.
               </p>
               <p className="text-gray-600 leading-relaxed mb-6">
-                Bolsonier Store é uma marca autoral de streetwear que respira a energia das ruas
-                brasileiras. Com foco em design contemporâneo, tipografia ousada e conceito visual
-                marcante, cada peça é uma declaração de estilo e presença.
+                Para quem ainda não me conhece, eu sou o André, criador da página @euinelegivel. Sou criador de conteúdo por teimosia e por visão, e a Bolsonier Store nasceu de uma ideia muito simples: transformar o universo que criei na internet em algo real, que pudesse ser vestido.
               </p>
               <p className="text-gray-600 leading-relaxed mb-6">
-                Cada peça carrega elementos de pichação contemporânea, tipografia ousada e design
-                que não passa despercebido. Porque quem usa Bolsonier não quer passar despercebido.
+                Tudo começou com as sátiras e os delírios tais como a Bastilha de Bolsonier. O que era apenas humor e meme acabou crescendo. Deixou de ser só vídeo para virar uma estética, uma identidade e um público. Foi essa energia que deu origem à loja.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-6">
+                Eu não vim da moda, não tenho formação em marketing e não conto com uma equipe gigante. O que eu tenho são ideias grandes e a vontade absurda de construir algo meu. Cada peça que você vê aqui carrega exatamente isso: um pedaço dessa trajetória, o deboche, a narrativa e a criatividade de quem faz acontecer.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-6">
+                A Bolsonier Store é a prova de que, com as ferramentas certas e coragem para começar, é possível construir a própria história sem pedir licença ou esperar por um manual de instruções. É uma marca feita na prática, no improviso e em parceria com quem já acompanha e entende a nossa brincadeira.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                Trabalhamos com produção sob demanda para garantir qualidade, exclusividade e
-                responsabilidade. Cada peça é feita especialmente para você, sem desperdício.
+                A nossa ideia é simples: vestir um universo criado por quem decidiu não esperar autorização para existir.
               </p>
             </div>
 
@@ -73,24 +75,20 @@ export default function About() {
               <h3 className="text-2xl font-bold mb-4 uppercase">Detalhes</h3>
               <ul className="space-y-3 text-sm">
                 <li className="flex gap-2">
+                  <span className="font-bold">Criador:</span>
+                  <span>André, da página @euinelegivel</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-bold">Origem:</span>
+                  <span>Sátiras, memes e a Bastilha de Bolsonier</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-bold">Proposta:</span>
+                  <span>Transformar o universo da internet em peças reais</span>
+                </li>
+                <li className="flex gap-2">
                   <span className="font-bold">Produção:</span>
                   <span>Sob demanda, feita no Brasil</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Prazo:</span>
-                  <span>Até 25 dias úteis</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Edição:</span>
-                  <span>Limitada</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Material:</span>
-                  <span>Malha de qualidade, produto sob demanda</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Pagamento:</span>
-                  <span>Via PIX</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="font-bold">Atendimento:</span>
@@ -113,7 +111,7 @@ export default function About() {
               color: "#CCFF00",
             }}
           >
-            Pronto para comprar?
+            Conheça a loja
           </h2>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/loja">

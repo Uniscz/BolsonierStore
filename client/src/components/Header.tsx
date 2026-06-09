@@ -7,7 +7,6 @@ import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/loja", label: "Loja" },
-  { href: "/colecao-pix", label: "O Pix É Nosso" },
   { href: "/sobre", label: "Sobre" },
   { href: "/contato", label: "Contato" },
 ];
@@ -43,7 +42,7 @@ export default function Header() {
         }}
       >
         <div className="container-shell">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-14 md:h-16">
 
             {/* Logo */}
             <Link href="/">
@@ -51,7 +50,7 @@ export default function Header() {
                 <span
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: "clamp(1.5rem, 4vw, 2rem)",
+                    fontSize: "clamp(1.2rem, 3vw, 1.55rem)",
                     color: "#FFFFFF",
                     letterSpacing: "0.02em",
                     lineHeight: 1,
@@ -62,9 +61,9 @@ export default function Header() {
                 <span
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: "clamp(0.5rem, 1.2vw, 0.65rem)",
+                    fontSize: "clamp(0.42rem, 1vw, 0.52rem)",
                     color: "rgba(255,255,255,0.5)",
-                    letterSpacing: "0.45em",
+                    letterSpacing: "0.36em",
                     lineHeight: 1,
                   }}
                 >
@@ -74,7 +73,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-5">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <a
@@ -88,14 +87,24 @@ export default function Header() {
             </nav>
 
             {/* Right Actions */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
               <a
                 href="https://www.instagram.com/euinelegivel/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-link"
+                aria-label="Instagram @euinelegivel"
               >
-                Instagram
+                IG
+              </a>
+              <a
+                href="https://www.tiktok.com/@euinelegivel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link"
+                aria-label="TikTok @euinelegivel"
+              >
+                TT
               </a>
               <button
                 onClick={openCart}
@@ -113,7 +122,7 @@ export default function Header() {
                 )}
               </button>
               <Link href="/loja">
-                <a className="btn-primary" style={{ padding: "0.6rem 1.4rem", fontSize: "0.6rem" }}>
+                <a className="btn-primary" style={{ padding: "0.5rem 1rem", fontSize: "0.55rem" }}>
                   Ver Coleção
                 </a>
               </Link>
@@ -166,7 +175,7 @@ export default function Header() {
             className="md:hidden border-t"
             style={{ borderColor: "rgba(255,255,255,0.08)", background: "#000" }}
           >
-            <div className="container-shell py-6 flex flex-col gap-5">
+            <div className="container-shell py-5 flex flex-col gap-4">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <a
@@ -202,8 +211,8 @@ export default function Header() {
       </header>
 
       {/* Spacer para compensar o header fixo */}
-      <div style={{ height: "4rem" }} className="md:hidden" />
-      <div style={{ height: "5rem" }} className="hidden md:block" />
+      <div style={{ height: "3.5rem" }} className="md:hidden" />
+      <div style={{ height: "4rem" }} className="hidden md:block" />
     </>
   );
 }

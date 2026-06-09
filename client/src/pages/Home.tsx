@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useRef } from "react";
 import { Link } from "wouter";
 
 const MODELS = [
@@ -15,7 +15,7 @@ const MODELS = [
 
 const TICKER_ITEMS = [
   "BOLSONIER STORE", "O PIX É NOSSO", "LUXURY COUNTERFEIT",
-  "FEITO NO BRASIL", "EST. 24", "SÃO PAULO",
+  "FEITO NO BRASIL", "EST. 24", "BRASIL",
   "IRONIA ELEGANTE", "VANDALISMO REFINADO", "NO PERMISSION NEEDED",
 ];
 
@@ -33,45 +33,41 @@ function Ticker({ color }: { color: "green" | "pink" }) {
 }
 
 function ModelCarousel() {
-  const [active, setActive] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const prev = useCallback(() => setActive(i => (i - 1 + MODELS.length) % MODELS.length), []);
-  const next = useCallback(() => setActive(i => (i + 1) % MODELS.length), []);
+  const scroll = (direction: "prev" | "next") => {
+    const track = trackRef.current;
+    if (!track) return;
 
-  useEffect(() => {
-    const t = setInterval(next, 4000);
-    return () => clearInterval(t);
-  }, [next]);
+    const amount = Math.min(track.clientWidth * 0.86, 760);
+    track.scrollBy({
+      left: direction === "next" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
 
   return (
-    <section className="carousel-section">
-      <div className="carousel-label">
+    <section className="carousel-section carousel-section-horizontal">
+      <div className="carousel-label carousel-label-compact">
         <span className="carousel-label-text">★ COLEÇÃO "O PIX É NOSSO" · LOOKS EDITORIAIS ★</span>
       </div>
-      <div className="carousel-wrapper">
-        <div className="carousel-main">
-          <img
-            key={active}
-            src={MODELS[active].src}
-            alt={MODELS[active].label}
-            className="carousel-main-img"
-          />
-          <button className="carousel-arrow carousel-arrow-left" onClick={prev} aria-label="Anterior">&#8592;</button>
-          <button className="carousel-arrow carousel-arrow-right" onClick={next} aria-label="Próximo">&#8594;</button>
-          <span className="carousel-counter">{active + 1} / {MODELS.length}</span>
-        </div>
-        <div className="carousel-thumbs">
+
+      <div className="lookbook-horizontal-shell">
+        <button className="lookbook-horizontal-arrow lookbook-horizontal-arrow-left" onClick={() => scroll("prev")} aria-label="Looks anteriores">&#8592;</button>
+
+        <div className="lookbook-horizontal-track" ref={trackRef}>
           {MODELS.map((m, i) => (
-            <button
-              key={i}
-              className={`carousel-thumb${active === i ? " active" : ""}`}
-              onClick={() => setActive(i)}
-              aria-label={m.label}
-            >
-              <img src={m.src} alt={m.label} />
-            </button>
+            <article className="lookbook-horizontal-card" key={m.src}>
+              <img src={m.src} alt={m.label} className="lookbook-horizontal-img" />
+              <div className="lookbook-horizontal-info">
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <strong>{m.label}</strong>
+              </div>
+            </article>
           ))}
         </div>
+
+        <button className="lookbook-horizontal-arrow lookbook-horizontal-arrow-right" onClick={() => scroll("next")} aria-label="Próximos looks">&#8594;</button>
       </div>
     </section>
   );
@@ -86,7 +82,7 @@ export default function Home() {
         <div className="hero-bar hero-bar-left" />
         <div className="hero-bar hero-bar-right" />
         <div className="hero-content">
-          <p className="hero-sub">★ EST. 24 · SÃO PAULO · BRASIL ★</p>
+          <p className="hero-sub">★ EST. 24 · BRASIL ★</p>
           <h1 className="hero-title">
             BOL<span className="hero-s">S</span>ONIER
           </h1>
@@ -130,7 +126,7 @@ export default function Home() {
             FAZ PARTE<br />DE QUEM<br /><span style={{ color: "#FF0066" }}>CONSTRÓI</span>
           </h2>
           <p className="statue-sub">
-            Não de quem observa. A BOLSONIER STORE nasceu nas ruas de São Paulo
+            Não de quem observa. A BOLSONIER STORE nasceu no Brasil
             com a ironia de quem entende o jogo — e decide criar o seu próprio.
           </p>
           <Link href="/sobre" className="btn-outline">NOSSA HISTÓRIA</Link>
@@ -179,7 +175,7 @@ export default function Home() {
             A peça que virou símbolo. Oversized, cropped, body — cada versão
             carrega a mesma mensagem: o dinheiro circula, mas a cultura é nossa.
           </p>
-          <span className="signature-origin">FEITO NO BRASIL · EST. 24 · SÃO PAULO</span>
+          <span className="signature-origin">FEITO NO BRASIL · EST. 24</span>
           <Link href="/loja" className="btn-acid">COMPRAR AGORA</Link>
         </div>
       </section>
@@ -198,12 +194,12 @@ export default function Home() {
           A próxima coleção está chegando.
         </p>
         <a
-          href="https://instagram.com/bolsonierstore"
+          href="https://instagram.com/euinelegivel"
           target="_blank"
           rel="noopener noreferrer"
           className="btn-acid"
         >
-          @BOLSONIERSTORE
+          @EUINELEGIVEL
         </a>
       </section>
 

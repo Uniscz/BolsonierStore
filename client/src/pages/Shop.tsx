@@ -1,249 +1,159 @@
-import { useState } from "react";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useCart } from "@/contexts/CartContext";
-import { formatPrice } from "@/data/products";
+import ProductImage from "@/components/ProductImage";
+import { formatPrice, getProductBySlug } from "@/data/products";
 
-// Dados das camisetas com mockups reais
-const shirts = [
-  {
-    id: "preto",
-    label: "Preto",
-    hex: "#1a1a1a",
-    images: ["/mockup-preto-1.png", "/mockup-preto-2.png", "/mockup-preto-3.png"],
-    angles: ["Frente", "Costas", "Detalhe"],
-  },
-  {
-    id: "branco",
-    label: "Branco",
-    hex: "#f0f0f0",
-    images: ["/mockup-branco-1.png", "/mockup-branco-2.png", "/mockup-branco-3.png"],
-    angles: ["Frente", "Costas", "Detalhe"],
-  },
-  {
-    id: "azul",
-    label: "Azul Royal",
-    hex: "#1a3a8f",
-    images: ["/mockup-azul-1.png", "/mockup-azul-2.png", "/mockup-azul-3.png"],
-    angles: ["Frente", "Costas", "Detalhe"],
-  },
-  {
-    id: "verde",
-    label: "Verde Bandeira",
-    hex: "#006b3c",
-    images: ["/mockup-verde-1.png", "/mockup-verde-2.png", "/mockup-verde-3.png"],
-    angles: ["Frente", "Costas", "Detalhe"],
-  },
-  {
-    id: "amarelo",
-    label: "Amarelo Canário",
-    hex: "#f5d800",
-    images: ["/mockup-amarelo-1.png", "/mockup-amarelo-2.png", "/mockup-amarelo-3.png"],
-    angles: ["Frente", "Costas", "Detalhe"],
-  },
-];
+const product = getProductBySlug("camiseta-pix");
 
-const SIZES = ["P", "M", "G", "GG", "XGG"];
-const PRICE = 99.90;
+function getColorCoverImage(color: NonNullable<typeof product>["colors"][0]) {
+  if (color.key === "preto") return color.images.frente;
+  if (color.key === "branco") return color.images.detalhe;
+  return color.images.detalhe;
+}
 
-function ShirtCard({ shirt }: { shirt: typeof shirts[0] }) {
-  const [angle, setAngle] = useState(0);
-  const [selectedSize, setSelectedSize] = useState("");
-  const { addItem, openCart } = useCart();
-
-  const handleAdd = () => {
-    if (!selectedSize) {
-      alert("Selecione um tamanho!");
-      return;
-    }
-    addItem({
-      productSlug: "camiseta-pix",
-      name: `Camiseta O Pix É Nosso — ${shirt.label}`,
-      price: PRICE,
-      size: selectedSize,
-      color: shirt.label,
-      image: shirt.images[0],
-      quantity: 1,
-    });
-    openCart();
-  };
+function ProductColorCard({ color }: { color: NonNullable<typeof product>["colors"][0] }) {
+  const coverImage = getColorCoverImage(color);
 
   return (
-    <div
-      style={{
-        background: "#0a0a0a",
-        border: "1px solid rgba(255,255,255,0.06)",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Imagem com seletor de ângulo */}
-      <div style={{ position: "relative", aspectRatio: "1/1", overflow: "hidden", background: "#111" }}>
-        {shirt.images.map((src, i) => (
-          <img
-            key={i}
-            src={src}
-            alt={`${shirt.label} — ${shirt.angles[i]}`}
+    <Link href={`/produto/camiseta-pix?cor=${color.key}`}>
+      <a
+        style={{
+          background: "#0a0a0a",
+          border: "1px solid rgba(255,255,255,0.06)",
+          display: "flex",
+          flexDirection: "column",
+          textDecoration: "none",
+          color: "inherit",
+          transition: "transform 0.2s ease, border-color 0.2s ease",
+        }}
+        onMouseEnter={(event) => {
+          event.currentTarget.style.transform = "translateY(-4px)";
+          event.currentTarget.style.borderColor = "rgba(255, 0, 102, 0.7)";
+        }}
+        onMouseLeave={(event) => {
+          event.currentTarget.style.transform = "translateY(0)";
+          event.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
+        }}
+        aria-label={`Abrir produto Camiseta O Pix É Nosso diretamente na cor ${color.name}`}
+      >
+        <div style={{ position: "relative", aspectRatio: "4/5", overflow: "hidden", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <ProductImage
+            src={coverImage}
+            alt={`Camiseta O Pix É Nosso — ${color.name} — frente e costas`}
+            className="w-full h-full object-contain transition-transform duration-300"
+            fallbackClassName="w-full h-full"
+            style={{ padding: "1.15rem" }}
+          />
+          <div
             style={{
               position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              objectPosition: "center",
-              padding: "1.5rem",
-              transition: "opacity 0.35s ease",
-              opacity: i === angle ? 1 : 0,
-            }}
-          />
-        ))}
-        {/* Dots de ângulo */}
-        <div
-          style={{
-            position: "absolute",
-            top: "0.75rem",
-            right: "0.75rem",
-            display: "flex",
-            gap: "5px",
-          }}
-        >
-          {shirt.angles.map((label, i) => (
-            <button
-              key={i}
-              onClick={() => setAngle(i)}
-              title={label}
-              style={{
-                width: i === angle ? "20px" : "7px",
-                height: "7px",
-                background: i === angle ? "#FF0066" : "rgba(255,255,255,0.25)",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.3s",
-                padding: 0,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Info */}
-      <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {/* Cor + nome + preço */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div
-            style={{
-              width: "18px",
-              height: "18px",
-              borderRadius: "50%",
-              background: shirt.hex,
-              border: "1px solid rgba(255,255,255,0.2)",
-              flexShrink: 0,
-            }}
-          />
-          <div>
-            <div
-              style={{
-                fontSize: "0.55rem",
-                letterSpacing: "0.25em",
-                color: "#FF0066",
-                textTransform: "uppercase",
-                marginBottom: "0.15rem",
-              }}
-            >
-              Oversized T-Shirt
-            </div>
-            <div
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "1.1rem",
-                color: "#fff",
-                letterSpacing: "0.05em",
-              }}
-            >
-              {shirt.label}
-            </div>
-          </div>
-          <div
-            style={{
-              marginLeft: "auto",
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: "1.1rem",
-              color: "#A6FF00",
-            }}
-          >
-            {formatPrice(PRICE)}
-          </div>
-        </div>
-
-        {/* Seletor de tamanho */}
-        <div>
-          <div
-            style={{
+              top: "0.75rem",
+              right: "0.75rem",
+              background: "#FF0066",
+              color: "#fff",
               fontSize: "0.55rem",
-              letterSpacing: "0.2em",
-              color: "rgba(255,255,255,0.35)",
-              marginBottom: "0.5rem",
+              letterSpacing: "0.16em",
+              fontWeight: 800,
+              padding: "0.35rem 0.5rem",
               textTransform: "uppercase",
             }}
           >
-            Tamanho
-          </div>
-          <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-            {SIZES.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  border: selectedSize === size ? "1px solid #FF0066" : "1px solid rgba(255,255,255,0.15)",
-                  background: selectedSize === size ? "#FF0066" : "transparent",
-                  color: selectedSize === size ? "#fff" : "rgba(255,255,255,0.6)",
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.05em",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-              >
-                {size}
-              </button>
-            ))}
+            Ver produto
           </div>
         </div>
 
-        {/* Botão adicionar */}
-        <button
-          onClick={handleAdd}
-          style={{
-            background: "#FF0066",
-            color: "#fff",
-            border: "none",
-            padding: "0.75rem 1rem",
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: "0.85rem",
-            letterSpacing: "0.15em",
-            cursor: "pointer",
-            transition: "background 0.2s",
-            marginTop: "auto",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#cc0052")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#FF0066")}
-        >
-          Adicionar ao Carrinho
-        </button>
-      </div>
-    </div>
+        <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div
+              style={{
+                width: "18px",
+                height: "18px",
+                borderRadius: "50%",
+                background: color.hex,
+                border: "1px solid rgba(255,255,255,0.25)",
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div
+                style={{
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.25em",
+                  color: "#FF0066",
+                  textTransform: "uppercase",
+                  marginBottom: "0.15rem",
+                }}
+              >
+                Oversized T-Shirt
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "1.1rem",
+                  color: "#fff",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {color.name}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "1rem",
+              marginTop: "auto",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6rem",
+                letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.45)",
+                textTransform: "uppercase",
+              }}
+            >
+              Escolha tamanho na página
+            </span>
+            <span
+              style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "1.1rem",
+                color: "#A6FF00",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {product ? formatPrice(product.price) : ""}
+            </span>
+          </div>
+        </div>
+      </a>
+    </Link>
   );
 }
 
 export default function Shop() {
+  if (!product) {
+    return (
+      <div style={{ background: "#000", minHeight: "100vh" }}>
+        <Header />
+        <section className="container-shell" style={{ padding: "6rem 0", color: "#fff" }}>
+          <h1 className="font-black uppercase text-4xl mb-4">Produto não encontrado</h1>
+          <p style={{ color: "rgba(255,255,255,0.55)" }}>Nenhum produto ativo foi encontrado para exibição.</p>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div style={{ background: "#000", minHeight: "100vh" }}>
       <Header />
 
-      {/* Header da loja */}
       <section
         style={{
           background: "#000",
@@ -267,13 +177,12 @@ export default function Shop() {
           >
             LOJA
           </h1>
-          <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", maxWidth: "500px", lineHeight: 1.7 }}>
-            Todas as peças são produzidas sob demanda. Prazo de produção e envio de até 25 dias úteis após confirmação do pagamento via PIX.
+          <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", maxWidth: "560px", lineHeight: 1.7 }}>
+            Escolha a cor da camiseta para abrir a página do produto. Lá você vê as fotos, seleciona tamanho, quantidade e finaliza o pedido.
           </p>
         </div>
       </section>
 
-      {/* Ticker */}
       <div style={{ background: "#A6FF00", overflow: "hidden", padding: "0.6rem 0" }}>
         <div className="ticker-track">
           {Array(3).fill(null).map((_, i) => (
@@ -284,7 +193,6 @@ export default function Shop() {
         </div>
       </div>
 
-      {/* Grid de produtos */}
       <section style={{ background: "#000", padding: "clamp(3rem, 6vw, 5rem) 0" }}>
         <div className="container-shell">
           <div
@@ -324,7 +232,6 @@ export default function Shop() {
             </div>
           </div>
 
-          {/* Grid de camisetas */}
           <div
             style={{
               display: "grid",
@@ -332,14 +239,13 @@ export default function Shop() {
             }}
             className="grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
           >
-            {shirts.map((shirt) => (
-              <ShirtCard key={shirt.id} shirt={shirt} />
+            {product.colors.map((color) => (
+              <ProductColorCard key={color.key} color={color} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Informações */}
       <section
         style={{
           background: "#0a0a0a",
@@ -348,29 +254,22 @@ export default function Shop() {
         }}
       >
         <div className="container-shell">
-          <div
-            style={{ display: "grid", gap: "3rem" }}
-            className="grid-cols-1 md:grid-cols-3"
-          >
+          <div style={{ display: "grid", gap: "3rem" }} className="grid-cols-1 md:grid-cols-3">
             {[
               {
-                icon: "📦",
-                title: "Produção sob demanda",
-                text: "Cada peça é produzida após a confirmação do pedido. Prazo de até 25 dias úteis.",
+                title: "Escolha a cor",
+                text: "Clique na camiseta para abrir a página completa do produto.",
               },
               {
-                icon: "💸",
-                title: "Pagamento via PIX",
-                text: "Pagamento exclusivo via PIX. Após o pagamento, você recebe a confirmação pelo WhatsApp.",
+                title: "Defina tamanho e quantidade",
+                text: "A seleção de tamanho acontece dentro da página do produto, com fotos e detalhes.",
               },
               {
-                icon: "🇧🇷",
-                title: "Feito no Brasil",
-                text: "Malha de qualidade, produção nacional. Streetwear autoral, do Brasil para o mundo.",
+                title: "Finalize pelo carrinho ou WhatsApp",
+                text: "Depois de escolher tudo, você pode adicionar ao carrinho ou comprar pelo atendimento.",
               },
             ].map((item, i) => (
               <div key={i}>
-                <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>{item.icon}</div>
                 <div
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
@@ -382,9 +281,7 @@ export default function Shop() {
                 >
                   {item.title}
                 </div>
-                <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>
-                  {item.text}
-                </p>
+                <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{item.text}</p>
               </div>
             ))}
           </div>

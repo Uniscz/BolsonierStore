@@ -358,9 +358,9 @@ body {
 .body-md { font-size: 0.875rem; line-height: 1.7; color: rgba(255,255,255,0.5); }
 
 .nav-link {
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.55);
   transition: color 0.2s;
@@ -427,7 +427,7 @@ body {
 ═══════════════════════════════════════ */
 .hero {
   position: relative;
-  min-height: 70vh;
+  min-height: min(58vh, 540px);
   background: #000;
   display: flex;
   align-items: center;
@@ -443,7 +443,7 @@ body {
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: 3rem 2rem 3rem;
+  padding: 2.25rem 2rem 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -453,16 +453,16 @@ body {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.4);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 .hero-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3.5rem, 13vw, 11rem);
+  font-size: clamp(2.8rem, 9vw, 7.5rem);
   line-height: 0.88;
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: #fff;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.4rem;
 }
 .hero-s { color: #FF0066; }
 .hero-cta-row {
@@ -479,6 +479,18 @@ body {
 }
 @media (min-width: 640px) {
   .hero-cta-row { flex-direction: row; align-items: center; }
+}
+@media (max-width: 640px) {
+  .hero {
+    min-height: 48vh;
+  }
+  .hero-content {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .hero-tagline {
+    max-width: 18rem;
+  }
 }
 
 /* ═══════════════════════════════════════
@@ -503,123 +515,129 @@ body {
 ═══════════════════════════════════════ */
 .carousel-section {
   background: #000;
-  padding: 0 0 4rem;
+  padding: 0 0 2.5rem;
+}
+.carousel-section-horizontal {
+  overflow: hidden;
 }
 .carousel-label {
-  padding: 3rem 2rem 1.5rem;
+  padding: 2.25rem 2rem 1rem;
   text-align: center;
+}
+.carousel-label-compact {
+  padding-bottom: 1rem;
 }
 .carousel-label-text {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   letter-spacing: 0.3em;
   color: #A6FF00;
   text-transform: uppercase;
 }
-.carousel-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-.carousel-main {
+.lookbook-horizontal-shell {
   position: relative;
-  width: 100%;
-  aspect-ratio: 9/16;
-  overflow: hidden;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 3.25rem;
+}
+.lookbook-horizontal-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.25rem 0 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #FF0066 #111;
+}
+.lookbook-horizontal-track::-webkit-scrollbar {
+  height: 6px;
+}
+.lookbook-horizontal-track::-webkit-scrollbar-track {
   background: #111;
 }
-.carousel-main-img {
+.lookbook-horizontal-track::-webkit-scrollbar-thumb {
+  background: #FF0066;
+}
+.lookbook-horizontal-card {
+  position: relative;
+  flex: 0 0 clamp(170px, 22vw, 260px);
+  aspect-ratio: 3/4;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+.lookbook-horizontal-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  animation: fadeIn 0.4s ease;
+  display: block;
+  transition: transform 0.35s ease;
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(1.02); }
-  to   { opacity: 1; transform: scale(1); }
+.lookbook-horizontal-card:hover .lookbook-horizontal-img {
+  transform: scale(1.035);
 }
-.carousel-arrow {
+.lookbook-horizontal-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0));
+  color: #fff;
+  text-transform: uppercase;
+}
+.lookbook-horizontal-info span {
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: #A6FF00;
+}
+.lookbook-horizontal-info strong {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+.lookbook-horizontal-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.6);
+  z-index: 5;
+  width: 42px;
+  height: 42px;
   border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.72);
   color: #fff;
-  font-size: 2rem;
-  width: 44px;
-  height: 44px;
+  font-size: 1.45rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
-.carousel-arrow:hover { background: #FF0066; }
-.carousel-arrow-left  { left: 0.75rem; }
-.carousel-arrow-right { right: 0.75rem; }
-.carousel-counter {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.15em;
-  color: rgba(255,255,255,0.7);
-  background: rgba(0,0,0,0.5);
-  padding: 0.2rem 0.6rem;
+.lookbook-horizontal-arrow:hover {
+  background: #FF0066;
+  border-color: #FF0066;
 }
-.carousel-thumbs {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.carousel-thumb {
-  width: 60px;
-  height: 80px;
-  overflow: hidden;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  background: #111;
-  padding: 0;
-}
-.carousel-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-}
-.carousel-thumb.active { border-color: #FF0066; }
-.carousel-thumb:hover  { border-color: #A6FF00; }
+.lookbook-horizontal-arrow-left { left: 0.75rem; }
+.lookbook-horizontal-arrow-right { right: 0.75rem; }
 
-@media (min-width: 768px) {
-  .carousel-wrapper {
-    flex-direction: row;
-    align-items: flex-start;
-    max-width: 1100px;
-    gap: 2rem;
+@media (max-width: 640px) {
+  .lookbook-horizontal-shell {
+    padding: 0 1rem;
   }
-  .carousel-main {
-    flex: 1;
-    max-width: 480px;
-    aspect-ratio: 9/16;
+  .lookbook-horizontal-card {
+    flex-basis: 68vw;
   }
-  .carousel-thumbs {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    width: 80px;
-  }
-  .carousel-thumb {
-    width: 80px;
-    height: 106px;
+  .lookbook-horizontal-arrow {
+    display: none;
   }
 }
 
