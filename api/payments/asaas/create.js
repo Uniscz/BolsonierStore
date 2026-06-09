@@ -76,8 +76,9 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
     if (addr.bairro) customerData.province = addr.bairro;
   }
 
-  // Descrição reduzida — apenas o essencial
-  const itemDescription = `Pedido ${order.order_number} - Bolsonier Store`;
+  // items[].name: máximo 30 caracteres (limite do Asaas Checkout)
+  // O número do pedido vai em externalReference, não aqui.
+  const itemDescription = "Bolsonier Store"; // 15 chars — dentro do limite
 
   const checkoutPayload = {
     // billingTypes: permite Pix e cartão de crédito
@@ -111,7 +112,12 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
   const data = await res.json();
 
   if (!res.ok || !data.id) {
-    console.warn("[Asaas Checkout] Falha ao criar checkout:", JSON.stringify(data));
+    // Log detalhado para facilitar depuração nos logs da Vercel
+    const errDetail = data?.errors?.map((e) => `[${e.code}] ${e.description}`).join(" | ") ||
+      data?.message ||
+      JSON.stringify(data);
+    console.error(`[Asaas Checkout] Falha ao criar checkout para ${order.order_number}: ${errDetail}`);
+    console.error("[Asaas Checkout] Payload enviado:", JSON.stringify(checkoutPayload));
     return null;
   }
 
