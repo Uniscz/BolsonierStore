@@ -137,9 +137,10 @@ export default function ProductDetail() {
       image: selectedColor.images.frente,
     });
 
-    toast.success("Produto adicionado ao carrinho.", {
+    toast.success("PRODUTO ADICIONADO À SACOLA", {
+      description: "Sua peça foi registrada no carrinho.",
       action: {
-        label: "Ver carrinho",
+        label: "VER CARRINHO",
         onClick: openCart,
       },
     });

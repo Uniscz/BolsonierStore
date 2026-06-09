@@ -108,14 +108,21 @@ export default function Header() {
               </a>
               <button
                 onClick={openCart}
-                className="relative nav-link flex items-center gap-1"
+                className="relative flex items-center gap-1.5 px-2 py-1 transition-colors group"
+                style={{ color: "rgba(255,255,255,0.75)" }}
                 aria-label="Abrir carrinho"
               >
-                <ShoppingBag size={16} />
+                <ShoppingBag size={20} className="group-hover:text-pink-shock transition-colors" />
+                <span
+                  className="font-black uppercase tracking-wider group-hover:text-pink-shock transition-colors"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.1em" }}
+                >
+                  Carrinho
+                </span>
                 {itemCount > 0 && (
                   <span
-                    className="absolute -top-2 -right-2 text-white text-xs font-black w-4 h-4 flex items-center justify-center rounded-full"
-                    style={{ background: "#FF0066", fontSize: "0.5rem" }}
+                    className="absolute -top-1.5 -right-1.5 text-white font-black w-5 h-5 flex items-center justify-center rounded-full"
+                    style={{ background: "#FF006E", fontSize: "0.6rem", lineHeight: 1 }}
                   >
                     {itemCount}
                   </span>
@@ -132,15 +139,15 @@ export default function Header() {
             <div className="md:hidden flex items-center gap-3">
               <button
                 onClick={openCart}
-                className="relative p-1"
+                className="relative flex items-center gap-1 p-1.5"
                 style={{ color: "#fff" }}
                 aria-label="Abrir carrinho"
               >
-                <ShoppingBag size={20} />
+                <ShoppingBag size={22} />
                 {itemCount > 0 && (
                   <span
-                    className="absolute -top-1 -right-1 text-white text-xs font-black w-4 h-4 flex items-center justify-center rounded-full"
-                    style={{ background: "#FF0066", fontSize: "0.5rem" }}
+                    className="absolute -top-1 -right-1 text-white font-black w-5 h-5 flex items-center justify-center rounded-full"
+                    style={{ background: "#FF006E", fontSize: "0.6rem", lineHeight: 1 }}
                   >
                     {itemCount}
                   </span>
