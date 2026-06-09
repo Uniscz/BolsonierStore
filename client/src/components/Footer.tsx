@@ -131,13 +131,14 @@ export default function Footer() {
             <p className="mt-1">Produção sob demanda no Brasil.</p>
           </div>
           <a
-            href={whatsappHelp}
+            href="https://wa.me/5547996103720"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors font-semibold"
+            aria-label="Falar no WhatsApp"
           >
-            <MessageCircle size={16} />
-            +55 47 99610-3720
+            <MessageCircle size={18} />
+            <span className="text-sm">Falar no WhatsApp</span>
           </a>
         </div>
       </div>

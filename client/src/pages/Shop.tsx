@@ -96,7 +96,7 @@ function ProductColorCard({ color }: { color: NonNullable<typeof product>["color
                   marginBottom: "0.15rem",
                 }}
               >
-                Oversized T-Shirt
+                T-Shirt
               </div>
               <div
                 style={{
@@ -198,7 +198,7 @@ export default function Shop() {
         <div className="ticker-track">
           {Array(3).fill(null).map((_, i) => (
             <span key={i} className="ticker-content" style={{ color: "#000", fontSize: "0.7rem" }}>
-              PRODUÇÃO SOB DEMANDA &nbsp;·&nbsp; PAGAMENTO VIA PIX &nbsp;·&nbsp; FEITO NO BRASIL &nbsp;·&nbsp; 5 CORES DISPONÍVEIS &nbsp;·&nbsp; TAMANHOS P AO XGG &nbsp;·&nbsp;
+              PRODUÇÃO SOB DEMANDA &nbsp;·&nbsp; PIX OU CARTÃO &nbsp;·&nbsp; FEITO NO BRASIL &nbsp;·&nbsp; 5 CORES DISPONÍVEIS &nbsp;·&nbsp; TAMANHOS P AO XGG &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -226,7 +226,7 @@ export default function Shop() {
                   color: "#fff",
                 }}
               >
-                CAMISETA OVERSIZED
+                CAMISETA T-SHIRT
               </h2>
             </div>
             <div
@@ -276,8 +276,8 @@ export default function Shop() {
                 text: "A seleção de tamanho acontece dentro da página do produto, com fotos e detalhes.",
               },
               {
-                title: "Finalize pelo carrinho ou WhatsApp",
-                text: "Depois de escolher tudo, você pode adicionar ao carrinho ou comprar pelo atendimento.",
+                title: "PAGUE COM SEGURANÇA",
+                text: "Finalize pelo checkout da loja. Pix e cartão disponíveis na tela segura.",
               },
             ].map((item, i) => (
               <div key={i}>

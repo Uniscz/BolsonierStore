@@ -1,50 +1,58 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams, Link } from "wouter";
-import { MessageCircle, ShoppingBag, Zap } from "lucide-react";
+import { useParams, Link } from "wouter";
+import { ShoppingBag, Truck, ShieldCheck } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductImage from "@/components/ProductImage";
 import { getProductBySlug, formatPrice } from "@/data/products";
-import { buildWhatsAppFreightMessage, buildWhatsAppHelpMessage, openWhatsApp } from "@/lib/whatsapp";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+
+// Verde ácido forte e elegante — usado apenas como acento
+const ACID = "#7CFC00";
 
 type GalleryView = "conjunto" | "frente" | "dobrada";
 
 export default function ProductDetail() {
   const params = useParams<{ id: string }>();
-  const [location] = useLocation();
   const slug = params.id;
 
   const product = getProductBySlug(slug);
-  const colorKeyFromUrl = typeof window !== "undefined"
-    ? new URLSearchParams(window.location.search).get("cor")
-    : null;
-  const initialColor = product?.colors.find((color) => color.key === colorKeyFromUrl) ?? product?.colors[0] ?? null;
+  const colorKeyFromUrl =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("cor")
+      : null;
+  const initialColor =
+    product?.colors.find((c) => c.key === colorKeyFromUrl) ??
+    product?.colors[0] ??
+    null;
 
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [selectedView, setSelectedView] = useState<GalleryView>("conjunto");
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [cep, setCep] = useState("");
-
   const { addItem, openCart } = useCart();
 
   useEffect(() => {
     if (!product) return;
-
-    const colorFromUrl = product.colors.find((color) => color.key === colorKeyFromUrl) ?? product.colors[0];
+    const colorFromUrl =
+      product.colors.find((c) => c.key === colorKeyFromUrl) ??
+      product.colors[0];
     setSelectedColor(colorFromUrl);
     setSelectedView("conjunto");
-  }, [location, colorKeyFromUrl, product]);
+  }, [colorKeyFromUrl, product]);
 
   if (!product) {
     return (
       <div className="min-h-screen bg-white">
         <Header />
         <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
-          <h1 className="text-4xl font-black uppercase mb-4">Produto não encontrado</h1>
-          <p className="text-gray-500 mb-8">Este produto não existe ou foi removido.</p>
+          <h1 className="text-4xl font-black uppercase mb-4">
+            Produto não encontrado
+          </h1>
+          <p className="text-gray-500 mb-8">
+            Este produto não existe ou foi removido.
+          </p>
           <Link href="/loja">
             <a className="bg-pink-shock text-white px-6 py-3 font-black uppercase tracking-wider hover:bg-black transition-colors">
               Ver loja
@@ -58,23 +66,18 @@ export default function ProductDetail() {
 
   const orderedImageSources = (() => {
     if (!selectedColor) return null;
-
-    if (selectedColor.key === "preto") {
+    if (selectedColor.key === "preto")
       return {
         conjunto: selectedColor.images.frente,
         frente: selectedColor.images.costas,
         dobrada: selectedColor.images.detalhe,
       };
-    }
-
-    if (selectedColor.key === "branco") {
+    if (selectedColor.key === "branco")
       return {
         conjunto: selectedColor.images.detalhe,
         frente: selectedColor.images.costas,
         dobrada: selectedColor.images.frente,
       };
-    }
-
     return {
       conjunto: selectedColor.images.detalhe,
       frente: selectedColor.images.frente,
@@ -105,16 +108,19 @@ export default function ProductDetail() {
       ]
     : [];
 
-  const activeImage = galleryImages.find((image) => image.key === selectedView) ?? galleryImages[0];
+  const activeImage =
+    galleryImages.find((img) => img.key === selectedView) ?? galleryImages[0];
   const currentImage = activeImage?.src ?? product.colors[0].images.frente;
 
-  const handleSelectColor = (color: typeof product.colors[number]) => {
+  const handleSelectColor = (color: (typeof product.colors)[number]) => {
     setSelectedColor(color);
     setSelectedView("conjunto");
-
-    if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", `/produto/${product.slug}?cor=${color.key}`);
-    }
+    if (typeof window !== "undefined")
+      window.history.replaceState(
+        null,
+        "",
+        `/produto/${product.slug}?cor=${color.key}`
+      );
   };
 
   const handleAddToCart = () => {
@@ -126,7 +132,6 @@ export default function ProductDetail() {
       toast.error("Selecione um tamanho antes de continuar.");
       return;
     }
-
     addItem({
       productSlug: product.slug,
       name: product.name,
@@ -136,27 +141,19 @@ export default function ProductDetail() {
       price: product.price,
       image: selectedColor.images.frente,
     });
-
     toast.success("PRODUTO ADICIONADO À SACOLA", {
       description: "Sua peça foi registrada no carrinho.",
-      action: {
-        label: "VER CARRINHO",
-        onClick: openCart,
-      },
+      action: { label: "VER CARRINHO", onClick: openCart },
     });
-  };
-
-  const handleFreightWhatsApp = () => {
-    const url = buildWhatsAppFreightMessage(cep || undefined);
-    openWhatsApp(url);
   };
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
+      {/* Breadcrumb */}
       <div className="container max-w-7xl mx-auto px-4 py-4">
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
+        <nav className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest">
           <Link href="/">
             <a className="hover:text-pink-shock transition-colors">Início</a>
           </Link>
@@ -165,20 +162,21 @@ export default function ProductDetail() {
             <a className="hover:text-pink-shock transition-colors">Loja</a>
           </Link>
           <span>/</span>
-          <span className="text-black font-semibold">{product.name}</span>
+          <span className="text-black font-bold">{product.name}</span>
         </nav>
       </div>
 
-      <section className="py-8 px-4">
+      <section className="py-6 px-4">
         <div className="container max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)] gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] gap-12 items-start">
+
+            {/* ── Galeria ── */}
             <div className="lg:sticky lg:top-24">
               {selectedColor && (
                 <p className="text-xs font-black uppercase tracking-[0.26em] text-pink-shock mb-3">
                   {selectedColor.name} · {activeImage?.label ?? "Frente e costas"}
                 </p>
               )}
-
               <div className="group relative bg-[#f7f7f2] overflow-hidden cursor-zoom-in min-h-[420px] lg:min-h-[620px] flex items-center justify-center">
                 <ProductImage
                   src={currentImage}
@@ -191,38 +189,39 @@ export default function ProductDetail() {
                   Passe o mouse para aproximar
                 </div>
               </div>
-
               {selectedColor && (
                 <div className="mt-4 grid grid-cols-3 gap-3">
-                  {galleryImages.map((image) => (
+                  {galleryImages.map((img) => (
                     <button
-                      key={image.key}
-                      onClick={() => setSelectedView(image.key)}
+                      key={img.key}
+                      onClick={() => setSelectedView(img.key)}
                       className={`group text-left transition-all ${
-                        selectedView === image.key
+                        selectedView === img.key
                           ? "opacity-100"
-                          : "opacity-60 hover:opacity-100"
+                          : "opacity-55 hover:opacity-100"
                       }`}
-                      aria-label={`Ver ${image.label.toLowerCase()} da cor ${selectedColor.name}`}
+                      aria-label={`Ver ${img.label.toLowerCase()} da cor ${selectedColor.name}`}
                     >
                       <div
                         className={`bg-[#f7f7f2] overflow-hidden border-b-2 transition-colors ${
-                          selectedView === image.key ? "border-pink-shock" : "border-transparent"
+                          selectedView === img.key
+                            ? "border-pink-shock"
+                            : "border-transparent"
                         }`}
                       >
                         <ProductImage
-                          src={image.src}
-                          alt={`${selectedColor.name} - ${image.label}`}
+                          src={img.src}
+                          alt={`${selectedColor.name} - ${img.label}`}
                           className="w-full aspect-[4/5] object-contain transition-transform duration-300 group-hover:scale-110"
                           fallbackClassName="w-full aspect-[4/5]"
                           style={{ padding: "0.6rem" }}
                         />
                       </div>
                       <span className="mt-2 block text-[0.72rem] font-black uppercase tracking-wider text-black">
-                        {image.label}
+                        {img.label}
                       </span>
                       <span className="block text-[0.62rem] uppercase tracking-[0.16em] text-gray-400">
-                        {image.helper}
+                        {img.helper}
                       </span>
                     </button>
                   ))}
@@ -230,13 +229,19 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <div className="space-y-7">
-              <div>
-                <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">
-                  {product.collection}
+            {/* ── Painel de compra ── */}
+            <div className="space-y-5">
+
+              {/* Cabeçalho do produto */}
+              <div className="pb-4 border-b border-gray-100">
+                <p
+                  className="text-xs uppercase tracking-[0.22em] mb-2"
+                  style={{ color: ACID, fontWeight: 700 }}
+                >
+                  {product.collection} · Pré-venda
                 </p>
                 <h1
-                  className="font-black uppercase mb-4 leading-tight text-black"
+                  className="font-black uppercase leading-none text-black mb-3"
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
                     fontSize: "clamp(2rem, 5vw, 3rem)",
@@ -244,87 +249,154 @@ export default function ProductDetail() {
                 >
                   {product.name}
                 </h1>
-                <p className="text-3xl font-black text-pink-shock mb-6">
-                  {formatPrice(product.price)}
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-4xl font-black text-pink-shock">
+                    {formatPrice(product.price)}
+                  </span>
+                  <span
+                    className="text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm"
+                    style={{ background: ACID, color: "#000" }}
+                  >
+                    Frete grátis
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  {product.description}
                 </p>
-                <p className="text-gray-600 leading-relaxed">{product.description}</p>
               </div>
 
-              <div className="border-2 border-black p-5 bg-white">
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <p className="font-black uppercase tracking-wider text-sm">Escolha a cor</p>
-                  <span className="text-pink-shock font-black uppercase text-xs tracking-wider">
+              {/* ── Bloco de Cor ── */}
+              <div className="bg-black p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <p
+                    className="font-black uppercase tracking-[0.12em] text-white"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}
+                  >
+                    Escolha a cor
+                  </p>
+                  <span
+                    className="text-xs font-bold uppercase tracking-widest px-2 py-0.5"
+                    style={{ background: "#FF0066", color: "#fff" }}
+                  >
                     {selectedColor?.name ?? "Selecione"}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color.key}
-                      onClick={() => handleSelectColor(color)}
-                      className={`px-3 py-3 font-bold text-xs border-2 transition-all flex items-center gap-2 justify-center ${
-                        selectedColor?.key === color.key
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-black border-black hover:bg-gray-100"
-                      }`}
-                    >
-                      <span
-                        className="w-3 h-3 rounded-full border border-gray-400"
-                        style={{ backgroundColor: color.hex }}
-                        aria-hidden="true"
-                      />
-                      {color.name}
-                    </button>
-                  ))}
+                  {product.colors.map((color) => {
+                    const active = selectedColor?.key === color.key;
+                    return (
+                      <button
+                        key={color.key}
+                        onClick={() => handleSelectColor(color)}
+                        className="flex items-center gap-2.5 px-3 py-3 font-bold text-xs uppercase tracking-wider transition-all duration-150"
+                        style={{
+                          border: active ? "2px solid #FF0066" : "2px solid rgba(255,255,255,0.15)",
+                          background: active ? "#FF0066" : "rgba(255,255,255,0.06)",
+                          color: "#fff",
+                        }}
+                      >
+                        <span
+                          className="w-4 h-4 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor: color.hex,
+                            border: active ? "2px solid #fff" : "1px solid rgba(255,255,255,0.3)",
+                          }}
+                          aria-hidden="true"
+                        />
+                        {color.name}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="border-2 border-black p-5 bg-white">
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <p className="font-black uppercase tracking-wider text-sm">Escolha o tamanho</p>
-                  <span className="text-pink-shock font-black uppercase text-xs tracking-wider">
+              {/* ── Bloco de Tamanho ── */}
+              <div className="bg-[#0d0d0d] p-5">
+                <div className="flex items-center justify-between mb-1">
+                  <p
+                    className="font-black uppercase tracking-[0.12em] text-white"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}
+                  >
+                    Escolha o tamanho
+                  </p>
+                  <span
+                    className="text-xs font-bold uppercase tracking-widest px-2 py-0.5"
+                    style={{
+                      background: selectedSize ? "#FF0066" : "rgba(255,255,255,0.1)",
+                      color: "#fff",
+                    }}
+                  >
                     {selectedSize ?? "Selecione"}
                   </span>
                 </div>
+                <p className="text-xs mb-4" style={{ color: ACID }}>
+                  Guia de medidas abaixo
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`w-12 h-12 font-black text-sm border-2 transition-all ${
-                        selectedSize === size
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-black border-black hover:bg-gray-100"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                  {product.sizes.map((size) => {
+                    const active = selectedSize === size;
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className="font-black text-sm transition-all duration-150"
+                        style={{
+                          width: "3.2rem",
+                          height: "3.2rem",
+                          border: active ? "2px solid #FF0066" : "2px solid rgba(255,255,255,0.2)",
+                          background: active ? "#FF0066" : "rgba(255,255,255,0.05)",
+                          color: "#fff",
+                        }}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="border-2 border-black p-5 bg-[#f7f7f2] text-black">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* ── Bloco de Quantidade ── */}
+              <div className="bg-[#111] p-5">
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-black uppercase tracking-wider text-sm text-black">Quantidade</p>
-                    <p className="text-xs uppercase tracking-[0.14em] text-gray-700 mt-1">
-                      Ajuste antes de enviar o pedido
+                    <p
+                      className="font-black uppercase tracking-[0.12em] text-white"
+                      style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}
+                    >
+                      Quantidade
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+                      Ajuste antes de adicionar
                     </p>
                   </div>
-                  <div className="flex items-center border-2 border-black bg-white self-start sm:self-auto">
+                  <div className="flex items-center" style={{ border: "2px solid rgba(255,255,255,0.15)" }}>
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-12 h-12 font-bold text-lg text-black hover:bg-black hover:text-white transition-colors"
+                      className="font-bold text-xl text-white transition-colors"
+                      style={{ width: "2.8rem", height: "2.8rem", background: "transparent" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#FF0066")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                       aria-label="Diminuir quantidade"
                     >
                       −
                     </button>
-                    <span className="text-xl font-black text-black w-14 text-center border-x-2 border-black h-12 flex items-center justify-center">
+                    <span
+                      className="font-black text-white text-xl flex items-center justify-center"
+                      style={{
+                        width: "3rem",
+                        height: "2.8rem",
+                        borderLeft: "2px solid rgba(255,255,255,0.15)",
+                        borderRight: "2px solid rgba(255,255,255,0.15)",
+                      }}
+                    >
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-12 h-12 font-bold text-lg text-black hover:bg-black hover:text-white transition-colors"
+                      className="font-bold text-xl text-white transition-colors"
+                      style={{ width: "2.8rem", height: "2.8rem", background: "transparent" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#FF0066")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                       aria-label="Aumentar quantidade"
                     >
                       +
@@ -333,65 +405,87 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="p-4 bg-pink-shock text-white border-2 border-pink-shock">
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap size={20} className="text-lime-acid" />
-                  <span className="font-bold uppercase tracking-wider text-sm">
-                    Pagamento via PIX
+              {/* ── Selos de benefício ── */}
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1.5"
+                  style={{ border: `1px solid ${ACID}`, color: ACID }}
+                >
+                  <Truck size={13} />
+                  Frete grátis
+                </span>
+                <span
+                  className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1.5"
+                  style={{ border: `1px solid ${ACID}`, color: ACID }}
+                >
+                  <ShieldCheck size={13} />
+                  Pix ou cartão no checkout seguro
+                </span>
+              </div>
+
+              {/* ── CTA principal ── */}
+              <button
+                onClick={handleAddToCart}
+                className="w-full py-5 font-black uppercase tracking-wider text-xl transition-all duration-200 flex items-center justify-center gap-3"
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  background: "#FF0066",
+                  color: "#fff",
+                  border: "2px solid #FF0066",
+                  letterSpacing: "0.12em",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#000";
+                  e.currentTarget.style.borderColor = "#000";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#FF0066";
+                  e.currentTarget.style.borderColor = "#FF0066";
+                }}
+              >
+                <ShoppingBag size={22} />
+                Adicionar ao carrinho
+              </button>
+
+              {/* ── Guia de Medidas ── */}
+              <div className="border border-gray-200 overflow-hidden">
+                <div className="bg-black px-4 py-3 flex items-center justify-between">
+                  <h3
+                    className="font-black uppercase tracking-wider text-white"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem" }}
+                  >
+                    Guia de Medidas
+                  </h3>
+                  <span className="text-xs" style={{ color: ACID }}>
+                    Medidas aproximadas ±2 cm
                   </span>
                 </div>
-                <p className="text-sm opacity-90">
-                  Finalize seu pedido pelo site e receba a chave PIX para pagamento. A produção inicia após confirmação.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full py-4 font-black uppercase tracking-wider text-lg transition-all duration-200 border-2 bg-black text-white border-black hover:bg-pink-shock hover:border-pink-shock flex items-center justify-center gap-2"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                >
-                  <ShoppingBag size={22} />
-                  Adicionar ao carrinho
-                </button>
-                <button
-                  onClick={() => openWhatsApp(buildWhatsAppHelpMessage())}
-                  className="w-full py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200 border-2 border-gray-300 text-gray-600 hover:border-green-600 hover:text-green-700 flex items-center justify-center gap-2"
-                >
-                  <MessageCircle size={18} />
-                  Dúvidas sobre tamanho? Falar no WhatsApp
-                </button>
-              </div>
-
-              <div className="border-2 border-gray-200 p-4">
-                <p className="font-bold uppercase text-sm mb-3">Consultar frete</p>
-                <p className="text-sm text-gray-600 mb-3">
-                  Frete calculado no atendimento pelo WhatsApp antes da confirmação final do pedido.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="text"
-                    placeholder="Seu CEP (opcional)"
-                    value={cep}
-                    onChange={(e) => setCep(e.target.value)}
-                    className="flex-1 border-2 border-black px-3 py-2 text-sm font-semibold focus:outline-none focus:border-pink-shock"
-                    maxLength={9}
+                <div className="bg-white">
+                  <img
+                    src="/guia-de-medidas.png"
+                    alt="Guia de medidas da camiseta O Pix É Nosso — tabela com tamanhos P ao XGG"
+                    className="w-full h-auto block"
                   />
-                  <button
-                    onClick={handleFreightWhatsApp}
-                    className="bg-black text-white px-4 py-2 font-bold text-xs uppercase tracking-wider hover:bg-pink-shock transition-colors border-2 border-black hover:border-pink-shock whitespace-nowrap"
-                  >
-                    Consultar frete
-                  </button>
                 </div>
               </div>
 
-              <div>
-                <h3 className="font-black uppercase tracking-wider text-sm mb-3">Detalhes</h3>
+              {/* ── Detalhes ── */}
+              <div className="border-t border-gray-100 pt-4">
+                <h3
+                  className="font-black uppercase tracking-wider text-sm mb-3 text-black"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                >
+                  Detalhes da peça
+                </h3>
                 <ul className="space-y-2">
                   {product.details.map((detail, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-pink-shock font-bold mt-0.5">·</span>
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm text-gray-600"
+                    >
+                      <span className="font-bold mt-0.5" style={{ color: "#FF0066" }}>
+                        ·
+                      </span>
                       {detail}
                     </li>
                   ))}

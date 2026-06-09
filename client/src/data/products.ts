@@ -31,18 +31,17 @@ export const products: Product[] = [
     slug: "camiseta-pix",
     name: "Camiseta O Pix É Nosso",
     collection: "O Pix É Nosso",
-    price: 99.90,
-    priceDisplay: "R$ 99,90",
+    price: 119.90,
+    priceDisplay: "R$ 119,90",
     category: "camiseta",
     description:
       "A camiseta O Pix É Nosso nasceu do caos brasileiro, da internet e da vontade de transformar meme em uniforme. Uma peça urbana, forte e divertida, feita para quem entende a piada antes de todo mundo.",
     details: [
-      "Modelo unissex oversized",
+      "Modelo unissex T-shirt",
       "Produção sob demanda",
       "Pré-venda limitada",
-      "Prazo de produção e envio de até 25 dias úteis",
-      "Pagamento via PIX",
-      "Atendimento pelo WhatsApp",
+      "Prazo de produção e envio de até 20 dias úteis",
+      "Pagamento via Pix ou cartão",
       "Malha de qualidade, feita no Brasil",
     ],
     colors: [

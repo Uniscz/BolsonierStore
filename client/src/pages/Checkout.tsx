@@ -223,16 +223,16 @@ export default function Checkout() {
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
-      {/* Faixa de título — fundo preto, texto branco */}
-      <div className="bg-black pt-24 pb-8 px-4">
+      {/* Faixa de título — fundo preto, compacta */}
+      <div className="bg-black pt-20 pb-4 px-4">
         <div className="max-w-5xl mx-auto">
           <h1
-            className="text-4xl md:text-5xl font-black uppercase tracking-wider text-white"
+            className="text-3xl md:text-4xl font-black uppercase tracking-wider text-white leading-none"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             Finalizar Pedido
           </h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-400 text-xs mt-1">
             Preencha seus dados para criar o pedido.
           </p>
         </div>
@@ -474,7 +474,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="font-semibold text-gray-700">Frete</span>
-                    <span className="text-gray-500 text-xs font-medium">A combinar</span>
+                    <span className="font-black text-sm" style={{ color: "#A6FF00" }}>GRÁTIS</span>
                   </div>
                   <div className="flex justify-between items-center border-t-2 border-gray-900 pt-3 mt-2">
                     <span className="font-black uppercase tracking-wider text-sm text-gray-900">Total</span>
@@ -482,8 +482,8 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-500 mt-4 leading-relaxed border-t border-gray-200 pt-3">
-                  O frete será calculado e informado via WhatsApp antes da confirmação do pagamento.
+                <p className="text-xs mt-4 leading-relaxed border-t border-gray-200 pt-3 font-semibold" style={{ color: "#A6FF00" }}>
+                  Frete grátis disponível para este endereço.
                 </p>
               </div>
             </div>
