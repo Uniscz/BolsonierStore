@@ -24,11 +24,35 @@ export default function CartDrawer() {
 
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay com vídeo de fundo */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 z-40"
         onClick={closeCart}
-      />
+        style={{ cursor: "pointer" }}
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          src="/cart-bg.mp4"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 0.72,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.45)",
+          }}
+        />
+      </div>
 
       {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 flex flex-col shadow-2xl border-l-4 border-black">
