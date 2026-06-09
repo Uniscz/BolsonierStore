@@ -251,3 +251,19 @@
     }
   }
 }
+/* Ticker animation */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Pink shock utility */
+.text-pink-shock { color: #FF006E; }
+.bg-pink-shock   { background-color: #FF006E; }
+.border-pink-shock { border-color: #FF006E; }
+.text-lime-acid  { color: #CCFF00; }
+.bg-lime-acid    { background-color: #CCFF00; }
+.border-lime-acid { border-color: #CCFF00; }

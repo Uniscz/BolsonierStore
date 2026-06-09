@@ -1,142 +1,166 @@
-import { useState } from "react";
-import { Link } from "wouter";
-import { ShoppingBag, MessageCircle, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { ShoppingBag, X, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { buildWhatsAppHelpMessage } from "@/lib/whatsapp";
 
 const menuItems = [
-  { label: "Loja", href: "/loja" },
-  { label: "O Pix é Nosso", href: "/colecao-pix" },
-  { label: "Sobre", href: "/sobre" },
-  { label: "Contato", href: "/contato" },
-  { label: "FAQ", href: "/faq" },
+  { href: "/", label: "Home" },
+  { href: "/loja", label: "Loja" },
+  { href: "/colecao/o-pix-e-nosso", label: "Coleção" },
+  { href: "/sobre", label: "Sobre" },
+  { href: "/contato", label: "Contato" },
 ];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { itemCount, openCart } = useCart();
+  const [scrolled, setScrolled] = useState(false);
+  const { openCart, itemCount } = useCart();
+  const [location] = useLocation();
   const whatsappHelp = buildWhatsAppHelpMessage();
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => { setIsMenuOpen(false); }, [location]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isMenuOpen]);
+
   return (
-    <header className="bg-white border-b-4 border-black sticky top-0 z-50">
-      <div className="container max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center gap-1 hover:opacity-90 transition-opacity group">
-              <div className="flex flex-col leading-tight">
-                <span
-                  className="font-black tracking-tighter"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: "1.5rem",
-                    textTransform: "uppercase",
-                    textShadow: "2px 2px 0px #FF006E, 4px 4px 0px #CCFF00",
-                    transform: "skewY(-2deg)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
+    <>
+      <header
+        className="sticky top-0 z-50 transition-all duration-300"
+        style={{
+          background: scrolled ? "rgba(0,0,0,0.97)" : "#000000",
+          borderBottom: "3px solid #FF006E",
+          backdropFilter: scrolled ? "blur(8px)" : "none",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-16 md:h-20">
+
+            {/* Logo */}
+            <Link href="/">
+              <a className="flex flex-col leading-none hover:opacity-80 transition-opacity select-none">
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(1.4rem, 4vw, 1.9rem)", color: "#FFFFFF", letterSpacing: "0.04em", lineHeight: 1 }}>
                   BOLSONIER
                 </span>
-                <span
-                  className="font-black tracking-widest"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: "0.75rem",
-                    color: "#FF006E",
-                    textTransform: "uppercase",
-                    textShadow: "1px 1px 0px #CCFF00",
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  STORE
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(0.55rem, 1.5vw, 0.7rem)", color: "#FF006E", letterSpacing: "0.35em", lineHeight: 1 }}>
+                  S&nbsp;T&nbsp;O&nbsp;R&nbsp;E
                 </span>
-              </div>
-            </a>
-          </Link>
+              </a>
+            </Link>
 
-          {/* Desktop Menu */}
-          <nav className="hidden lg:flex items-center gap-6">
-            {menuItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <a
-                  className="font-black tracking-wider hover:text-pink-shock transition-all duration-200 uppercase text-xs hover:scale-110 transform"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {item.label}
-                </a>
-              </Link>
-            ))}
-          </nav>
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center gap-8">
+              {menuItems.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  <a
+                    className="relative font-black uppercase tracking-widest text-xs transition-colors duration-200 group"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", color: location === item.href ? "#FF006E" : "#FFFFFF" }}
+                  >
+                    {item.label}
+                    <span className="absolute -bottom-1 left-0 h-0.5 bg-pink-shock transition-all duration-300 group-hover:w-full" style={{ width: location === item.href ? "100%" : "0%", background: "#FF006E" }} />
+                  </a>
+                </Link>
+              ))}
+            </nav>
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-3">
-            <a
-              href={whatsappHelp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 bg-pink-shock text-white px-4 py-2 font-black tracking-wider hover:bg-black transition-all duration-200 uppercase text-xs border-2 border-pink-shock hover:border-black"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              <MessageCircle size={18} />
-              <span>WhatsApp</span>
-            </a>
+            {/* Right Actions */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <a
+                href={whatsappHelp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 font-black tracking-wider uppercase text-xs transition-all duration-200 border-2"
+                style={{ fontFamily: "'Bebas Neue', sans-serif", background: "#FF006E", borderColor: "#FF006E", color: "#FFFFFF", fontSize: "0.8rem" }}
+              >
+                <MessageCircle size={15} />
+                WhatsApp
+              </a>
 
-            <button
-              onClick={openCart}
-              className="relative p-2 hover:bg-lime-acid transition-colors duration-200 border-2 border-transparent hover:border-black"
-              aria-label="Abrir carrinho"
-            >
-              <ShoppingBag size={24} className="text-black" />
-              {itemCount > 0 && (
-                <span className="absolute top-0 right-0 bg-pink-shock text-white text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">
-                  {itemCount > 99 ? "99+" : itemCount}
-                </span>
-              )}
-            </button>
+              <button onClick={openCart} className="relative p-2 transition-colors duration-200" style={{ color: "#FFFFFF" }} aria-label="Abrir carrinho">
+                <ShoppingBag size={22} />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 text-white text-xs font-black w-5 h-5 flex items-center justify-center rounded-full" style={{ background: "#FF006E", fontSize: "0.6rem" }}>
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </span>
+                )}
+              </button>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 hover:bg-lime-acid transition-colors duration-200 border-2 border-transparent hover:border-black"
-              aria-label="Menu"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              {/* Hambúrguer animado */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5"
+                aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+                aria-expanded={isMenuOpen}
+              >
+                <span className="block h-0.5 w-6 transition-all duration-300 origin-center" style={{ background: "#FFFFFF", transform: isMenuOpen ? "translateY(8px) rotate(45deg)" : "none" }} />
+                <span className="block h-0.5 w-6 transition-all duration-300" style={{ background: "#FF006E", opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? "scaleX(0)" : "none" }} />
+                <span className="block h-0.5 w-6 transition-all duration-300 origin-center" style={{ background: "#FFFFFF", transform: isMenuOpen ? "translateY(-8px) rotate(-45deg)" : "none" }} />
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <nav className="lg:hidden mt-4 pt-4 border-t-4 border-black space-y-3">
-            {menuItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <a
-                  className="block font-black tracking-wide hover:text-pink-shock transition-colors duration-200 uppercase text-sm"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              </Link>
-            ))}
-            <a
-              href={whatsappHelp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full mt-4 bg-pink-shock text-white px-4 py-3 font-black tracking-wider hover:bg-black transition-colors duration-200 uppercase text-sm flex items-center justify-center gap-2 border-2 border-pink-shock hover:border-black"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <MessageCircle size={18} />
-              WhatsApp
-            </a>
-          </nav>
-        )}
+      {/* Overlay */}
+      <div
+        className="fixed inset-0 z-40 lg:hidden transition-all duration-300"
+        style={{ background: "rgba(0,0,0,0.7)", opacity: isMenuOpen ? 1 : 0, pointerEvents: isMenuOpen ? "auto" : "none" }}
+        onClick={() => setIsMenuOpen(false)}
+      />
+
+      {/* Drawer lateral */}
+      <div
+        className="fixed top-0 right-0 h-full z-50 lg:hidden flex flex-col transition-transform duration-300"
+        style={{ width: "min(320px, 85vw)", background: "#000000", borderLeft: "3px solid #FF006E", transform: isMenuOpen ? "translateX(0)" : "translateX(100%)" }}
+      >
+        <div className="flex items-center justify-between px-6 py-5 border-b-2" style={{ borderColor: "#FF006E" }}>
+          <div className="flex flex-col leading-none">
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "#FFF", letterSpacing: "0.04em" }}>BOLSONIER</span>
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.6rem", color: "#FF006E", letterSpacing: "0.35em" }}>S&nbsp;T&nbsp;O&nbsp;R&nbsp;E</span>
+          </div>
+          <button onClick={() => setIsMenuOpen(false)} className="p-2" style={{ color: "#FFFFFF" }} aria-label="Fechar menu">
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex-1 px-6 py-8 flex flex-col gap-1">
+          {menuItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <a
+                className="block py-4 border-b transition-all duration-200"
+                style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.6rem", letterSpacing: "0.06em", color: location === item.href ? "#FF006E" : "#FFFFFF", borderColor: "rgba(255,255,255,0.08)" }}
+              >
+                {item.label}
+              </a>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="px-6 pb-8 flex flex-col gap-3">
+          <a
+            href={whatsappHelp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-4 font-black uppercase tracking-wider border-2 transition-all duration-200"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", background: "#FF006E", borderColor: "#FF006E", color: "#FFFFFF", fontSize: "1rem" }}
+          >
+            <MessageCircle size={18} />
+            Falar no WhatsApp
+          </a>
+          <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.2em" }}>
+            FEITO NO BRASIL · EST. 24
+          </p>
+        </div>
       </div>
-    </header>
+    </>
   );
 }
