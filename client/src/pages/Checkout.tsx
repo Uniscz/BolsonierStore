@@ -79,6 +79,7 @@ export default function Checkout() {
   const [, navigate] = useLocation();
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState<"order" | "payment" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Carrinho vazio
@@ -148,8 +149,10 @@ export default function Checkout() {
     }));
 
     setLoading(true);
+    setLoadingStep("order");
     try {
-      const response = await fetch("/api/orders", {
+      // Passo 1: Criar pedido no Supabase
+      const orderResponse = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -166,19 +169,41 @@ export default function Checkout() {
         }),
       });
 
-      const data = await response.json();
+      const orderData = await orderResponse.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Erro ao criar pedido.");
+      if (!orderResponse.ok || !orderData.success) {
+        throw new Error(orderData.error || "Erro ao criar pedido.");
       }
 
+      const orderNumber = orderData.order_number;
       clearCart();
-      navigate(`/pedido/${data.order_number}`);
+
+      // Passo 2: Gerar pagamento no Asaas
+      setLoadingStep("payment");
+      try {
+        const paymentResponse = await fetch("/api/payments/asaas/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order_number: orderNumber }),
+        });
+        const paymentData = await paymentResponse.json();
+        if (!paymentResponse.ok || !paymentData.success) {
+          // Pagamento falhou, mas pedido foi criado — redirecionar mesmo assim
+          console.warn("[Checkout] Falha ao gerar pagamento:", paymentData.error);
+        }
+      } catch (paymentErr) {
+        // Falha silenciosa no pagamento — pedido já existe
+        console.warn("[Checkout] Erro ao chamar /api/payments/asaas/create:", paymentErr);
+      }
+
+      // Redirecionar para a página do pedido em qualquer caso
+      navigate(`/pedido/${orderNumber}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro desconhecido.";
       setError(message);
     } finally {
       setLoading(false);
+      setLoadingStep(null);
     }
   }
 
@@ -386,7 +411,9 @@ export default function Checkout() {
                 {loading ? (
                   <>
                     <Loader2 size={22} className="animate-spin" />
-                    Criando pedido...
+                    {loadingStep === "payment"
+                      ? "Pedido criado. Gerando pagamento..."
+                      : "Criando pedido..."}
                   </>
                 ) : (
                   <>

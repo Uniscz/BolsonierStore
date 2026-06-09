@@ -1,17 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
 import { formatPrice } from "@/data/products";
-import { CheckCircle2, Loader2, AlertCircle, MessageCircle, Package, Clock } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+  MessageCircle,
+  Package,
+  Clock,
+  CreditCard,
+  RefreshCw,
+  ExternalLink,
+} from "lucide-react";
 
 // ─── Mapeamentos de status ────────────────────────────────────────────────────
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
   pending: "Aguardando pagamento",
-  paid: "Pago",
-  failed: "Falhou",
+  paid: "Pagamento confirmado",
+  failed: "Falha no pagamento",
+  overdue: "Pagamento vencido",
   refunded: "Estornado",
 };
 
@@ -25,24 +36,24 @@ const ORDER_STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelado",
 };
 
-// Cores de badge para cada status
 function paymentBadgeClass(status: string) {
   switch (status) {
     case "paid":     return "bg-lime-acid text-black border-lime-acid";
-    case "failed":   return "bg-red-500 text-white border-red-500";
+    case "failed":
+    case "overdue":  return "bg-red-500 text-white border-red-500";
     case "refunded": return "bg-gray-500 text-white border-gray-500";
-    default:         return "bg-yellow-400 text-black border-yellow-400"; // pending
+    default:         return "bg-yellow-400 text-black border-yellow-400";
   }
 }
 
 function orderBadgeClass(status: string) {
   switch (status) {
-    case "paid":            return "bg-lime-acid text-black border-lime-acid";
-    case "in_production":   return "bg-pink-shock text-white border-pink-shock";
-    case "shipped":         return "bg-blue-500 text-white border-blue-500";
-    case "delivered":       return "bg-lime-acid text-black border-lime-acid";
-    case "cancelled":       return "bg-red-500 text-white border-red-500";
-    default:                return "bg-yellow-400 text-black border-yellow-400"; // created / awaiting
+    case "paid":          return "bg-lime-acid text-black border-lime-acid";
+    case "in_production": return "bg-pink-shock text-white border-pink-shock";
+    case "shipped":       return "bg-blue-500 text-white border-blue-500";
+    case "delivered":     return "bg-lime-acid text-black border-lime-acid";
+    case "cancelled":     return "bg-red-500 text-white border-red-500";
+    default:              return "bg-yellow-400 text-black border-yellow-400";
   }
 }
 
@@ -64,6 +75,8 @@ interface Order {
   total: number;
   payment_status: string;
   order_status: string;
+  asaas_invoice_url?: string | null;
+  asaas_payment_id?: string | null;
   created_at: string;
 }
 
@@ -76,8 +89,10 @@ export default function OrderConfirmation() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [generatingPayment, setGeneratingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchOrder = useCallback(() => {
     if (!order_number) return;
     setLoading(true);
     fetch(`/api/orders/${order_number}`)
@@ -92,6 +107,38 @@ export default function OrderConfirmation() {
       .catch(() => setError("Erro ao buscar pedido. Tente novamente."))
       .finally(() => setLoading(false));
   }, [order_number]);
+
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
+
+  async function handleGeneratePayment() {
+    if (!order_number) return;
+    setGeneratingPayment(true);
+    setPaymentError(null);
+    try {
+      const res = await fetch("/api/payments/asaas/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order_number }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setPaymentError(data.error || "Não foi possível gerar o pagamento. Tente novamente.");
+      } else {
+        // Recarregar pedido para pegar o novo asaas_invoice_url
+        fetchOrder();
+        // Se tiver URL, abrir direto
+        if (data.payment_url) {
+          window.open(data.payment_url, "_blank", "noopener,noreferrer");
+        }
+      }
+    } catch {
+      setPaymentError("Erro de conexão. Tente novamente.");
+    } finally {
+      setGeneratingPayment(false);
+    }
+  }
 
   function buildWhatsAppMessage() {
     const text = `Olá, fiz um pedido na Bolsonier Store.\nPedido: ${order_number}\nPreciso de ajuda para finalizar.`;
@@ -154,26 +201,36 @@ export default function OrderConfirmation() {
     );
   }
 
-  // ─── Sucesso ───────────────────────────────────────────────────────────────
+  // ─── Derivações de estado ──────────────────────────────────────────────────
   const paymentLabel = PAYMENT_STATUS_LABELS[order.payment_status] ?? order.payment_status;
   const orderLabel = ORDER_STATUS_LABELS[order.order_status] ?? order.order_status;
+  const isPaid = order.payment_status === "paid";
+  const isFailed = order.payment_status === "failed" || order.payment_status === "overdue";
+  const hasInvoiceUrl = Boolean(order.asaas_invoice_url);
 
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Header />
 
-      {/* Hero de sucesso */}
+      {/* Hero */}
       <div className="pt-24 pb-10 px-4 bg-black">
         <div className="max-w-2xl mx-auto text-center space-y-3">
-          <CheckCircle2 size={56} className="mx-auto text-lime-acid" />
+          {isPaid ? (
+            <CheckCircle2 size={56} className="mx-auto text-lime-acid" />
+          ) : (
+            <CreditCard size={56} className="mx-auto text-pink-shock" />
+          )}
           <h1
             className="text-4xl md:text-5xl font-black uppercase tracking-wider text-white"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
-            Pedido criado com sucesso!
+            {isPaid ? "Pagamento confirmado!" : "Pedido criado com sucesso!"}
           </h1>
           <p className="text-gray-300 text-sm">
-            Em breve o pagamento via Pix será gerado.
+            {isPaid
+              ? "Pagamento reconhecido. Seu pedido será encaminhado aos ateliês da Bolsonier Store."
+              : "O processo foi protocolado. A Corte aguarda a confirmação do pagamento."}
           </p>
         </div>
       </div>
@@ -226,6 +283,122 @@ export default function OrderConfirmation() {
             </div>
           </div>
 
+          {/* ── Bloco de ação de pagamento ── */}
+          {!isPaid && (
+            <div className="bg-black border-2 border-gray-700 p-5 space-y-4">
+              <h2
+                className="text-base font-black uppercase tracking-wider text-white border-b border-gray-700 pb-3"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              >
+                Finalizar Pagamento
+              </h2>
+
+              {/* Caso A: tem link de pagamento */}
+              {hasInvoiceUrl && !isFailed && (
+                <>
+                  <p className="text-sm text-gray-300">
+                    Seu pedido foi criado. Para iniciar a produção, finalize o pagamento.
+                  </p>
+                  <a
+                    href={order.asaas_invoice_url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                  >
+                    <ExternalLink size={22} />
+                    Pagar Agora
+                  </a>
+                  <p className="text-xs text-gray-500 text-center">
+                    Você poderá escolher a forma de pagamento disponível na tela segura do Asaas.
+                  </p>
+                </>
+              )}
+
+              {/* Caso B: sem link de pagamento ainda */}
+              {!hasInvoiceUrl && !isFailed && (
+                <>
+                  <p className="text-sm text-gray-400">
+                    Link de pagamento ainda não gerado.
+                  </p>
+                  {paymentError && (
+                    <div className="flex items-start gap-2 bg-red-900/40 border border-red-600 p-3 text-red-400 text-xs">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                      <span>{paymentError}</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleGeneratePayment}
+                    disabled={generatingPayment}
+                    className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                  >
+                    {generatingPayment ? (
+                      <>
+                        <Loader2 size={22} className="animate-spin" />
+                        Gerando pagamento...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={22} />
+                        Gerar Pagamento
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-gray-500 text-center">
+                    Você poderá escolher a forma de pagamento disponível na tela segura do Asaas.
+                  </p>
+                </>
+              )}
+
+              {/* Caso C: pagamento falhou/vencido */}
+              {isFailed && (
+                <>
+                  <p className="text-sm text-red-400">
+                    Houve um problema com o pagamento. Você pode tentar gerar um novo link.
+                  </p>
+                  {paymentError && (
+                    <div className="flex items-start gap-2 bg-red-900/40 border border-red-600 p-3 text-red-400 text-xs">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                      <span>{paymentError}</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleGeneratePayment}
+                    disabled={generatingPayment}
+                    className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                  >
+                    {generatingPayment ? (
+                      <>
+                        <Loader2 size={22} className="animate-spin" />
+                        Gerando pagamento...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw size={22} />
+                        Tentar Novamente
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ── Pago: mensagem de confirmação ── */}
+          {isPaid && (
+            <div className="bg-lime-acid border-2 border-lime-acid p-4 text-black text-center">
+              <p className="font-black text-sm uppercase tracking-wider">
+                Pagamento reconhecido
+              </p>
+              <p className="text-xs font-medium mt-1">
+                Seu pedido será encaminhado aos ateliês da Bolsonier Store.
+              </p>
+              {/* TODO: "O Veredito da Bastilha" — easter egg pós-pagamento (implementar futuramente) */}
+            </div>
+          )}
+
           {/* Itens do pedido */}
           <div className="bg-black border-2 border-gray-700 p-5">
             <h2
@@ -267,25 +440,14 @@ export default function OrderConfirmation() {
             <span>Pedido realizado em {formatDate(order.created_at)}</span>
           </div>
 
-          {/* Aviso de pagamento */}
-          <div className="bg-yellow-400 border-2 border-yellow-400 p-4 text-black text-center">
-            <p className="font-black text-sm uppercase tracking-wider">
-              Aguardando pagamento
-            </p>
-            <p className="text-xs font-medium mt-1">
-              Em breve você receberá a chave Pix para finalizar o pagamento.
-            </p>
-          </div>
-
           {/* Botão WhatsApp — suporte ao pedido */}
           <a
             href={buildWhatsAppMessage()}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full bg-green-600 text-white py-4 font-black tracking-wider uppercase text-base flex items-center justify-center gap-2 hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"
-            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            className="w-full bg-transparent text-gray-400 py-3 font-bold tracking-wider uppercase text-xs flex items-center justify-center gap-2 hover:text-green-500 transition-colors border-2 border-gray-700 hover:border-green-600"
           >
-            <MessageCircle size={20} />
+            <MessageCircle size={16} />
             Falar no WhatsApp sobre este pedido
           </a>
 
