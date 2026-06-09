@@ -71,31 +71,46 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-pink-shock to-lime-acid p-8 text-white border-2 border-black">
-              <h3 className="text-2xl font-bold mb-4 uppercase">Detalhes</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex gap-2">
-                  <span className="font-bold">Criador:</span>
-                  <span>André, da página @euinelegivel</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Origem:</span>
-                  <span>Sátiras, memes e a Bastilha de Bolsonier</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Proposta:</span>
-                  <span>Transformar o universo da internet em peças reais</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Produção:</span>
-                  <span>Sob demanda, feita no Brasil</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold">Atendimento:</span>
-                  <span>WhatsApp +55 47 99610-3720</span>
-                </li>
-              </ul>
-            </div>
+            <aside className="space-y-5 lg:sticky lg:top-28">
+              <div className="relative overflow-hidden border-2 border-black bg-white shadow-[10px_10px_0_#000]">
+                <div className="absolute left-0 top-0 h-full w-2 bg-pink-shock" aria-hidden="true" />
+                <div className="absolute right-0 top-0 h-full w-2 bg-lime-acid" aria-hidden="true" />
+                <img
+                  src="/brand/about-bolsonier-store.png"
+                  alt="Logotipo Bolsonier Store Boutique Streetwear"
+                  className="h-full min-h-[340px] w-full object-contain p-8 sm:p-10"
+                />
+              </div>
+
+              <div className="border-2 border-black bg-black p-8 text-white">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.35em] text-lime-acid">
+                  Boutique streetwear
+                </p>
+                <h3 className="mb-5 text-2xl font-black uppercase">Detalhes</h3>
+                <ul className="space-y-3 text-sm text-gray-200">
+                  <li className="flex gap-2">
+                    <span className="font-bold text-white">Criador:</span>
+                    <span>André, da página @euinelegivel</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-white">Origem:</span>
+                    <span>Sátiras, memes e a Bastilha de Bolsonier</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-white">Proposta:</span>
+                    <span>Transformar o universo da internet em peças reais</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-white">Produção:</span>
+                    <span>Sob demanda, feita no Brasil</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-white">Atendimento:</span>
+                    <span>WhatsApp +55 47 99610-3720</span>
+                  </li>
+                </ul>
+              </div>
+            </aside>
           </div>
         </div>
       </section>

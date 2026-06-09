@@ -6,14 +6,24 @@ import { formatPrice, getProductBySlug } from "@/data/products";
 
 const product = getProductBySlug("camiseta-pix");
 
+const editorialCoverByColor: Partial<Record<NonNullable<typeof product>["colors"][0]["key"], string>> = {
+  preto: "/lifestyle/pix-preto-modelo-rua.png",
+  branco: "/lifestyle/pix-branco-modelo-rua-1.png",
+  verde: "/lifestyle/pix-verde-modelo-rua.png",
+  amarelo: "/lifestyle/pix-amarelo-modelo-rua.png",
+};
+
 function getColorCoverImage(color: NonNullable<typeof product>["colors"][0]) {
-  if (color.key === "preto") return color.images.frente;
-  if (color.key === "branco") return color.images.detalhe;
-  return color.images.detalhe;
+  return editorialCoverByColor[color.key] ?? color.images.detalhe;
+}
+
+function hasEditorialCover(color: NonNullable<typeof product>["colors"][0]) {
+  return Boolean(editorialCoverByColor[color.key]);
 }
 
 function ProductColorCard({ color }: { color: NonNullable<typeof product>["colors"][0] }) {
   const coverImage = getColorCoverImage(color);
+  const isEditorialCover = hasEditorialCover(color);
 
   return (
     <Link href={`/produto/camiseta-pix?cor=${color.key}`}>
@@ -40,10 +50,10 @@ function ProductColorCard({ color }: { color: NonNullable<typeof product>["color
         <div style={{ position: "relative", aspectRatio: "4/5", overflow: "hidden", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <ProductImage
             src={coverImage}
-            alt={`Camiseta O Pix É Nosso — ${color.name} — frente e costas`}
-            className="w-full h-full object-contain transition-transform duration-300"
+            alt={`Camiseta O Pix É Nosso — ${color.name} — ${isEditorialCover ? "look editorial" : "mockup da peça"}`}
+            className={`w-full h-full transition-transform duration-300 ${isEditorialCover ? "object-cover" : "object-contain"}`}
             fallbackClassName="w-full h-full"
-            style={{ padding: "1.15rem" }}
+            style={isEditorialCover ? { padding: 0 } : { padding: "1.15rem" }}
           />
           <div
             style={{
@@ -59,7 +69,7 @@ function ProductColorCard({ color }: { color: NonNullable<typeof product>["color
               textTransform: "uppercase",
             }}
           >
-            Ver produto
+            {isEditorialCover ? "Look real" : "Ver produto"}
           </div>
         </div>
 

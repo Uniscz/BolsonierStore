@@ -327,23 +327,28 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="border-2 border-black p-5 bg-white">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="font-black uppercase tracking-wider text-sm">Quantidade</p>
-                  <div className="flex items-center border-2 border-black">
+              <div className="border-2 border-black p-5 bg-[#f7f7f2] text-black">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <p className="font-black uppercase tracking-wider text-sm text-black">Quantidade</p>
+                    <p className="text-xs uppercase tracking-[0.14em] text-gray-700 mt-1">
+                      Ajuste antes de enviar o pedido
+                    </p>
+                  </div>
+                  <div className="flex items-center border-2 border-black bg-white self-start sm:self-auto">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-12 h-12 font-bold text-lg hover:bg-black hover:text-white transition-colors"
+                      className="w-12 h-12 font-bold text-lg text-black hover:bg-black hover:text-white transition-colors"
                       aria-label="Diminuir quantidade"
                     >
                       −
                     </button>
-                    <span className="text-xl font-black w-14 text-center border-x-2 border-black h-12 flex items-center justify-center">
+                    <span className="text-xl font-black text-black w-14 text-center border-x-2 border-black h-12 flex items-center justify-center">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-12 h-12 font-bold text-lg hover:bg-black hover:text-white transition-colors"
+                      className="w-12 h-12 font-bold text-lg text-black hover:bg-black hover:text-white transition-colors"
                       aria-label="Aumentar quantidade"
                     >
                       +

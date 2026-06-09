@@ -2,15 +2,11 @@ import { useRef } from "react";
 import { Link } from "wouter";
 
 const MODELS = [
-  { src: "/model-black-street.png",     label: "Preto · Street" },
-  { src: "/model-white-graffiti.png",   label: "Branco · Graffiti" },
-  { src: "/model-yellow-street.png",    label: "Amarelo · Street" },
-  { src: "/model-yellow-body.png",      label: "Amarelo · Body" },
-  { src: "/model-yellow-crop.png",      label: "Amarelo · Crop" },
-  { src: "/model-white-body.png",       label: "Branco · Body" },
-  { src: "/model-white-oversized.png",  label: "Branco · Oversized" },
-  { src: "/model-gray-oversized.png",   label: "Cinza · Oversized" },
-  { src: "/model-composition.png",      label: "Composição · 5 Cores" },
+  { src: "/lifestyle/pix-preto-modelo-rua.png",     label: "Preto · Rua" },
+  { src: "/lifestyle/pix-verde-modelo-rua.png",     label: "Verde Bandeira · Rua" },
+  { src: "/lifestyle/pix-amarelo-modelo-rua.png",   label: "Amarelo Canário · Rua" },
+  { src: "/lifestyle/pix-branco-modelo-rua-1.png",  label: "Branco · Asfalto" },
+  { src: "/lifestyle/pix-branco-modelo-rua-2.png",  label: "Branco · Concreto" },
 ];
 
 const TICKER_ITEMS = [
@@ -91,6 +87,13 @@ export default function Home() {
             <span className="hero-tagline">LUXURY COUNTERFEIT · IRONIA ELEGANTE · FEITO NO BRASIL</span>
           </div>
         </div>
+
+        <div className="hero-visual" aria-label="Looks editoriais da coleção O Pix É Nosso">
+          <img src="/lifestyle/pix-verde-modelo-rua.png" alt="Modelo usando camiseta verde O Pix É Nosso" className="hero-look hero-look-main" />
+          <img src="/lifestyle/pix-amarelo-modelo-rua.png" alt="Modelo usando camiseta amarela O Pix É Nosso" className="hero-look hero-look-back hero-look-yellow" />
+          <img src="/lifestyle/pix-preto-modelo-rua.png" alt="Modelo usando camiseta preta O Pix É Nosso" className="hero-look hero-look-back hero-look-black" />
+          <div className="hero-stamp">O PIX É NOSSO</div>
+        </div>
       </section>
 
       {/* ── TICKER VERDE ── */}
@@ -144,15 +147,15 @@ export default function Home() {
         </div>
         <div className="mosaic-grid">
           <div className="mosaic-large">
-            <img src="/model-black-street.png" alt="Look preto street" />
+            <img src="/lifestyle/pix-preto-modelo-rua.png" alt="Look preto na rua" />
           </div>
           <div className="mosaic-small-col">
-            <img src="/model-white-graffiti.png" alt="Look branco graffiti" />
-            <img src="/model-yellow-street.png" alt="Look amarelo street" />
+            <img src="/lifestyle/pix-verde-modelo-rua.png" alt="Look verde na rua" />
+            <img src="/lifestyle/pix-amarelo-modelo-rua.png" alt="Look amarelo na rua" />
           </div>
           <div className="mosaic-small-col">
-            <img src="/model-white-body.png" alt="Look branco body" />
-            <img src="/model-yellow-body.png" alt="Look amarelo body" />
+            <img src="/lifestyle/pix-branco-modelo-rua-1.png" alt="Look branco no asfalto" />
+            <img src="/lifestyle/pix-branco-modelo-rua-2.png" alt="Look branco no concreto" />
           </div>
         </div>
       </section>
