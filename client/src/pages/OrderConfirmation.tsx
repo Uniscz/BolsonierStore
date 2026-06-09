@@ -75,6 +75,10 @@ interface Order {
   total: number;
   payment_status: string;
   order_status: string;
+  payment_provider?: string | null;
+  // InfinityPay
+  infinitepay_payment_url?: string | null;
+  // Asaas (legado)
   asaas_invoice_url?: string | null;
   asaas_payment_id?: string | null;
   created_at: string;
@@ -89,7 +93,7 @@ export default function OrderConfirmation() {
   // Detectar query params de retorno
   const searchParams = new URLSearchParams(window.location.search);
   const paymentParam = searchParams.get("payment");       // "success" | "cancelled" | null
-  const paymentError = searchParams.get("payment_error"); // "1" quando o Checkout não foi gerado
+  const paymentError = searchParams.get("payment_error"); // "1" quando o link não foi gerado
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,13 +121,20 @@ export default function OrderConfirmation() {
     fetchOrder();
   }, [fetchOrder]);
 
+  // Determina o endpoint de retry conforme o provedor do pedido
+  function getRetryEndpoint(provider?: string | null) {
+    if (provider === "asaas") return "/api/payments/asaas/create";
+    return "/api/payments/infinitepay/create";
+  }
+
   // Chamado apenas em caso de falha — botão de retry
   async function handleRetryPayment() {
-    if (!order_number) return;
+    if (!order_number || !order) return;
     setRetrying(true);
     setRetryError(null);
+    const endpoint = getRetryEndpoint(order.payment_provider);
     try {
-      const res = await fetch("/api/payments/asaas/create", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ order_number }),
@@ -132,7 +143,6 @@ export default function OrderConfirmation() {
       if (!res.ok || !data.success) {
         setRetryError(data.error || "Não foi possível gerar o pagamento seguro. Tente novamente.");
       } else {
-        // Recarregar pedido para pegar o novo link
         fetchOrder();
         if (data.payment_url) {
           window.open(data.payment_url, "_blank", "noopener,noreferrer");
@@ -211,7 +221,10 @@ export default function OrderConfirmation() {
   const orderLabel = ORDER_STATUS_LABELS[order.order_status] ?? order.order_status;
   const isPaid = order.payment_status === "paid";
   const isFailed = order.payment_status === "failed" || order.payment_status === "overdue";
-  const hasPaymentUrl = Boolean(order.asaas_invoice_url);
+
+  // URL de pagamento: prioriza InfinityPay, fallback para Asaas legado
+  const paymentUrl = order.infinitepay_payment_url || order.asaas_invoice_url || null;
+  const hasPaymentUrl = Boolean(paymentUrl);
 
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
@@ -256,12 +269,12 @@ export default function OrderConfirmation() {
             </p>
           </div>
 
-          {/* Banner: payment_error=1 (fallback do /checkout quando Asaas falhou) */}
+          {/* Banner: payment_error=1 */}
           {paymentError === "1" && (
             <div className="flex items-start gap-2 bg-orange-900/40 border-2 border-orange-500 p-4 text-orange-300 text-sm">
               <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
               <span className="font-semibold">
-                O pagamento seguro não foi gerado automaticamente. Clique em “Tentar gerar pagamento novamente” abaixo.
+                O pagamento seguro não foi gerado automaticamente. Clique em "Tentar gerar pagamento novamente" abaixo.
               </span>
             </div>
           )}
@@ -271,7 +284,7 @@ export default function OrderConfirmation() {
             <div className="flex items-start gap-2 bg-yellow-900/40 border-2 border-yellow-500 p-4 text-yellow-300 text-sm">
               <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
               <span className="font-semibold">
-                Pagamento não concluído. Você pode tentar novamente clicando em “Pagar Agora” abaixo.
+                Pagamento não concluído. Você pode tentar novamente clicando em "Pagar Agora" abaixo.
               </span>
             </div>
           )}
@@ -332,10 +345,10 @@ export default function OrderConfirmation() {
               {hasPaymentUrl && !isFailed && (
                 <>
                   <p className="text-sm text-gray-300">
-                    Seu pagamento está pronto. Você poderá escolher Pix ou cartão na tela segura do Asaas.
+                    Seu pagamento está pronto. Escolha Pix ou cartão na tela segura.
                   </p>
                   <a
-                    href={order.asaas_invoice_url!}
+                    href={paymentUrl!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white"
@@ -345,12 +358,12 @@ export default function OrderConfirmation() {
                     Pagar Agora
                   </a>
                   <p className="text-xs text-gray-500 text-center">
-                    Pagamento seguro processado pelo Asaas.
+                    Pagamento seguro · Pix ou cartão
                   </p>
                 </>
               )}
 
-              {/* Caso de falha: botão de retry */}
+              {/* Caso de falha ou sem link: botão de retry */}
               {(isFailed || (!hasPaymentUrl && !isFailed)) && (
                 <>
                   {isFailed ? (
@@ -402,7 +415,6 @@ export default function OrderConfirmation() {
               <p className="text-xs font-medium mt-1">
                 Seu pedido será encaminhado aos ateliês da Bolsonier Store.
               </p>
-              {/* TODO: "O Veredito da Bastilha" — easter egg pós-pagamento */}
             </div>
           )}
 

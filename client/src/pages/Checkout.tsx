@@ -182,11 +182,11 @@ export default function Checkout() {
 
       const orderNumber = orderData.order_number;
 
-      // Passo 2: Gerar pagamento no Asaas
+      // Passo 2: Gerar link de pagamento na InfinityPay
       setLoadingStep("payment");
       let paymentUrl: string | null = null;
       try {
-        const paymentResponse = await fetch("/api/payments/asaas/create", {
+        const paymentResponse = await fetch("/api/payments/infinitepay/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ order_number: orderNumber }),
@@ -195,10 +195,10 @@ export default function Checkout() {
         if (paymentResponse.ok && paymentData.success && paymentData.payment_url) {
           paymentUrl = paymentData.payment_url;
         } else {
-          console.warn("[Checkout] Falha ao gerar pagamento:", paymentData.error);
+          console.warn("[Checkout] Falha ao gerar link de pagamento:", paymentData.error);
         }
       } catch (paymentErr) {
-        console.warn("[Checkout] Erro ao chamar /api/payments/asaas/create:", paymentErr);
+          console.warn("[Checkout] Erro ao chamar /api/payments/infinitepay/create:", paymentErr);
       }
 
       // Passo 3: Redirecionar — limpar carrinho só agora, antes de sair
@@ -423,7 +423,7 @@ export default function Checkout() {
                   <>
                     <Loader2 size={22} className="animate-spin" />
                     {loadingStep === "redirect"
-                      ? "Redirecionando para o Asaas..."
+                      ? "Redirecionando para o pagamento..."
                       : loadingStep === "payment"
                       ? "Gerando pagamento seguro..."
                       : "Criando seu pedido..."}
