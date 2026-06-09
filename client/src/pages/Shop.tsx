@@ -9,6 +9,7 @@ const product = getProductBySlug("camiseta-pix");
 const editorialCoverByColor: Partial<Record<NonNullable<typeof product>["colors"][0]["key"], string>> = {
   preto: "/lifestyle/pix-preto-modelo-rua.png",
   branco: "/lifestyle/pix-branco-modelo-rua-1.png",
+  azul: "/lifestyle/pix-azul-modelo-rua.png",
   verde: "/lifestyle/pix-verde-modelo-rua.png",
   amarelo: "/lifestyle/pix-amarelo-modelo-rua.png",
 };
