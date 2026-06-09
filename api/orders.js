@@ -121,7 +121,6 @@ export default async function handler(req, res) {
         subtotal: subtotal ?? 0,
         shipping_value: shipping_value ?? 0,
         total,
-        payment_provider: "asaas",      // preparado para futura integração
         payment_status: "pending",
         order_status: "created",
         notes: notes || null,

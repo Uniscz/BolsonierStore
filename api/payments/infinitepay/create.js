@@ -190,24 +190,39 @@ export default async function handler(req, res) {
   }
 
   // ── 6. Atualizar pedido no Supabase ───────────────────────────────────────
-  const updatePayload = {
+  // Update em dois níveis: tenta salvar todos os campos InfinityPay;
+  // se falhar (colunas ainda não migradas), faz update apenas dos campos base.
+  const baseUpdate = {
     payment_provider: "infinitepay",
     payment_status: "pending",
     order_status: "awaiting_payment",
-    infinitepay_order_nsu: result.orderNsu,
-    infinitepay_payment_url: result.paymentUrl,
-    raw_payment_payload: result.raw,
     updated_at: new Date().toISOString(),
   };
 
-  const { error: updateError } = await supabase
-    .from("orders")
-    .update(updatePayload)
-    .eq("order_number", order_number);
+  try {
+    const { error: updateFullError } = await supabase
+      .from("orders")
+      .update({
+        ...baseUpdate,
+        infinitepay_order_nsu: result.orderNsu,
+        infinitepay_payment_url: result.paymentUrl,
+      })
+      .eq("order_number", order_number);
 
-  if (updateError) {
-    console.error(`[Supabase] Erro ao atualizar pedido ${order_number}:`, updateError.message);
-    // Não bloquear o cliente — link foi criado com sucesso
+    if (updateFullError) {
+      // Colunas InfinityPay podem não existir ainda no Supabase
+      console.warn(`[Supabase] Update completo falhou para ${order_number} (colunas InfinityPay ausentes?): ${updateFullError.message}`);
+      const { error: updateBaseError } = await supabase
+        .from("orders")
+        .update(baseUpdate)
+        .eq("order_number", order_number);
+      if (updateBaseError) {
+        console.error(`[Supabase] Update base também falhou para ${order_number}: ${updateBaseError.message}`);
+      }
+    }
+  } catch (updateErr) {
+    // Nunca bloquear o cliente por falha de update
+    console.error(`[Supabase] Exceção no update do pedido ${order_number}:`, updateErr?.message);
   }
 
   return res.status(200).json({
