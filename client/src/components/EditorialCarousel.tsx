@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 
-// Slots para os mockups — substitua os src quando tiver as fotos
 const slides = [
-  { id: 1, label: "Look 01", desc: "Coleção O Pix É Nosso — Em breve", tag: "Coleção" },
-  { id: 2, label: "Look 02", desc: "Coleção O Pix É Nosso — Em breve", tag: "Coleção" },
-  { id: 3, label: "Look 03", desc: "Editorial São Paulo — Em breve", tag: "Editorial" },
-  { id: 4, label: "Look 04", desc: "Coleção O Pix É Nosso — Em breve", tag: "Coleção" },
-  { id: 5, label: "Look 05", desc: "Editorial São Paulo — Em breve", tag: "Editorial" },
+  { id: 1, label: "Look 01", desc: "O Pix É Nosso — Preto", tag: "Drop 01" },
+  { id: 2, label: "Look 02", desc: "O Pix É Nosso — Branco", tag: "Drop 01" },
+  { id: 3, label: "Look 03", desc: "O Pix É Nosso — Azul Royal", tag: "Drop 01" },
+  { id: 4, label: "Look 04", desc: "O Pix É Nosso — Verde Bandeira", tag: "Drop 01" },
+  { id: 5, label: "Look 05", desc: "O Pix É Nosso — Amarelo Canário", tag: "Drop 01" },
 ];
 
 function PlaceholderSlide({ label, tag }: { label: string; tag: string }) {
@@ -61,7 +60,7 @@ function PlaceholderSlide({ label, tag }: { label: string; tag: string }) {
             textTransform: "uppercase",
           }}
         >
-          Mockup em breve
+          Drop ativo
         </div>
       </div>
     </div>

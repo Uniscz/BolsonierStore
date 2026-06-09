@@ -62,18 +62,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/colecao-pix" className="hover:text-lime-acid transition-colors">
-                  O Pix é Nosso
+                <Link href="/produto/camiseta-pix?cor=preto" className="hover:text-lime-acid transition-colors">
+                  Camiseta O Pix É Nosso
                 </Link>
               </li>
               <li>
-                <Link href="/colecao-bastilha" className="hover:text-lime-acid transition-colors">
-                  A Bastilha
-                </Link>
-              </li>
-              <li>
-                <Link href="/produto/camiseta-pix" className="hover:text-lime-acid transition-colors">
-                  Camiseta O Pix é Nosso
+                <Link href="/sobre" className="hover:text-lime-acid transition-colors">
+                  Nossa História
                 </Link>
               </li>
             </ul>

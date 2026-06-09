@@ -1,212 +1,209 @@
-import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
+import ProductImage from "@/components/ProductImage";
+import { formatPrice, getProductBySlug } from "@/data/products";
 
-const MODELS = [
-  { src: "/model-black-street.png",     label: "Preto · Street" },
-  { src: "/model-white-graffiti.png",   label: "Branco · Graffiti" },
-  { src: "/model-yellow-street.png",    label: "Amarelo · Street" },
-  { src: "/model-yellow-body.png",      label: "Amarelo · Body" },
-  { src: "/model-yellow-crop.png",      label: "Amarelo · Crop" },
-  { src: "/model-white-body.png",       label: "Branco · Body" },
-  { src: "/model-white-oversized.png",  label: "Branco · Oversized" },
-  { src: "/model-gray-oversized.png",   label: "Cinza · Oversized" },
-  { src: "/model-composition.png",      label: "Composição · 5 Cores" },
-];
+const product = getProductBySlug("camiseta-pix")!;
 
-const TICKER_ITEMS = [
-  "BOLSONIER STORE", "O PIX É NOSSO", "LUXURY COUNTERFEIT",
-  "FEITO NO BRASIL", "EST. 24", "SÃO PAULO",
-  "IRONIA ELEGANTE", "VANDALISMO REFINADO", "NO PERMISSION NEEDED",
-];
+const TICKERS = {
+  green: [
+    "BOLSONIER STORE",
+    "O PIX É NOSSO",
+    "DROP 01",
+    "FEITO NO BRASIL",
+    "IRONIA ELEGANTE",
+    "VANDALISMO REFINADO",
+    "NO PERMISSION NEEDED",
+    "BRASIL / INTERNET",
+  ],
+  pink: [
+    "ENTRAR NO DROP",
+    "PRÉ-VENDA",
+    "R$ 99,90",
+    "5 CORES",
+    "PRODUÇÃO SOB DEMANDA",
+    "ATÉ 25 DIAS ÚTEIS",
+    "WHATSAPP",
+    "PIX",
+  ],
+};
 
 function Ticker({ color }: { color: "green" | "pink" }) {
-  const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
+  const items = [...TICKERS[color], ...TICKERS[color], ...TICKERS[color]];
   return (
     <div className={`ticker ticker-${color}`}>
       <div className="ticker-track">
         {items.map((item, i) => (
-          <span key={i} className="ticker-item">★ {item}</span>
+          <span key={`${item}-${i}`} className="ticker-item">
+            ★ {item}
+          </span>
         ))}
       </div>
     </div>
   );
 }
 
-function ModelCarousel() {
-  const [active, setActive] = useState(0);
-
-  const prev = useCallback(() => setActive(i => (i - 1 + MODELS.length) % MODELS.length), []);
-  const next = useCallback(() => setActive(i => (i + 1) % MODELS.length), []);
-
-  useEffect(() => {
-    const t = setInterval(next, 4000);
-    return () => clearInterval(t);
-  }, [next]);
-
-  return (
-    <section className="carousel-section">
-      <div className="carousel-label">
-        <span className="carousel-label-text">★ COLEÇÃO "O PIX É NOSSO" · LOOKS EDITORIAIS ★</span>
-      </div>
-      <div className="carousel-wrapper">
-        <div className="carousel-main">
-          <img
-            key={active}
-            src={MODELS[active].src}
-            alt={MODELS[active].label}
-            className="carousel-main-img"
-          />
-          <button className="carousel-arrow carousel-arrow-left" onClick={prev} aria-label="Anterior">&#8592;</button>
-          <button className="carousel-arrow carousel-arrow-right" onClick={next} aria-label="Próximo">&#8594;</button>
-          <span className="carousel-counter">{active + 1} / {MODELS.length}</span>
-        </div>
-        <div className="carousel-thumbs">
-          {MODELS.map((m, i) => (
-            <button
-              key={i}
-              className={`carousel-thumb${active === i ? " active" : ""}`}
-              onClick={() => setActive(i)}
-              aria-label={m.label}
-            >
-              <img src={m.src} alt={m.label} />
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   return (
     <main style={{ background: "#000", minHeight: "100vh" }}>
+      <section className="drop-hero">
+        <div className="container-shell drop-hero-grid">
+          <div className="drop-hero-copy">
+            <p className="kicker-green">Bolsonier Studios apresenta</p>
+            <div className="drop-hero-badges">
+              <span className="badge-pink">DROP 01</span>
+              <span className="badge-green">PRÉ-VENDA</span>
+              <span className="badge-pink">LOTE 01</span>
+            </div>
+            <h1 className="drop-hero-title">
+              O PIX<br />
+              <span>É NOSSO</span>
+            </h1>
+            <p className="drop-hero-text">
+              O meme saiu do feed.<br />
+              Agora veste gente.
+            </p>
+            <div className="drop-hero-meta">
+              <strong>{formatPrice(product.price)}</strong>
+              <span>Produção sob demanda</span>
+              <span>Até 25 dias úteis após confirmação</span>
+            </div>
+            <div className="drop-hero-actions">
+              <Link href="/loja" className="btn-primary">
+                Entrar no Drop
+              </Link>
+              <a href="#lookbook" className="btn-secondary">
+                Ver Lookbook
+              </a>
+            </div>
+          </div>
 
-      {/* ── HERO ── */}
-      <section className="hero">
-        <div className="hero-bar hero-bar-left" />
-        <div className="hero-bar hero-bar-right" />
-        <div className="hero-content">
-          <p className="hero-sub">★ EST. 24 · SÃO PAULO · BRASIL ★</p>
-          <h1 className="hero-title">
-            BOL<span className="hero-s">S</span>ONIER
-          </h1>
-          <div className="hero-cta-row">
-            <Link href="/loja" className="btn-acid">VER COLEÇÃO</Link>
-            <span className="hero-tagline">LUXURY COUNTERFEIT · IRONIA ELEGANTE · FEITO NO BRASIL</span>
+          <div className="drop-hero-visual">
+            <ProductImage
+              src={product.heroImage}
+              alt="Campanha Drop 01 O Pix É Nosso"
+              className="drop-hero-img"
+              fallbackClassName="drop-hero-fallback"
+            />
+            <img src={product.stampImage} alt="Selo O Pix É Nosso" className="drop-stamp drop-stamp-hero" />
           </div>
         </div>
       </section>
 
-      {/* ── TICKER VERDE ── */}
       <Ticker color="green" />
 
-      {/* ── CARROSSEL DE MODELOS ── */}
-      <ModelCarousel />
-
-      {/* ── TICKER PINK ── */}
-      <Ticker color="pink" />
-
-      {/* ── COMPOSIÇÃO EDITORIAL (imagem panorâmica dos 5 looks) ── */}
-      <section className="composition-section">
-        <img
-          src="/model-composition.png"
-          alt="Composição editorial — 5 looks da coleção O Pix É Nosso"
-          className="composition-img"
+      <section className="campaign-wide-section">
+        <ProductImage
+          src={product.wideCampaignImage}
+          alt="Banner de campanha O Pix É Nosso com cinco cores"
+          className="campaign-wide-img"
+          fallbackClassName="campaign-wide-fallback"
         />
-      </section>
-
-      {/* ── ESTÁTUA COM BATOM ── */}
-      <section className="statue-section">
-        <div className="statue-art">
-          <img
-            src="/art-statue.png"
-            alt="Estátua da Liberdade com batom — BOLSONIER STORE"
-            className="statue-img"
-          />
-        </div>
-        <div className="statue-text">
-          <span className="statue-label">★ MANIFESTO ★</span>
-          <h2 className="statue-title">
-            FAZ PARTE<br />DE QUEM<br /><span style={{ color: "#FF0066" }}>CONSTRÓI</span>
+        <div className="campaign-wide-overlay">
+          <p className="kicker-green">DROP 01 · PRÉ-VENDA</p>
+          <h2>
+            O PIX É NOSSO,<br />
+            <span>MY FRIEND</span>
           </h2>
-          <p className="statue-sub">
-            Não de quem observa. A BOLSONIER STORE nasceu nas ruas de São Paulo
-            com a ironia de quem entende o jogo — e decide criar o seu próprio.
-          </p>
-          <Link href="/sobre" className="btn-outline">NOSSA HISTÓRIA</Link>
-        </div>
-      </section>
-
-      {/* ── TICKER VERDE ── */}
-      <Ticker color="green" />
-
-      {/* ── MOSAICO DE MODELOS ── */}
-      <section className="mosaic-section">
-        <div className="mosaic-header">
-          <span className="mosaic-label">★ LOOKS DA COLEÇÃO ★</span>
-          <h2 className="mosaic-title">O PIX É NOSSO,<br /><span style={{ color: "#FF0066" }}>MY FRIEND</span></h2>
-        </div>
-        <div className="mosaic-grid">
-          <div className="mosaic-large">
-            <img src="/model-black-street.png" alt="Look preto street" />
-          </div>
-          <div className="mosaic-small-col">
-            <img src="/model-white-graffiti.png" alt="Look branco graffiti" />
-            <img src="/model-yellow-street.png" alt="Look amarelo street" />
-          </div>
-          <div className="mosaic-small-col">
-            <img src="/model-white-body.png" alt="Look branco body" />
-            <img src="/model-yellow-body.png" alt="Look amarelo body" />
+          <div className="campaign-wide-tags">
+            <span>5 cores</span>
+            <span>{formatPrice(product.price)}</span>
+            <span>Produção sob demanda</span>
           </div>
         </div>
       </section>
 
-      {/* ── ASSINATURA / ARTE GRAFFITI ── */}
-      <section className="signature-section">
-        <div className="signature-art">
-          <img
-            src="/art-graffiti.png"
-            alt="Arte graffiti O Pix É Nosso — BOLSONIER STORE"
-            className="signature-img"
-          />
-        </div>
-        <div className="signature-text">
-          <span className="signature-label">★ COLEÇÃO ASSINATURA ★</span>
-          <h2 className="signature-title">
-            O PIX<br /><span style={{ color: "#FF0066" }}>É NOSSO,</span><br />MY FRIEND
-          </h2>
-          <p className="signature-sub">
-            A peça que virou símbolo. Oversized, cropped, body — cada versão
-            carrega a mesma mensagem: o dinheiro circula, mas a cultura é nossa.
-          </p>
-          <span className="signature-origin">FEITO NO BRASIL · EST. 24 · SÃO PAULO</span>
-          <Link href="/loja" className="btn-acid">COMPRAR AGORA</Link>
-        </div>
-      </section>
-
-      {/* ── TICKER PINK ── */}
       <Ticker color="pink" />
 
-      {/* ── INSTAGRAM CTA ── */}
-      <section className="instagram-section">
-        <span className="instagram-label">★ SIGA A GENTE ★</span>
-        <h2 className="instagram-title">
-          NOVAS PEÇAS<br /><span style={{ color: "#A6FF00" }}>CHEGANDO</span>
-        </h2>
-        <p className="instagram-sub">
-          Acompanhe os drops, bastidores e novidades antes de todo mundo.
-          A próxima coleção está chegando.
-        </p>
-        <a
-          href="https://instagram.com/bolsonierstore"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-acid"
-        >
-          @BOLSONIERSTORE
-        </a>
+      <section className="brand-signature-section">
+        <div className="brand-logo-panel">
+          <img src={product.brandLogoImage} alt="Bolsonier Store Boutique Streetwear" />
+        </div>
+        <div className="brand-copy-panel">
+          <p className="kicker-green">Assinatura premium da marca</p>
+          <h2>
+            Boutique<br />
+            <span>Streetwear</span>
+          </h2>
+          <p>
+            Um drop editorial com humor brasileiro, acabamento visual de campanha e a energia de quem transforma meme em objeto de desejo.
+          </p>
+          <Link href="/sobre" className="btn-secondary">
+            Nossa História
+          </Link>
+        </div>
       </section>
 
+      <section id="lookbook" className="lookbook-section">
+        <div className="container-shell lookbook-header">
+          <p className="kicker-pink">Looks editoriais</p>
+          <h2>
+            LOOKBOOK<br />
+            <span>O PIX É NOSSO</span>
+          </h2>
+          <p>
+            Scroll horizontal, imagens grandes e leitura de campanha. Sem vitrine genérica: o drop aparece como editorial de rua.
+          </p>
+        </div>
+        <div className="lookbook-rail" aria-label="Lookbook O Pix É Nosso">
+          {product.lookbookImages.map((src, index) => (
+            <article className="lookbook-card" key={src}>
+              <ProductImage
+                src={src}
+                alt={`Look editorial ${index + 1} do drop O Pix É Nosso`}
+                className="lookbook-img"
+                fallbackClassName="lookbook-fallback"
+              />
+              <span>{String(index + 1).padStart(2, "0")}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="manifesto-section">
+        <div className="manifesto-monogram">
+          <img src={product.monogramImage} alt="Monograma B com coroa Bolsonier Store" />
+        </div>
+        <div className="manifesto-copy">
+          <span className="kicker-green">Manifesto</span>
+          <h2>
+            FAZ PARTE<br />
+            DE QUEM<br />
+            <span>CONSTRÓI</span>
+          </h2>
+          <p>
+            A BOLSONIER STORE nasceu da internet brasileira, do deboche e da vontade de transformar caos em estética.
+            O primeiro drop é um recibo visual do Brasil: ironia elegante, rua e design na mesma peça.
+          </p>
+          <Link href="/sobre" className="btn-secondary">
+            Nossa História
+          </Link>
+        </div>
+      </section>
+
+      <Ticker color="green" />
+
+      <section className="shop-preview-section">
+        <div className="container-shell shop-preview-grid">
+          <div>
+            <p className="kicker-pink">Camiseta Oversized</p>
+            <h2>
+              5 CORES.<br />
+              <span>UMA FRASE.</span>
+            </h2>
+            <p>
+              Preto, branco, azul, verde e amarelo em pré-venda. Escolha a cor, selecione o tamanho e entre no drop sem clique morto.
+            </p>
+          </div>
+          <div className="shop-preview-actions">
+            <Link href="/loja" className="btn-green">
+              Comprar Agora
+            </Link>
+            <a href="https://instagram.com/euinelegivel" target="_blank" rel="noopener noreferrer" className="btn-secondary">
+              Instagram
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
