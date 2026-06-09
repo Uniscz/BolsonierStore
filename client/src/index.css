@@ -825,7 +825,7 @@ body {
   border-top: 1px solid #1a1a1a;
 }
 .signature-art { width: 100%; max-width: 420px; }
-.signature-img { width: 100%; mix-blend-mode: multiply; filter: invert(1) brightness(0.9); }
+.signature-img { width: 100%; display: block; }
 .signature-text { display: flex; flex-direction: column; gap: 1.25rem; max-width: 480px; }
 .signature-label { font-size: 0.75rem; letter-spacing: 0.3em; color: #A6FF00; text-transform: uppercase; }
 .signature-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); color: #fff; line-height: 0.95; }
