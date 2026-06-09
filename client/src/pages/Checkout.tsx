@@ -81,9 +81,10 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState<"order" | "payment" | "redirect" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
 
-  // Carrinho vazio
-  if (items.length === 0) {
+  // Carrinho vazio — só mostra se não estiver em processo de redirecionamento
+  if (items.length === 0 && !redirecting) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Header />
@@ -180,7 +181,6 @@ export default function Checkout() {
       }
 
       const orderNumber = orderData.order_number;
-      clearCart();
 
       // Passo 2: Gerar pagamento no Asaas
       setLoadingStep("payment");
@@ -201,13 +201,13 @@ export default function Checkout() {
         console.warn("[Checkout] Erro ao chamar /api/payments/asaas/create:", paymentErr);
       }
 
-      // Passo 3: Redirecionar
+      // Passo 3: Redirecionar — limpar carrinho só agora, antes de sair
+      clearCart();
+      setRedirecting(true);
       if (paymentUrl) {
-        // Fluxo ideal: ir direto para o Asaas Checkout na mesma aba
         setLoadingStep("redirect");
         window.location.href = paymentUrl;
       } else {
-        // Fallback: ir para a página do pedido (botão de retry disponível lá)
         navigate(`/pedido/${orderNumber}?payment_error=1`);
       }
     } catch (err: unknown) {
