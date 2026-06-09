@@ -164,7 +164,7 @@ export default function Home() {
       <section className="signature-section">
         <div className="signature-art">
           <img
-            src="/art-graffiti.png"
+            src="/signature-pix-enosso.png"
             alt="Arte graffiti O Pix É Nosso — BOLSONIER STORE"
             className="signature-img"
           />
