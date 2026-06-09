@@ -1,5 +1,10 @@
 import { useState, useRef, useEffect, type CSSProperties } from "react";
 
+// Detecta mobile (tela estreita ou touch) para usar o vídeo 9:16
+const isMobile = () =>
+  typeof window !== "undefined" &&
+  (window.innerWidth < 768 || ("ontouchstart" in window && window.innerWidth < 1024));
+
 interface BastilhaPaidExperienceProps {
   order_number: string;
   onClose: () => void;
@@ -16,6 +21,9 @@ export default function BastilhaPaidExperience({
   const [finalTextVisible, setFinalTextVisible] = useState(false);
   const [buttonVisible, setButtonVisible] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoSrc = isMobile()
+    ? "/videos/bastilha-portoes-mobile.mp4"
+    : "/videos/bastilha-portoes.mp4";
 
   // Fade-in do texto sobre o vídeo após 1.2s
   useEffect(() => {
@@ -62,7 +70,7 @@ export default function BastilhaPaidExperience({
           {/* Vídeo fullscreen */}
           <video
             ref={videoRef}
-            src="/videos/bastilha-portoes.mp4"
+            src={videoSrc}
             autoPlay
             playsInline
             onEnded={handleVideoEnded}
