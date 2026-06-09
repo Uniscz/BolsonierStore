@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductImage from "@/components/ProductImage";
 import { getProductBySlug, formatPrice } from "@/data/products";
-import { buildWhatsAppOrderMessage, buildWhatsAppFreightMessage, openWhatsApp } from "@/lib/whatsapp";
+import { buildWhatsAppFreightMessage, buildWhatsAppHelpMessage, openWhatsApp } from "@/lib/whatsapp";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 
@@ -143,31 +143,6 @@ export default function ProductDetail() {
         onClick: openCart,
       },
     });
-  };
-
-  const handleBuyNowWhatsApp = () => {
-    if (!selectedColor) {
-      toast.error("Selecione uma cor antes de continuar.");
-      return;
-    }
-    if (!selectedSize) {
-      toast.error("Selecione um tamanho antes de continuar.");
-      return;
-    }
-
-    const url = buildWhatsAppOrderMessage(
-      [
-        {
-          name: product.name,
-          color: selectedColor.name,
-          size: selectedSize,
-          quantity,
-          price: product.price,
-        },
-      ],
-      product.price * quantity
-    );
-    openWhatsApp(url);
   };
 
   const handleFreightWhatsApp = () => {
@@ -365,8 +340,7 @@ export default function ProductDetail() {
                   </span>
                 </div>
                 <p className="text-sm opacity-90">
-                  Após finalizar pelo WhatsApp, você receberá a chave PIX. A produção inicia após
-                  confirmação do pagamento.
+                  Finalize seu pedido pelo site e receba a chave PIX para pagamento. A produção inicia após confirmação.
                 </p>
               </div>
 
@@ -380,12 +354,11 @@ export default function ProductDetail() {
                   Adicionar ao carrinho
                 </button>
                 <button
-                  onClick={handleBuyNowWhatsApp}
-                  className="w-full py-4 font-black uppercase tracking-wider text-lg transition-all duration-200 border-2 bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 flex items-center justify-center gap-2"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                  onClick={() => openWhatsApp(buildWhatsAppHelpMessage())}
+                  className="w-full py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200 border-2 border-gray-300 text-gray-600 hover:border-green-600 hover:text-green-700 flex items-center justify-center gap-2"
                 >
-                  <MessageCircle size={22} />
-                  Comprar agora pelo WhatsApp
+                  <MessageCircle size={18} />
+                  Dúvidas sobre tamanho? Falar no WhatsApp
                 </button>
               </div>
 

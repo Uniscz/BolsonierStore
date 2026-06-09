@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/data/products";
-import { Loader2, ShoppingBag, AlertCircle } from "lucide-react";
+import { Loader2, ShoppingBag, AlertCircle, ShoppingCart } from "lucide-react";
 
 interface FormData {
   customer_name: string;
@@ -41,6 +41,39 @@ const ESTADOS = [
   "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
 ];
 
+// ─── Sub-componentes de campo ─────────────────────────────────────────────────
+
+function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
+  return (
+    <label className="block text-xs font-black uppercase tracking-wider mb-1 text-gray-800">
+      {children}
+      {required && <span className="text-pink-shock ml-1">*</span>}
+    </label>
+  );
+}
+
+function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className="w-full border-2 border-gray-800 bg-white text-gray-900 px-3 py-2.5 text-sm font-medium placeholder-gray-400 focus:outline-none focus:border-pink-shock transition-colors"
+    />
+  );
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2
+      className="text-xl font-black uppercase tracking-wider mb-4 text-gray-900 border-l-4 border-pink-shock pl-3"
+      style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+    >
+      {children}
+    </h2>
+  );
+}
+
+// ─── Componente principal ─────────────────────────────────────────────────────
+
 export default function Checkout() {
   const { items, total, clearCart } = useCart();
   const [, navigate] = useLocation();
@@ -48,18 +81,20 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redireciona se o carrinho estiver vazio
+  // Carrinho vazio
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center pt-24 pb-16 px-4">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-6">
             <ShoppingBag size={64} className="mx-auto text-gray-300" />
-            <p className="font-black text-xl uppercase tracking-wider">Seu carrinho está vazio.</p>
+            <p className="font-black text-xl uppercase tracking-wider text-gray-900">
+              Seu carrinho está vazio.
+            </p>
             <a
               href="/produto/camiseta-pix"
-              className="inline-block bg-black text-white px-8 py-3 font-black tracking-wider uppercase text-sm hover:bg-pink-shock transition-colors border-2 border-black"
+              className="inline-block bg-black text-white px-8 py-3 font-black tracking-wider uppercase text-sm hover:bg-pink-shock transition-colors border-2 border-black hover:border-pink-shock"
               style={{ fontFamily: "'Bebas Neue', sans-serif" }}
             >
               Ver produto
@@ -72,9 +107,11 @@ export default function Checkout() {
   }
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping_value = 0; // frete a combinar
+  const shipping_value = 0;
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
@@ -83,11 +120,11 @@ export default function Checkout() {
     e.preventDefault();
     setError(null);
 
-    // Validação básica
     if (!form.customer_name.trim()) { setError("Nome completo é obrigatório."); return; }
     if (!form.customer_whatsapp.trim()) { setError("WhatsApp é obrigatório."); return; }
     if (!form.cep.trim() || !form.rua.trim() || !form.numero.trim() || !form.bairro.trim() || !form.cidade.trim() || !form.estado) {
-      setError("Preencha o endereço completo (CEP, Rua, Número, Bairro, Cidade e Estado)."); return;
+      setError("Preencha o endereço completo (CEP, Rua, Número, Bairro, Cidade e Estado).");
+      return;
     }
 
     const shipping_address = {
@@ -148,262 +185,240 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
-      <main className="flex-1 pt-24 pb-16 px-4">
+
+      {/* Faixa de título — fundo preto, texto branco */}
+      <div className="bg-black pt-24 pb-8 px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Título */}
           <h1
-            className="text-4xl font-black uppercase tracking-wider mb-8 border-b-4 border-black pb-4"
+            className="text-4xl md:text-5xl font-black uppercase tracking-wider text-white"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             Finalizar Pedido
           </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Preencha seus dados para criar o pedido.
+          </p>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            {/* Formulário — 3 colunas */}
-            <div className="lg:col-span-3">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Dados pessoais */}
-                <section>
-                  <h2
-                    className="text-xl font-black uppercase tracking-wider mb-4 border-l-4 border-pink-shock pl-3"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                  >
-                    Dados Pessoais
-                  </h2>
-                  <div className="space-y-3">
+      <main className="flex-1 bg-gray-50 py-8 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            {/* ── Formulário (3 colunas) ── */}
+            <div className="lg:col-span-3 space-y-6">
+
+              {/* Card: Dados pessoais */}
+              <div className="bg-white border-2 border-gray-900 p-6">
+                <SectionTitle>Dados Pessoais</SectionTitle>
+                <div className="space-y-4">
+                  <div>
+                    <FieldLabel required>Nome completo</FieldLabel>
+                    <TextInput
+                      type="text"
+                      name="customer_name"
+                      value={form.customer_name}
+                      onChange={handleChange}
+                      placeholder="Seu nome completo"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel required>WhatsApp</FieldLabel>
+                    <TextInput
+                      type="tel"
+                      name="customer_whatsapp"
+                      value={form.customer_whatsapp}
+                      onChange={handleChange}
+                      placeholder="(47) 99999-9999"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>E-mail</FieldLabel>
+                    <TextInput
+                      type="email"
+                      name="customer_email"
+                      value={form.customer_email}
+                      onChange={handleChange}
+                      placeholder="seu@email.com"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>
+                      CPF{" "}
+                      <span className="text-gray-500 font-normal normal-case tracking-normal">
+                        (opcional)
+                      </span>
+                    </FieldLabel>
+                    <TextInput
+                      type="text"
+                      name="customer_document"
+                      value={form.customer_document}
+                      onChange={handleChange}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Card: Endereço */}
+              <div className="bg-white border-2 border-gray-900 p-6">
+                <SectionTitle>Endereço de Entrega</SectionTitle>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        Nome completo <span className="text-pink-shock">*</span>
-                      </label>
-                      <input
+                      <FieldLabel required>CEP</FieldLabel>
+                      <TextInput
                         type="text"
-                        name="customer_name"
-                        value={form.customer_name}
+                        name="cep"
+                        value={form.cep}
                         onChange={handleChange}
-                        placeholder="Seu nome completo"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
+                        placeholder="00000-000"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        WhatsApp <span className="text-pink-shock">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="customer_whatsapp"
-                        value={form.customer_whatsapp}
-                        onChange={handleChange}
-                        placeholder="(47) 99999-9999"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        E-mail
-                      </label>
-                      <input
-                        type="email"
-                        name="customer_email"
-                        value={form.customer_email}
-                        onChange={handleChange}
-                        placeholder="seu@email.com"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        CPF <span className="text-gray-400 font-normal normal-case">(opcional)</span>
-                      </label>
-                      <input
+                      <FieldLabel required>Número</FieldLabel>
+                      <TextInput
                         type="text"
-                        name="customer_document"
-                        value={form.customer_document}
+                        name="numero"
+                        value={form.numero}
                         onChange={handleChange}
-                        placeholder="000.000.000-00"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
+                        placeholder="123"
+                        required
                       />
                     </div>
                   </div>
-                </section>
-
-                {/* Endereço */}
-                <section>
-                  <h2
-                    className="text-xl font-black uppercase tracking-wider mb-4 border-l-4 border-pink-shock pl-3"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                  >
-                    Endereço de Entrega
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                          CEP <span className="text-pink-shock">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="cep"
-                          value={form.cep}
-                          onChange={handleChange}
-                          placeholder="00000-000"
-                          className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                          Número <span className="text-pink-shock">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="numero"
-                          value={form.numero}
-                          onChange={handleChange}
-                          placeholder="123"
-                          className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        Rua <span className="text-pink-shock">*</span>
-                      </label>
-                      <input
+                  <div>
+                    <FieldLabel required>Rua</FieldLabel>
+                    <TextInput
+                      type="text"
+                      name="rua"
+                      value={form.rua}
+                      onChange={handleChange}
+                      placeholder="Nome da rua"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>Complemento</FieldLabel>
+                    <TextInput
+                      type="text"
+                      name="complemento"
+                      value={form.complemento}
+                      onChange={handleChange}
+                      placeholder="Apto, bloco, etc."
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel required>Bairro</FieldLabel>
+                    <TextInput
+                      type="text"
+                      name="bairro"
+                      value={form.bairro}
+                      onChange={handleChange}
+                      placeholder="Bairro"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="col-span-2">
+                      <FieldLabel required>Cidade</FieldLabel>
+                      <TextInput
                         type="text"
-                        name="rua"
-                        value={form.rua}
+                        name="cidade"
+                        value={form.cidade}
                         onChange={handleChange}
-                        placeholder="Nome da rua"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
+                        placeholder="Cidade"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        Complemento
-                      </label>
-                      <input
-                        type="text"
-                        name="complemento"
-                        value={form.complemento}
+                      <FieldLabel required>Estado</FieldLabel>
+                      <select
+                        name="estado"
+                        value={form.estado}
                         onChange={handleChange}
-                        placeholder="Apto, bloco, etc."
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                        Bairro <span className="text-pink-shock">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="bairro"
-                        value={form.bairro}
-                        onChange={handleChange}
-                        placeholder="Bairro"
-                        className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
                         required
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-2">
-                        <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                          Cidade <span className="text-pink-shock">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="cidade"
-                          value={form.cidade}
-                          onChange={handleChange}
-                          placeholder="Cidade"
-                          className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                          Estado <span className="text-pink-shock">*</span>
-                        </label>
-                        <select
-                          name="estado"
-                          value={form.estado}
-                          onChange={handleChange}
-                          className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock bg-white"
-                          required
-                        >
-                          <option value="">UF</option>
-                          {ESTADOS.map((uf) => (
-                            <option key={uf} value={uf}>{uf}</option>
-                          ))}
-                        </select>
-                      </div>
+                        className="w-full border-2 border-gray-800 bg-white text-gray-900 px-3 py-2.5 text-sm font-medium focus:outline-none focus:border-pink-shock transition-colors"
+                      >
+                        <option value="">UF</option>
+                        {ESTADOS.map((uf) => (
+                          <option key={uf} value={uf}>{uf}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
-                </section>
+                </div>
+              </div>
 
-                {/* Observações */}
-                <section>
-                  <h2
-                    className="text-xl font-black uppercase tracking-wider mb-4 border-l-4 border-pink-shock pl-3"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                  >
-                    Observações
-                  </h2>
-                  <textarea
-                    name="notes"
-                    value={form.notes}
-                    onChange={handleChange}
-                    placeholder="Alguma observação sobre o pedido? (opcional)"
-                    rows={3}
-                    className="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:border-pink-shock resize-none"
-                  />
-                </section>
+              {/* Card: Observações */}
+              <div className="bg-white border-2 border-gray-900 p-6">
+                <SectionTitle>Observações</SectionTitle>
+                <textarea
+                  name="notes"
+                  value={form.notes}
+                  onChange={handleChange}
+                  placeholder="Alguma observação sobre o pedido? (opcional)"
+                  rows={3}
+                  className="w-full border-2 border-gray-800 bg-white text-gray-900 px-3 py-2.5 text-sm font-medium placeholder-gray-400 focus:outline-none focus:border-pink-shock transition-colors resize-none"
+                />
+              </div>
 
-                {/* Erro */}
-                {error && (
-                  <div className="flex items-start gap-2 bg-red-50 border-2 border-red-500 p-3 text-red-700 text-sm">
-                    <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-                    <span>{error}</span>
-                  </div>
+              {/* Erro */}
+              {error && (
+                <div className="flex items-start gap-2 bg-red-50 border-2 border-red-600 p-4 text-red-700 text-sm font-medium">
+                  <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Botão principal */}
+              <button
+                type="submit"
+                form="checkout-form"
+                disabled={loading}
+                onClick={handleSubmit}
+                className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-black transition-colors border-2 border-pink-shock hover:border-black disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={22} className="animate-spin" />
+                    Criando pedido...
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={22} />
+                    Criar Pedido
+                  </>
                 )}
-
-                {/* Botão */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-lg flex items-center justify-center gap-2 hover:bg-black transition-colors border-2 border-pink-shock hover:border-black disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 size={20} className="animate-spin" />
-                      Criando pedido...
-                    </>
-                  ) : (
-                    "Criar Pedido"
-                  )}
-                </button>
-              </form>
+              </button>
             </div>
 
-            {/* Resumo do carrinho — 2 colunas */}
+            {/* ── Resumo do carrinho (2 colunas) ── */}
             <div className="lg:col-span-2">
-              <div className="border-4 border-black p-4 sticky top-28">
+              <div className="bg-white border-2 border-gray-900 p-6 lg:sticky lg:top-28">
                 <h2
-                  className="text-xl font-black uppercase tracking-wider mb-4 border-b-2 border-black pb-2"
+                  className="text-xl font-black uppercase tracking-wider mb-4 text-gray-900 border-b-2 border-gray-900 pb-3"
                   style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                 >
                   Resumo do Pedido
                 </h2>
-                <div className="space-y-3 mb-4">
+
+                <div className="space-y-4 mb-4">
                   {items.map((item) => (
-                    <div key={item.id} className="border-b border-gray-200 pb-3 last:border-0">
-                      <p className="font-black text-xs uppercase tracking-wider">{item.name}</p>
-                      <p className="text-xs text-gray-500">
-                        Cor: {item.color} · Tam: {item.size} · Qtd: {item.quantity}
+                    <div key={item.id} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                      <p className="font-black text-xs uppercase tracking-wider text-gray-900">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Cor: <span className="font-semibold text-gray-800">{item.color}</span>
+                        {" · "}
+                        Tam: <span className="font-semibold text-gray-800">{item.size}</span>
+                        {" · "}
+                        Qtd: <span className="font-semibold text-gray-800">{item.quantity}</span>
                       </p>
                       <p className="text-sm font-black text-pink-shock mt-1">
                         {formatPrice(item.subtotal)}
@@ -411,28 +426,32 @@ export default function Checkout() {
                     </div>
                   ))}
                 </div>
-                <div className="space-y-2 border-t-2 border-black pt-3">
+
+                <div className="space-y-2 border-t-2 border-gray-900 pt-4">
                   <div className="flex justify-between text-sm">
-                    <span className="font-semibold">Subtotal</span>
-                    <span className="font-black">{formatPrice(subtotal)}</span>
+                    <span className="font-semibold text-gray-700">Subtotal</span>
+                    <span className="font-black text-gray-900">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="font-semibold">Frete</span>
-                    <span className="text-gray-500 text-xs">A combinar</span>
+                    <span className="font-semibold text-gray-700">Frete</span>
+                    <span className="text-gray-500 text-xs font-medium">A combinar</span>
                   </div>
-                  <div className="flex justify-between items-center border-t-2 border-black pt-2 mt-2">
-                    <span className="font-black uppercase tracking-wider text-sm">Total</span>
-                    <span className="font-black text-xl text-pink-shock">{formatPrice(total)}</span>
+                  <div className="flex justify-between items-center border-t-2 border-gray-900 pt-3 mt-2">
+                    <span className="font-black uppercase tracking-wider text-sm text-gray-900">Total</span>
+                    <span className="font-black text-2xl text-pink-shock">{formatPrice(total)}</span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+
+                <p className="text-xs text-gray-500 mt-4 leading-relaxed border-t border-gray-200 pt-3">
                   O frete será calculado e informado via WhatsApp antes da confirmação do pagamento.
                 </p>
               </div>
             </div>
+
           </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

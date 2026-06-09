@@ -1,7 +1,7 @@
 import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ShoppingCart } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
-import { buildWhatsAppOrderMessage, openWhatsApp } from "@/lib/whatsapp";
+import { buildWhatsAppHelpMessage, openWhatsApp } from "@/lib/whatsapp";
 import { formatPrice } from "@/data/products";
 import ProductImage from "@/components/ProductImage";
 
@@ -10,24 +10,14 @@ export default function CartDrawer() {
     useCart();
   const [, navigate] = useLocation();
 
-  const handleFinishByWhatsApp = () => {
-    if (items.length === 0) return;
-    const url = buildWhatsAppOrderMessage(
-      items.map((item) => ({
-        name: item.name,
-        color: item.color,
-        size: item.size,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      total
-    );
-    openWhatsApp(url);
-  };
-
   const handleGoToCheckout = () => {
     closeCart();
     navigate("/checkout");
+  };
+
+  const handleWhatsAppSupport = () => {
+    const url = buildWhatsAppHelpMessage();
+    openWhatsApp(url);
   };
 
   if (!isOpen) return null;
@@ -156,33 +146,30 @@ export default function CartDrawer() {
               <span className="font-black uppercase tracking-wider text-sm">Total</span>
               <span className="font-black text-xl text-pink-shock">{formatPrice(total)}</span>
             </div>
-            <p className="text-xs text-gray-500">
-              Frete calculado no atendimento pelo WhatsApp antes da confirmação final do pedido.
-            </p>
 
-            {/* Botão principal: Finalizar Pedido (novo fluxo com banco) */}
+            {/* Botão PRINCIPAL: Finalizar Pedido */}
             <button
               onClick={handleGoToCheckout}
-              className="w-full bg-pink-shock text-white py-3 font-black tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-black transition-colors border-2 border-pink-shock hover:border-black"
-              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem" }}
+              className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-black transition-colors border-2 border-pink-shock hover:border-black"
+              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={22} />
               Finalizar Pedido
             </button>
 
-            {/* Botão secundário: WhatsApp (fluxo legado mantido) */}
+            {/* Botão SECUNDÁRIO: Suporte WhatsApp */}
             <button
-              onClick={handleFinishByWhatsApp}
-              className="w-full bg-green-600 text-white py-3 font-black tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-green-700 transition-colors border-2 border-green-600 hover:border-green-700"
-              style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem" }}
+              onClick={handleWhatsAppSupport}
+              className="w-full py-2.5 font-bold uppercase tracking-wider text-xs border-2 border-gray-300 text-gray-600 hover:border-green-600 hover:text-green-700 transition-colors flex items-center justify-center gap-1.5"
             >
-              <MessageCircle size={18} />
-              Finalizar pelo WhatsApp
+              <MessageCircle size={14} />
+              Precisa de ajuda? Falar no WhatsApp
             </button>
 
+            {/* Botão TERCIÁRIO: Limpar carrinho */}
             <button
               onClick={clearCart}
-              className="w-full py-2 font-bold uppercase tracking-wider text-xs border-2 border-gray-300 text-gray-500 hover:border-black hover:text-black transition-colors"
+              className="w-full py-2 font-bold uppercase tracking-wider text-xs text-gray-400 hover:text-red-600 transition-colors"
             >
               Limpar carrinho
             </button>
