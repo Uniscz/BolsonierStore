@@ -1,7 +1,6 @@
-import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ShoppingCart } from "lucide-react";
+import { X, Plus, Minus, Trash2, ShoppingBag, ShoppingCart, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
-import { buildWhatsAppHelpMessage, openWhatsApp } from "@/lib/whatsapp";
 import { formatPrice } from "@/data/products";
 import ProductImage from "@/components/ProductImage";
 
@@ -15,9 +14,9 @@ export default function CartDrawer() {
     navigate("/checkout");
   };
 
-  const handleWhatsAppSupport = () => {
-    const url = buildWhatsAppHelpMessage();
-    openWhatsApp(url);
+  const handleContinueShopping = () => {
+    closeCart();
+    navigate("/loja");
   };
 
   if (!isOpen) return null;
@@ -130,7 +129,7 @@ export default function CartDrawer() {
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-6 h-6 border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                        className="w-6 h-6 border-2 border-pink-shock bg-pink-shock text-white flex items-center justify-center hover:bg-black hover:border-black transition-colors"
                         aria-label="Diminuir quantidade"
                       >
                         <Minus size={12} />
@@ -138,7 +137,7 @@ export default function CartDrawer() {
                       <span className="text-sm font-bold w-6 text-center">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-6 h-6 border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
+                        className="w-6 h-6 border-2 border-pink-shock bg-pink-shock text-white flex items-center justify-center hover:bg-black hover:border-black transition-colors"
                         aria-label="Aumentar quantidade"
                       >
                         <Plus size={12} />
@@ -181,13 +180,13 @@ export default function CartDrawer() {
               Finalizar Pedido
             </button>
 
-            {/* Botão SECUNDÁRIO: Suporte WhatsApp */}
+            {/* Botão SECUNDÁRIO: Continuar comprando */}
             <button
-              onClick={handleWhatsAppSupport}
-              className="w-full py-2.5 font-bold uppercase tracking-wider text-xs border-2 border-gray-300 text-gray-600 hover:border-green-600 hover:text-green-700 transition-colors flex items-center justify-center gap-1.5"
+              onClick={handleContinueShopping}
+              className="w-full py-2.5 font-bold uppercase tracking-wider text-xs border-2 border-gray-300 text-gray-700 hover:border-black hover:text-black transition-colors flex items-center justify-center gap-1.5"
             >
-              <MessageCircle size={14} />
-              Precisa de ajuda? Falar no WhatsApp
+              <ArrowLeft size={14} />
+              Continuar comprando
             </button>
 
             {/* Botão TERCIÁRIO: Limpar carrinho */}

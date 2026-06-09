@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useEffect, useState, useCallback, FormEvent } from "react";
 import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -82,6 +82,8 @@ export default function Checkout() {
   const [loadingStep, setLoadingStep] = useState<"order" | "payment" | "redirect" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepError, setCepError] = useState<string | null>(null);
 
   // Carrinho vazio — só mostra se não estiver em processo de redirecionamento
   if (items.length === 0 && !redirecting) {
@@ -116,7 +118,37 @@ export default function Checkout() {
   ) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "cep") {
+      setCepError(null);
+      const digits = value.replace(/\D/g, "");
+      if (digits.length === 8) fetchCep(digits);
+    }
   }
+
+  const fetchCep = useCallback(async (digits: string) => {
+    setCepLoading(true);
+    setCepError(null);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        setCepError("CEP não encontrado.");
+        return;
+      }
+      setForm((prev) => ({
+        ...prev,
+        rua: data.logradouro || prev.rua,
+        bairro: data.bairro || prev.bairro,
+        cidade: data.localidade || prev.cidade,
+        estado: data.uf || prev.estado,
+        complemento: data.complemento || prev.complemento,
+      }));
+    } catch {
+      setCepError("Erro ao buscar CEP. Preencha manualmente.");
+    } finally {
+      setCepLoading(false);
+    }
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -305,14 +337,28 @@ export default function Checkout() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <FieldLabel required>CEP</FieldLabel>
-                      <TextInput
-                        type="text"
-                        name="cep"
-                        value={form.cep}
-                        onChange={handleChange}
-                        placeholder="00000-000"
-                        required
-                      />
+                      <div className="relative">
+                        <TextInput
+                          type="text"
+                          name="cep"
+                          value={form.cep}
+                          onChange={handleChange}
+                          placeholder="00000-000"
+                          maxLength={9}
+                          required
+                        />
+                        {cepLoading && (
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                            <Loader2 size={16} className="animate-spin text-pink-shock" />
+                          </div>
+                        )}
+                      </div>
+                      {cepError && (
+                        <p className="text-xs text-red-500 mt-1">{cepError}</p>
+                      )}
+                      {!cepError && !cepLoading && form.cidade && (
+                        <p className="text-xs text-green-600 mt-1">✓ Endereço preenchido automaticamente</p>
+                      )}
                     </div>
                     <div>
                       <FieldLabel required>Número</FieldLabel>
