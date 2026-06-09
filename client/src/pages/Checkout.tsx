@@ -123,6 +123,10 @@ export default function Checkout() {
 
     if (!form.customer_name.trim()) { setError("Nome completo é obrigatório."); return; }
     if (!form.customer_whatsapp.trim()) { setError("WhatsApp é obrigatório."); return; }
+    if (!form.customer_document.trim()) {
+      setError("CPF ou CNPJ é obrigatório para processar o pagamento.");
+      return;
+    }
     if (!form.cep.trim() || !form.rua.trim() || !form.numero.trim() || !form.bairro.trim() || !form.cidade.trim() || !form.estado) {
       setError("Preencha o endereço completo (CEP, Rua, Número, Bairro, Cidade e Estado).");
       return;
@@ -270,19 +274,18 @@ export default function Checkout() {
                     />
                   </div>
                   <div>
-                    <FieldLabel>
-                      CPF{" "}
-                      <span className="text-gray-500 font-normal normal-case tracking-normal">
-                        (opcional)
-                      </span>
-                    </FieldLabel>
+                    <FieldLabel required>CPF ou CNPJ</FieldLabel>
                     <TextInput
                       type="text"
                       name="customer_document"
                       value={form.customer_document}
                       onChange={handleChange}
-                      placeholder="000.000.000-00"
+                      placeholder="000.000.000-00 ou 00.000.000/0001-00"
+                      required
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Necessário para processar o pagamento com segurança.
+                    </p>
                   </div>
                 </div>
               </div>

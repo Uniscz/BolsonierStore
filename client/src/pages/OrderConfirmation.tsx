@@ -89,8 +89,8 @@ export default function OrderConfirmation() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [generatingPayment, setGeneratingPayment] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
 
   const fetchOrder = useCallback(() => {
     if (!order_number) return;
@@ -112,10 +112,11 @@ export default function OrderConfirmation() {
     fetchOrder();
   }, [fetchOrder]);
 
-  async function handleGeneratePayment() {
+  // Chamado apenas em caso de falha — botão de retry
+  async function handleRetryPayment() {
     if (!order_number) return;
-    setGeneratingPayment(true);
-    setPaymentError(null);
+    setRetrying(true);
+    setRetryError(null);
     try {
       const res = await fetch("/api/payments/asaas/create", {
         method: "POST",
@@ -124,24 +125,23 @@ export default function OrderConfirmation() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setPaymentError(data.error || "Não foi possível gerar o pagamento. Tente novamente.");
+        setRetryError(data.error || "Não foi possível gerar o pagamento seguro. Tente novamente.");
       } else {
-        // Recarregar pedido para pegar o novo asaas_invoice_url
+        // Recarregar pedido para pegar o novo link
         fetchOrder();
-        // Se tiver URL, abrir direto
         if (data.payment_url) {
           window.open(data.payment_url, "_blank", "noopener,noreferrer");
         }
       }
     } catch {
-      setPaymentError("Erro de conexão. Tente novamente.");
+      setRetryError("Erro de conexão. Tente novamente.");
     } finally {
-      setGeneratingPayment(false);
+      setRetrying(false);
     }
   }
 
   function buildWhatsAppMessage() {
-    const text = `Olá, fiz um pedido na Bolsonier Store.\nPedido: ${order_number}\nPreciso de ajuda para finalizar.`;
+    const text = `Olá, fiz um pedido na Bolsonier Store.\nPedido: ${order_number}\nPreciso de ajuda.`;
     return `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(text)}`;
   }
 
@@ -165,7 +165,7 @@ export default function OrderConfirmation() {
       <div className="min-h-screen bg-black flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center pt-24">
-          <div className="flex flex-col items-center gap-4 text-gray-400">
+          <div className="flex flex-col items-center gap-4">
             <Loader2 size={40} className="animate-spin text-pink-shock" />
             <p className="font-semibold text-white">Carregando pedido...</p>
           </div>
@@ -206,7 +206,7 @@ export default function OrderConfirmation() {
   const orderLabel = ORDER_STATUS_LABELS[order.order_status] ?? order.order_status;
   const isPaid = order.payment_status === "paid";
   const isFailed = order.payment_status === "failed" || order.payment_status === "overdue";
-  const hasInvoiceUrl = Boolean(order.asaas_invoice_url);
+  const hasPaymentUrl = Boolean(order.asaas_invoice_url);
 
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
@@ -225,12 +225,12 @@ export default function OrderConfirmation() {
             className="text-4xl md:text-5xl font-black uppercase tracking-wider text-white"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
-            {isPaid ? "Pagamento confirmado!" : "Pedido criado com sucesso!"}
+            {isPaid ? "Pagamento confirmado!" : "Pedido criado!"}
           </h1>
           <p className="text-gray-300 text-sm">
             {isPaid
               ? "Pagamento reconhecido. Seu pedido será encaminhado aos ateliês da Bolsonier Store."
-              : "O processo foi protocolado. A Corte aguarda a confirmação do pagamento."}
+              : "Seu pedido foi registrado. Finalize o pagamento para iniciar a produção."}
           </p>
         </div>
       </div>
@@ -257,7 +257,7 @@ export default function OrderConfirmation() {
               className="text-base font-black uppercase tracking-wider text-white mb-4 border-b border-gray-700 pb-3"
               style={{ fontFamily: "'Bebas Neue', sans-serif" }}
             >
-              Status do Pedido
+              Status
             </h2>
             <div className="flex flex-wrap gap-4">
               <div>
@@ -283,7 +283,7 @@ export default function OrderConfirmation() {
             </div>
           </div>
 
-          {/* ── Bloco de ação de pagamento ── */}
+          {/* ── Bloco de pagamento ── */}
           {!isPaid && (
             <div className="bg-black border-2 border-gray-700 p-5 space-y-4">
               <h2
@@ -293,11 +293,11 @@ export default function OrderConfirmation() {
                 Finalizar Pagamento
               </h2>
 
-              {/* Caso A: tem link de pagamento */}
-              {hasInvoiceUrl && !isFailed && (
+              {/* Caso normal: tem link de pagamento */}
+              {hasPaymentUrl && !isFailed && (
                 <>
                   <p className="text-sm text-gray-300">
-                    Seu pedido foi criado. Para iniciar a produção, finalize o pagamento.
+                    Seu pagamento está pronto. Você poderá escolher Pix ou cartão na tela segura do Asaas.
                   </p>
                   <a
                     href={order.asaas_invoice_url!}
@@ -310,74 +310,46 @@ export default function OrderConfirmation() {
                     Pagar Agora
                   </a>
                   <p className="text-xs text-gray-500 text-center">
-                    Você poderá escolher a forma de pagamento disponível na tela segura do Asaas.
+                    Pagamento seguro processado pelo Asaas.
                   </p>
                 </>
               )}
 
-              {/* Caso B: sem link de pagamento ainda */}
-              {!hasInvoiceUrl && !isFailed && (
+              {/* Caso de falha: botão de retry */}
+              {(isFailed || (!hasPaymentUrl && !isFailed)) && (
                 <>
-                  <p className="text-sm text-gray-400">
-                    Link de pagamento ainda não gerado.
-                  </p>
-                  {paymentError && (
-                    <div className="flex items-start gap-2 bg-red-900/40 border border-red-600 p-3 text-red-400 text-xs">
-                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-                      <span>{paymentError}</span>
-                    </div>
+                  {isFailed ? (
+                    <p className="text-sm text-red-400">
+                      Houve um problema com o pagamento anterior. Tente gerar um novo pagamento seguro.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400">
+                      O pagamento seguro não foi gerado automaticamente. Clique abaixo para tentar novamente.
+                    </p>
                   )}
-                  <button
-                    onClick={handleGeneratePayment}
-                    disabled={generatingPayment}
-                    className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white disabled:opacity-60 disabled:cursor-not-allowed"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                  >
-                    {generatingPayment ? (
-                      <>
-                        <Loader2 size={22} className="animate-spin" />
-                        Gerando pagamento...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard size={22} />
-                        Gerar Pagamento
-                      </>
-                    )}
-                  </button>
-                  <p className="text-xs text-gray-500 text-center">
-                    Você poderá escolher a forma de pagamento disponível na tela segura do Asaas.
-                  </p>
-                </>
-              )}
 
-              {/* Caso C: pagamento falhou/vencido */}
-              {isFailed && (
-                <>
-                  <p className="text-sm text-red-400">
-                    Houve um problema com o pagamento. Você pode tentar gerar um novo link.
-                  </p>
-                  {paymentError && (
+                  {retryError && (
                     <div className="flex items-start gap-2 bg-red-900/40 border border-red-600 p-3 text-red-400 text-xs">
                       <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
-                      <span>{paymentError}</span>
+                      <span>{retryError}</span>
                     </div>
                   )}
+
                   <button
-                    onClick={handleGeneratePayment}
-                    disabled={generatingPayment}
+                    onClick={handleRetryPayment}
+                    disabled={retrying}
                     className="w-full bg-pink-shock text-white py-4 font-black tracking-wider uppercase text-xl flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors border-2 border-pink-shock hover:border-white disabled:opacity-60 disabled:cursor-not-allowed"
                     style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                   >
-                    {generatingPayment ? (
+                    {retrying ? (
                       <>
                         <Loader2 size={22} className="animate-spin" />
-                        Gerando pagamento...
+                        Gerando pagamento seguro...
                       </>
                     ) : (
                       <>
                         <RefreshCw size={22} />
-                        Tentar Novamente
+                        Tentar gerar pagamento novamente
                       </>
                     )}
                   </button>
@@ -395,7 +367,7 @@ export default function OrderConfirmation() {
               <p className="text-xs font-medium mt-1">
                 Seu pedido será encaminhado aos ateliês da Bolsonier Store.
               </p>
-              {/* TODO: "O Veredito da Bastilha" — easter egg pós-pagamento (implementar futuramente) */}
+              {/* TODO: "O Veredito da Bastilha" — easter egg pós-pagamento */}
             </div>
           )}
 

@@ -1,5 +1,7 @@
 // POST /api/payments/asaas/create
-// Cria cliente e cobrança no Asaas para um pedido existente no Supabase.
+// Cria uma sessão de Asaas Checkout para um pedido existente no Supabase.
+// Usa POST /v3/checkouts — interface mais limpa que a fatura padrão (invoiceUrl).
+// Fallback automático para cobrança avulsa se o Checkout falhar.
 // Nunca expõe ASAAS_API_KEY nem SUPABASE_SECRET_KEY ao frontend.
 
 import { createClient } from "@supabase/supabase-js";
@@ -24,47 +26,185 @@ function getAsaasHeaders() {
 }
 
 function getAsaasBaseUrl() {
+  // Sandbox: https://sandbox.asaas.com/api/v3
+  // Produção: https://api.asaas.com/v3
   return process.env.ASAAS_BASE_URL || "https://sandbox.asaas.com/api/v3";
 }
 
-function getBillingType() {
-  // UNDEFINED permite que o pagador escolha entre Pix e cartão
-  return process.env.ASAAS_BILLING_TYPE || "UNDEFINED";
+function getAsaasCheckoutBaseUrl() {
+  const base = getAsaasBaseUrl();
+  // Determina o domínio público do Asaas para montar a URL do checkout
+  if (base.includes("sandbox")) {
+    return "https://sandbox.asaas.com";
+  }
+  return "https://asaas.com";
 }
 
-// Formata data de vencimento como YYYY-MM-DD (hoje ou amanhã se após 18h)
-function getDueDate() {
+// Formata data de vencimento como YYYY-MM-DD
+function getDueDate(daysAhead = 1) {
   const now = new Date();
-  // Se for tarde (após 18h BRT), usa amanhã para garantir processamento
-  if (now.getUTCHours() >= 21) {
-    now.setUTCDate(now.getUTCDate() + 1);
-  }
+  now.setUTCDate(now.getUTCDate() + daysAhead);
   return now.toISOString().split("T")[0];
 }
 
-// Monta descrição legível do pedido
-function buildDescription(order) {
-  const itemLines = Array.isArray(order.items)
-    ? order.items
-        .map(
-          (item) =>
-            `${item.name}, cor ${item.color}, tam ${item.size}, qtd ${item.quantity}`
-        )
-        .join(" | ")
-    : "Itens não disponíveis";
+// ─── Estratégia 1: Asaas Checkout (interface mais limpa) ─────────────────────
 
-  return (
-    `Pedido ${order.order_number} - Bolsonier Store\n` +
-    `Itens: ${itemLines}\n` +
-    `Cliente: ${order.customer_name}\n` +
-    `WhatsApp: ${order.customer_whatsapp || "não informado"}`
-  );
+async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
+  const checkoutPublicBase = getAsaasCheckoutBaseUrl();
+
+  // customerData: pré-preenche os dados do cliente na tela do Asaas
+  const customerData = {
+    name: order.customer_name,
+  };
+  if (order.customer_document) {
+    customerData.cpfCnpj = order.customer_document.replace(/\D/g, "");
+  }
+  if (order.customer_email) {
+    customerData.email = order.customer_email;
+  }
+  if (order.customer_whatsapp) {
+    customerData.mobilePhone = order.customer_whatsapp.replace(/\D/g, "");
+  }
+
+  // Endereço (opcional, melhora a experiência de pagamento)
+  const addr = order.shipping_address;
+  if (addr) {
+    if (addr.cep) customerData.postalCode = addr.cep.replace(/\D/g, "");
+    if (addr.rua) customerData.address = addr.rua;
+    if (addr.numero) customerData.addressNumber = addr.numero;
+    if (addr.complemento) customerData.complement = addr.complemento;
+    if (addr.bairro) customerData.province = addr.bairro;
+  }
+
+  // Descrição reduzida — apenas o essencial
+  const itemDescription = `Pedido ${order.order_number} - Bolsonier Store`;
+
+  const checkoutPayload = {
+    // billingTypes: permite Pix e cartão de crédito
+    billingTypes: ["PIX", "CREDIT_CARD"],
+    // chargeTypes: DETACHED = cobrança avulsa (não recorrente)
+    chargeTypes: ["DETACHED"],
+    // minutesToExpire: 1440 = 24h (máximo permitido)
+    minutesToExpire: 1440,
+    externalReference: order.order_number,
+    customerData,
+    items: [
+      {
+        name: itemDescription,
+        quantity: 1,
+        value: Number(order.total),
+      },
+    ],
+    // callback: redireciona para a página do pedido após pagamento
+    callback: {
+      successUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}`,
+      autoRedirect: true,
+    },
+  };
+
+  const res = await fetch(`${asaasBase}/checkouts`, {
+    method: "POST",
+    headers: asaasHeaders,
+    body: JSON.stringify(checkoutPayload),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.id) {
+    console.warn("[Asaas Checkout] Falha ao criar checkout:", JSON.stringify(data));
+    return null;
+  }
+
+  // Monta a URL pública do checkout
+  const checkoutUrl = `${checkoutPublicBase}/checkoutSession/show?id=${data.id}`;
+
+  return {
+    checkoutId: data.id,
+    checkoutUrl,
+    raw: data,
+  };
+}
+
+// ─── Estratégia 2: Cobrança avulsa (fallback) ────────────────────────────────
+
+async function createAsaasPayment(order, asaasBase, asaasHeaders) {
+  // Criar/recuperar cliente
+  let asaasCustomerId = order.asaas_customer_id || null;
+
+  if (!asaasCustomerId) {
+    const customerPayload = {
+      name: order.customer_name,
+      externalReference: order.order_number,
+      notificationDisabled: false,
+    };
+    if (order.customer_email) customerPayload.email = order.customer_email;
+    if (order.customer_whatsapp) {
+      customerPayload.mobilePhone = order.customer_whatsapp.replace(/\D/g, "");
+    }
+    if (order.customer_document) {
+      customerPayload.cpfCnpj = order.customer_document.replace(/\D/g, "");
+    }
+    const addr = order.shipping_address;
+    if (addr) {
+      if (addr.cep) customerPayload.postalCode = addr.cep.replace(/\D/g, "");
+      if (addr.rua) customerPayload.address = addr.rua;
+      if (addr.numero) customerPayload.addressNumber = addr.numero;
+      if (addr.complemento) customerPayload.complement = addr.complemento;
+      if (addr.bairro) customerPayload.province = addr.bairro;
+    }
+
+    const customerRes = await fetch(`${asaasBase}/customers`, {
+      method: "POST",
+      headers: asaasHeaders,
+      body: JSON.stringify(customerPayload),
+    });
+    const customerData = await customerRes.json();
+    if (!customerRes.ok || !customerData.id) {
+      const errMsg =
+        customerData?.errors?.[0]?.description ||
+        customerData?.message ||
+        "Erro ao criar cliente no Asaas.";
+      throw new Error(errMsg);
+    }
+    asaasCustomerId = customerData.id;
+  }
+
+  // Criar cobrança avulsa — descrição reduzida
+  const paymentPayload = {
+    customer: asaasCustomerId,
+    billingType: process.env.ASAAS_BILLING_TYPE || "UNDEFINED",
+    value: Number(order.total),
+    dueDate: getDueDate(1),
+    description: `Pedido ${order.order_number} - Bolsonier Store`,
+    externalReference: order.order_number,
+  };
+
+  const paymentRes = await fetch(`${asaasBase}/payments`, {
+    method: "POST",
+    headers: asaasHeaders,
+    body: JSON.stringify(paymentPayload),
+  });
+  const paymentData = await paymentRes.json();
+
+  if (!paymentRes.ok || !paymentData.id) {
+    const errMsg =
+      paymentData?.errors?.[0]?.description ||
+      paymentData?.message ||
+      "Erro ao criar cobrança no Asaas.";
+    throw new Error(errMsg);
+  }
+
+  return {
+    asaasCustomerId,
+    asaasPaymentId: paymentData.id,
+    invoiceUrl: paymentData.invoiceUrl || paymentData.bankSlipUrl || null,
+    raw: paymentData,
+  };
 }
 
 // ─── Handler principal ────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
-  // Apenas POST
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Método não permitido." });
   }
@@ -81,7 +221,7 @@ export default async function handler(req, res) {
   const { data: order, error: fetchError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_name, customer_email, customer_whatsapp, customer_document, shipping_address, items, total, payment_status, asaas_payment_id, asaas_invoice_url, asaas_customer_id"
+      "id, order_number, customer_name, customer_email, customer_whatsapp, customer_document, shipping_address, items, total, payment_status, asaas_payment_id, asaas_invoice_url, asaas_customer_id, asaas_checkout_id"
     )
     .eq("order_number", order_number)
     .single();
@@ -90,7 +230,7 @@ export default async function handler(req, res) {
     return res.status(404).json({ success: false, error: "Pedido não encontrado." });
   }
 
-  // ── 2. Verificar se já está pago ──────────────────────────────────────────
+  // ── 2. Pedido já pago ─────────────────────────────────────────────────────
   if (order.payment_status === "paid") {
     return res.status(200).json({
       success: true,
@@ -100,14 +240,14 @@ export default async function handler(req, res) {
     });
   }
 
-  // ── 3. Reutilizar cobrança existente se já tiver link ─────────────────────
-  if (order.asaas_payment_id && order.asaas_invoice_url) {
+  // ── 3. Reutilizar link existente (idempotência) ───────────────────────────
+  if (order.asaas_invoice_url) {
     return res.status(200).json({
       success: true,
       order_number: order.order_number,
-      asaas_payment_id: order.asaas_payment_id,
       payment_url: order.asaas_invoice_url,
       payment_status: order.payment_status,
+      source: "cached",
     });
   }
 
@@ -120,116 +260,69 @@ export default async function handler(req, res) {
   const asaasBase = getAsaasBaseUrl();
   const asaasHeaders = getAsaasHeaders();
 
-  // ── 5. Criar/recuperar cliente no Asaas ──────────────────────────────────
-  let asaasCustomerId = order.asaas_customer_id || null;
-
-  if (!asaasCustomerId) {
-    const customerPayload = {
-      name: order.customer_name,
-      externalReference: order.order_number, // referência única por pedido
-      notificationDisabled: false,
-    };
-
-    if (order.customer_email) customerPayload.email = order.customer_email;
-    if (order.customer_whatsapp) customerPayload.mobilePhone = order.customer_whatsapp.replace(/\D/g, "");
-    if (order.customer_document) customerPayload.cpfCnpj = order.customer_document.replace(/\D/g, "");
-
-    // Endereço (opcional, melhora a experiência de pagamento)
-    const addr = order.shipping_address;
-    if (addr) {
-      if (addr.cep) customerPayload.postalCode = addr.cep.replace(/\D/g, "");
-      if (addr.rua) customerPayload.address = addr.rua;
-      if (addr.numero) customerPayload.addressNumber = addr.numero;
-      if (addr.complemento) customerPayload.complement = addr.complemento;
-      if (addr.bairro) customerPayload.province = addr.bairro;
-    }
-
-    const customerRes = await fetch(`${asaasBase}/customers`, {
-      method: "POST",
-      headers: asaasHeaders,
-      body: JSON.stringify(customerPayload),
-    });
-
-    const customerData = await customerRes.json();
-
-    if (!customerRes.ok || !customerData.id) {
-      console.error("[Asaas] Erro ao criar cliente:", JSON.stringify(customerData));
-      // Se o Asaas exigir CPF e não foi fornecido, retornar erro claro
-      const errMsg =
-        customerData?.errors?.[0]?.description ||
-        customerData?.message ||
-        "Erro ao criar cliente no Asaas.";
-      if (errMsg.toLowerCase().includes("cpf") || errMsg.toLowerCase().includes("cnpj") || errMsg.toLowerCase().includes("document")) {
-        return res.status(422).json({
-          success: false,
-          error: "Para gerar o pagamento, informe seu CPF no campo correspondente.",
-          asaas_error: errMsg,
-        });
-      }
-      return res.status(502).json({ success: false, error: errMsg });
-    }
-
-    asaasCustomerId = customerData.id;
-  }
-
-  // ── 6. Criar cobrança no Asaas ────────────────────────────────────────────
-  const paymentPayload = {
-    customer: asaasCustomerId,
-    billingType: getBillingType(),
-    value: total,
-    dueDate: getDueDate(),
-    description: buildDescription(order),
-    externalReference: order.order_number,
-  };
-
-  const paymentRes = await fetch(`${asaasBase}/payments`, {
-    method: "POST",
-    headers: asaasHeaders,
-    body: JSON.stringify(paymentPayload),
-  });
-
-  const paymentData = await paymentRes.json();
-
-  if (!paymentRes.ok || !paymentData.id) {
-    console.error("[Asaas] Erro ao criar cobrança:", JSON.stringify(paymentData));
-    const errMsg =
-      paymentData?.errors?.[0]?.description ||
-      paymentData?.message ||
-      "Erro ao criar cobrança no Asaas.";
-    return res.status(502).json({ success: false, error: errMsg });
-  }
-
-  // invoiceUrl é o link da fatura segura do Asaas onde o cliente escolhe Pix ou cartão
-  const invoiceUrl = paymentData.invoiceUrl || paymentData.bankSlipUrl || null;
-
-  // ── 7. Atualizar pedido no Supabase ───────────────────────────────────────
-  const updatePayload = {
-    asaas_customer_id: asaasCustomerId,
-    asaas_payment_id: paymentData.id,
-    asaas_invoice_url: invoiceUrl,
+  // ── 5. Tentar Asaas Checkout primeiro ─────────────────────────────────────
+  let paymentUrl = null;
+  let updatePayload = {
     payment_provider: "asaas",
     payment_status: "pending",
     order_status: "awaiting_payment",
-    raw_payment_payload: paymentData,
     updated_at: new Date().toISOString(),
   };
 
+  try {
+    const checkout = await createAsaasCheckout(order, asaasBase, asaasHeaders);
+
+    if (checkout) {
+      // Sucesso com Asaas Checkout
+      paymentUrl = checkout.checkoutUrl;
+      updatePayload.asaas_invoice_url = paymentUrl;
+      updatePayload.asaas_checkout_id = checkout.checkoutId;
+      updatePayload.raw_payment_payload = checkout.raw;
+      console.log(`[Asaas] Checkout criado para ${order_number}: ${paymentUrl}`);
+    } else {
+      // Checkout falhou — fallback para cobrança avulsa
+      console.log(`[Asaas] Fallback para cobrança avulsa para ${order_number}`);
+      const payment = await createAsaasPayment(order, asaasBase, asaasHeaders);
+      paymentUrl = payment.invoiceUrl;
+      updatePayload.asaas_customer_id = payment.asaasCustomerId;
+      updatePayload.asaas_payment_id = payment.asaasPaymentId;
+      updatePayload.asaas_invoice_url = paymentUrl;
+      updatePayload.raw_payment_payload = payment.raw;
+    }
+  } catch (err) {
+    console.error("[Asaas] Erro ao criar pagamento:", err.message);
+    const msg = err.message || "Erro ao criar pagamento no Asaas.";
+    // Erros de CPF/CNPJ: retornar mensagem clara
+    if (
+      msg.toLowerCase().includes("cpf") ||
+      msg.toLowerCase().includes("cnpj") ||
+      msg.toLowerCase().includes("document")
+    ) {
+      return res.status(422).json({
+        success: false,
+        error: "Para gerar o pagamento, informe seu CPF ou CNPJ no campo correspondente.",
+        asaas_error: msg,
+      });
+    }
+    return res.status(502).json({ success: false, error: msg });
+  }
+
+  // ── 6. Atualizar pedido no Supabase ───────────────────────────────────────
   const { error: updateError } = await supabase
     .from("orders")
     .update(updatePayload)
     .eq("order_number", order_number);
 
   if (updateError) {
-    console.error("[Supabase] Erro ao atualizar pedido:", updateError.message);
-    // Não falhar a resposta — o pagamento foi criado, só o update falhou
-    // Retornar sucesso com aviso para não bloquear o cliente
+    console.error(`[Supabase] Erro ao atualizar pedido ${order_number}:`, updateError.message);
+    // Não bloquear o cliente — pagamento foi criado
   }
 
   return res.status(200).json({
     success: true,
     order_number: order.order_number,
-    asaas_payment_id: paymentData.id,
-    payment_url: invoiceUrl,
+    payment_url: paymentUrl,
     payment_status: "pending",
+    source: updatePayload.asaas_checkout_id ? "checkout" : "payment",
   });
 }
