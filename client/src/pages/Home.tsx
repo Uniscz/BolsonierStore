@@ -1,6 +1,162 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+// Dados das camisetas — 5 cores, cada uma com 3 ângulos
+const shirts = [
+  {
+    id: "preto",
+    label: "Preto",
+    color: "#1a1a1a",
+    images: ["/mockup-preto-1.png", "/mockup-preto-2.png", "/mockup-preto-3.png"],
+    tag: "Oversized T-Shirt",
+  },
+  {
+    id: "branco",
+    label: "Branco",
+    color: "#f5f5f5",
+    images: ["/mockup-branco-1.png", "/mockup-branco-2.png", "/mockup-branco-3.png"],
+    tag: "Oversized T-Shirt",
+  },
+  {
+    id: "azul",
+    label: "Azul Royal",
+    color: "#1a3a8f",
+    images: ["/mockup-azul-1.png", "/mockup-azul-2.png", "/mockup-azul-3.png"],
+    tag: "Oversized T-Shirt",
+  },
+  {
+    id: "amarelo",
+    label: "Amarelo Canário",
+    color: "#f5d800",
+    images: ["/mockup-amarelo-1.png", "/mockup-amarelo-2.png", "/mockup-amarelo-3.png"],
+    tag: "Oversized T-Shirt",
+  },
+  {
+    id: "verde",
+    label: "Verde Bandeira",
+    color: "#006b3c",
+    images: ["/mockup-verde-1.png", "/mockup-verde-2.png", "/mockup-verde-3.png"],
+    tag: "Oversized T-Shirt",
+  },
+];
+
+// Componente de card de produto com troca de ângulo ao hover
+function ShirtCard({ shirt, large = false }: { shirt: typeof shirts[0]; large?: boolean }) {
+  const [angle, setAngle] = useState(0);
+
+  return (
+    <div
+      className="group cursor-pointer"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        background: "#0d0d0d",
+        border: "1px solid rgba(255,255,255,0.04)",
+      }}
+      onMouseEnter={() => setAngle(1)}
+      onMouseLeave={() => setAngle(0)}
+    >
+      {/* Imagem principal */}
+      <div style={{ position: "relative", aspectRatio: large ? "3/4" : "1/1", overflow: "hidden" }}>
+        {shirt.images.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`${shirt.label} — ângulo ${i + 1}`}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              objectPosition: "center",
+              padding: "1rem",
+              transition: "opacity 0.4s ease, transform 0.6s ease",
+              opacity: angle === i ? 1 : 0,
+              transform: angle === i ? "scale(1)" : "scale(1.03)",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Info overlay */}
+      <div
+        style={{
+          padding: "1rem 1.25rem",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontSize: "0.6rem",
+              letterSpacing: "0.25em",
+              color: "#FF0066",
+              marginBottom: "0.2rem",
+              textTransform: "uppercase",
+            }}
+          >
+            {shirt.tag}
+          </div>
+          <div
+            style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: "1rem",
+              color: "#fff",
+              letterSpacing: "0.05em",
+            }}
+          >
+            {shirt.label}
+          </div>
+        </div>
+        {/* Swatch de cor */}
+        <div
+          style={{
+            width: "16px",
+            height: "16px",
+            borderRadius: "50%",
+            background: shirt.color,
+            border: "1px solid rgba(255,255,255,0.2)",
+            flexShrink: 0,
+          }}
+        />
+      </div>
+
+      {/* Dots de ângulo */}
+      <div
+        style={{
+          position: "absolute",
+          top: "0.75rem",
+          right: "0.75rem",
+          display: "flex",
+          gap: "4px",
+        }}
+      >
+        {shirt.images.map((_, i) => (
+          <button
+            key={i}
+            onMouseEnter={() => setAngle(i)}
+            onClick={(e) => { e.stopPropagation(); setAngle(i); }}
+            style={{
+              width: i === angle ? "16px" : "6px",
+              height: "6px",
+              background: i === angle ? "#FF0066" : "rgba(255,255,255,0.3)",
+              border: "none",
+              cursor: "pointer",
+              transition: "all 0.3s",
+              padding: 0,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -33,14 +189,7 @@ export default function Home() {
             >
               BOL<span style={{ color: "#FF0066" }}>S</span>ONIER
             </h1>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "2rem",
-                flexWrap: "wrap",
-              }}
-            >
+            <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
               <Link href="/loja">
                 <a className="btn-primary">Ver Coleção</a>
               </Link>
@@ -60,15 +209,7 @@ export default function Home() {
       </section>
 
       {/* ── TICKER ACID GREEN ── */}
-      <div
-        style={{
-          background: "#A6FF00",
-          overflow: "hidden",
-          padding: "0.75rem 0",
-          borderTop: "none",
-          borderBottom: "none",
-        }}
-      >
+      <div style={{ background: "#A6FF00", overflow: "hidden", padding: "0.75rem 0" }}>
         <div className="ticker-track">
           {Array(3).fill(null).map((_, i) => (
             <span key={i} className="ticker-content" style={{ color: "#000" }}>
@@ -78,10 +219,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── LOOKS DA COLEÇÃO — grid editorial 3 fotos ── */}
+      {/* ── LOOKS DA COLEÇÃO — grid editorial 3 camisetas principais ── */}
       <section style={{ background: "#000", padding: "clamp(3rem, 6vw, 5rem) 0" }}>
         <div className="container-shell">
-          {/* Cabeçalho da seção */}
           <div
             style={{
               display: "flex",
@@ -111,74 +251,19 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Grid editorial — 3 fotos lado a lado, altura fixa */}
+          {/* Grid 3 colunas — preto, branco, azul */}
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
               gap: "2px",
-              height: "clamp(400px, 65vh, 700px)",
             }}
           >
-            {[
-              { src: "/model-black.png", label: "Preto", tag: "Oversized T-Shirt" },
-              { src: "/model-green.png", label: "Verde", tag: "Oversized T-Shirt" },
-              { src: "/model-white.png", label: "Branco", tag: "Oversized T-Shirt" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="group cursor-pointer"
-                style={{ position: "relative", overflow: "hidden", background: "#111" }}
-              >
-                <img
-                  src={item.src}
-                  alt={item.label}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "top center",
-                    transition: "transform 0.7s ease",
-                  }}
-                  className="group-hover:scale-105"
-                />
-                {/* Overlay no hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end"
-                  style={{
-                    background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%)",
-                    padding: "1.5rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "0.6rem",
-                      letterSpacing: "0.25em",
-                      color: "#FF0066",
-                      marginBottom: "0.25rem",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {item.tag}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      fontSize: "1.25rem",
-                      color: "#fff",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    {item.label}
-                  </div>
-                </div>
-              </div>
+            {shirts.slice(0, 3).map((shirt) => (
+              <ShirtCard key={shirt.id} shirt={shirt} large />
             ))}
           </div>
 
-          {/* Mobile: botão ver tudo */}
           <div className="mt-6 md:hidden">
             <Link href="/loja">
               <a className="btn-green w-full justify-center">Ver Tudo</a>
@@ -187,7 +272,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SEÇÃO ESTÁTUA — arte com batom ── */}
+      {/* ── SEÇÃO ESTÁTUA ── */}
       <section
         style={{
           background: "#000",
@@ -199,20 +284,12 @@ export default function Home() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
               gap: "clamp(2rem, 5vw, 6rem)",
               alignItems: "center",
             }}
             className="grid-cols-1 md:grid-cols-2"
           >
-            {/* Arte da estátua */}
-            <div
-              style={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "center" }}>
               <img
                 src="/art-statue-main.png"
                 alt="Vandalismo Refinado"
@@ -221,17 +298,13 @@ export default function Home() {
                   maxWidth: "420px",
                   height: "auto",
                   display: "block",
-                  /* multiply remove o fundo branco/xadrez da PNG */
                   mixBlendMode: "multiply",
                   filter: "contrast(1.1) brightness(0.9)",
                 }}
               />
             </div>
-            {/* Texto */}
             <div>
-              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>
-                Vandalismo Refinado
-              </div>
+              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>Vandalismo Refinado</div>
               <h2
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
@@ -268,13 +341,7 @@ export default function Home() {
       </section>
 
       {/* ── TICKER HOT PINK ── */}
-      <div
-        style={{
-          background: "#FF0066",
-          overflow: "hidden",
-          padding: "0.75rem 0",
-        }}
-      >
+      <div style={{ background: "#FF0066", overflow: "hidden", padding: "0.75rem 0" }}>
         <div className="ticker-track">
           {Array(3).fill(null).map((_, i) => (
             <span key={i} className="ticker-content" style={{ color: "#fff" }}>
@@ -284,7 +351,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── COLEÇÃO ATUAL — grid mosaico ── */}
+      {/* ── COLEÇÃO COMPLETA — grid 5 camisetas ── */}
       <section style={{ background: "#000", padding: "clamp(3rem, 6vw, 5rem) 0" }}>
         <div className="container-shell">
           <div
@@ -320,68 +387,33 @@ export default function Home() {
                 padding: "0.3rem 0.75rem",
               }}
             >
-              EST. 24
+              5 CORES · EST. 24
             </div>
           </div>
 
-          {/* Linha 1: 3 fotos grandes */}
+          {/* Grid 5 camisetas com seletor de ângulo */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(5, 1fr)",
               gap: "2px",
-              marginBottom: "2px",
-              height: "clamp(280px, 45vh, 500px)",
             }}
+            className="grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
           >
-            {["/model-black.png", "/model-green.png", "/model-white.png"].map((src, i) => (
-              <div key={i} style={{ position: "relative", overflow: "hidden", background: "#111" }}>
-                <img
-                  src={src}
-                  alt={`Look ${i + 1}`}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "top center",
-                  }}
-                />
-              </div>
+            {shirts.map((shirt) => (
+              <ShirtCard key={shirt.id} shirt={shirt} />
             ))}
           </div>
 
-          {/* Linha 2: 4 fotos menores */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "2px",
-              height: "clamp(180px, 28vh, 320px)",
-            }}
-          >
-            {["/model-yellow.png", "/model-pink.png", "/model-blue.png", "/model-navy.png"].map((src, i) => (
-              <div key={i} style={{ position: "relative", overflow: "hidden", background: "#111" }}>
-                <img
-                  src={src}
-                  alt={`Look ${i + 4}`}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "top center",
-                  }}
-                />
-              </div>
-            ))}
+          <div style={{ marginTop: "2rem", textAlign: "center" }}>
+            <Link href="/loja">
+              <a className="btn-primary">Comprar Agora</a>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── SEÇÃO GRAFFITI — O PIX É NOSSO signature ── */}
+      {/* ── SEÇÃO GRAFFITI ── */}
       <section
         style={{
           background: "#000",
@@ -391,14 +423,9 @@ export default function Home() {
       >
         <div className="container-shell">
           <div
-            style={{
-              display: "grid",
-              gap: "clamp(2rem, 5vw, 6rem)",
-              alignItems: "center",
-            }}
+            style={{ display: "grid", gap: "clamp(2rem, 5vw, 6rem)", alignItems: "center" }}
             className="grid-cols-1 md:grid-cols-2"
           >
-            {/* Arte graffiti */}
             <div style={{ display: "flex", justifyContent: "center" }}>
               <div
                 style={{
@@ -416,11 +443,8 @@ export default function Home() {
                 />
               </div>
             </div>
-            {/* Texto */}
             <div>
-              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>
-                Coleção Signature
-              </div>
+              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>Coleção Signature</div>
               <h2
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
@@ -433,25 +457,11 @@ export default function Home() {
                 O PIX<br />
                 <span style={{ color: "#A6FF00" }}>É NOSSO</span>
               </h2>
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  color: "rgba(255,255,255,0.55)",
-                  lineHeight: 1.8,
-                  marginBottom: "0.75rem",
-                }}
-              >
-                A coleção que virou manifesto. Disponível em múltiplas cores e cortes.
+              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.8, marginBottom: "0.75rem" }}>
+                A coleção que virou manifesto. Disponível em 5 cores e cortes oversized.
                 Para quem constrói, não para quem observa.
               </p>
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  color: "rgba(255,255,255,0.55)",
-                  lineHeight: 1.8,
-                  marginBottom: "2.5rem",
-                }}
-              >
+              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.8, marginBottom: "2.5rem" }}>
                 Feito no Brasil. Para o mundo.
               </p>
               <Link href="/loja">
@@ -467,7 +477,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── NOVAS PEÇAS CHEGANDO ── */}
+      {/* ── NOVAS PEÇAS ── */}
       <section
         style={{
           background: "#000",
@@ -490,15 +500,7 @@ export default function Home() {
             NOVAS PEÇAS<br />
             <span style={{ color: "#A6FF00" }}>CHEGANDO</span>
           </h2>
-          <p
-            style={{
-              fontSize: "0.9rem",
-              color: "rgba(255,255,255,0.5)",
-              maxWidth: "520px",
-              margin: "0 auto 3rem",
-              lineHeight: 1.8,
-            }}
-          >
+          <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", maxWidth: "520px", margin: "0 auto 3rem", lineHeight: 1.8 }}>
             Fique por dentro das novidades. Siga a BOLSONIER STORE no Instagram para ser o primeiro a saber.
           </p>
           <a
