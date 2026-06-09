@@ -86,9 +86,10 @@ export default function OrderConfirmation() {
   const params = useParams<{ order_number: string }>();
   const order_number = params.order_number;
 
-  // Detectar query param ?payment=success|cancelled retornado pelo Asaas Checkout
+  // Detectar query params de retorno
   const searchParams = new URLSearchParams(window.location.search);
-  const paymentParam = searchParams.get("payment"); // "success" | "cancelled" | null
+  const paymentParam = searchParams.get("payment");       // "success" | "cancelled" | null
+  const paymentError = searchParams.get("payment_error"); // "1" quando o Checkout não foi gerado
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -254,6 +255,16 @@ export default function OrderConfirmation() {
               {order.order_number}
             </p>
           </div>
+
+          {/* Banner: payment_error=1 (fallback do /checkout quando Asaas falhou) */}
+          {paymentError === "1" && (
+            <div className="flex items-start gap-2 bg-orange-900/40 border-2 border-orange-500 p-4 text-orange-300 text-sm">
+              <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="font-semibold">
+                O pagamento seguro não foi gerado automaticamente. Clique em “Tentar gerar pagamento novamente” abaixo.
+              </span>
+            </div>
+          )}
 
           {/* Banner: payment=cancelled */}
           {paymentParam === "cancelled" && (

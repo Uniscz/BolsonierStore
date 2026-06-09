@@ -79,7 +79,7 @@ export default function Checkout() {
   const [, navigate] = useLocation();
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState<"order" | "payment" | null>(null);
+  const [loadingStep, setLoadingStep] = useState<"order" | "payment" | "redirect" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Carrinho vazio
@@ -184,6 +184,7 @@ export default function Checkout() {
 
       // Passo 2: Gerar pagamento no Asaas
       setLoadingStep("payment");
+      let paymentUrl: string | null = null;
       try {
         const paymentResponse = await fetch("/api/payments/asaas/create", {
           method: "POST",
@@ -191,17 +192,24 @@ export default function Checkout() {
           body: JSON.stringify({ order_number: orderNumber }),
         });
         const paymentData = await paymentResponse.json();
-        if (!paymentResponse.ok || !paymentData.success) {
-          // Pagamento falhou, mas pedido foi criado — redirecionar mesmo assim
+        if (paymentResponse.ok && paymentData.success && paymentData.payment_url) {
+          paymentUrl = paymentData.payment_url;
+        } else {
           console.warn("[Checkout] Falha ao gerar pagamento:", paymentData.error);
         }
       } catch (paymentErr) {
-        // Falha silenciosa no pagamento — pedido já existe
         console.warn("[Checkout] Erro ao chamar /api/payments/asaas/create:", paymentErr);
       }
 
-      // Redirecionar para a página do pedido em qualquer caso
-      navigate(`/pedido/${orderNumber}`);
+      // Passo 3: Redirecionar
+      if (paymentUrl) {
+        // Fluxo ideal: ir direto para o Asaas Checkout na mesma aba
+        setLoadingStep("redirect");
+        window.location.href = paymentUrl;
+      } else {
+        // Fallback: ir para a página do pedido (botão de retry disponível lá)
+        navigate(`/pedido/${orderNumber}?payment_error=1`);
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro desconhecido.";
       setError(message);
@@ -414,9 +422,11 @@ export default function Checkout() {
                 {loading ? (
                   <>
                     <Loader2 size={22} className="animate-spin" />
-                    {loadingStep === "payment"
-                      ? "Pedido criado. Gerando pagamento..."
-                      : "Criando pedido..."}
+                    {loadingStep === "redirect"
+                      ? "Redirecionando para o Asaas..."
+                      : loadingStep === "payment"
+                      ? "Gerando pagamento seguro..."
+                      : "Criando seu pedido..."}
                   </>
                 ) : (
                   <>
