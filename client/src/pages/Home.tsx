@@ -1,276 +1,135 @@
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import EditorialCarousel from "@/components/EditorialCarousel";
 
 export default function Home() {
   return (
-    <div style={{ background: "#000", color: "#fff", minHeight: "100vh" }}>
+    <div style={{ background: "#000", minHeight: "100vh" }}>
       <Header />
 
       {/* ── HERO ── */}
       <section
-        className="relative overflow-hidden"
         style={{
           background: "#000",
-          minHeight: "clamp(600px, 90vh, 1000px)",
-          display: "flex",
-          alignItems: "center",
+          paddingTop: "clamp(4rem, 10vw, 8rem)",
+          paddingBottom: "clamp(4rem, 10vw, 8rem)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,0,102,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,102,0.04) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-            opacity: 0.6,
-          }}
-        />
-        <div className="absolute left-0 top-0 bottom-0 w-px" style={{ background: "linear-gradient(to bottom, transparent, #FF0066, transparent)" }} />
-        <div className="absolute right-0 top-0 bottom-0 w-px" style={{ background: "linear-gradient(to bottom, transparent, #A6FF00, transparent)" }} />
-
-        <div className="relative z-10 container-shell py-24 w-full">
-          <div className="max-w-4xl">
-            <div className="kicker mb-6">
-              Boutique Streetwear · Produção sob demanda · EST. 24
+        <div className="container-shell">
+          <div style={{ maxWidth: "900px" }}>
+            <div className="kicker-pink" style={{ marginBottom: "1.5rem" }}>
+              Boutique Streetwear · EST. 24 · São Paulo / Brasil
             </div>
             <h1
               style={{
                 fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "clamp(5rem, 18vw, 18rem)",
+                fontSize: "clamp(5rem, 18vw, 16rem)",
                 lineHeight: 0.88,
-                letterSpacing: "-0.01em",
                 color: "#fff",
-                textTransform: "uppercase",
+                letterSpacing: "-0.02em",
+                marginBottom: "2rem",
               }}
             >
               BOL<span style={{ color: "#FF0066" }}>S</span>ONIER
             </h1>
             <div
-              className="flex items-center gap-4 mb-8"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.12)", paddingTop: "1rem" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "2rem",
+                flexWrap: "wrap",
+              }}
             >
-              <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.12)" }} />
+              <Link href="/loja">
+                <a className="btn-primary">Ver Coleção</a>
+              </Link>
               <span
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(1.2rem, 3vw, 2.2rem)",
-                  letterSpacing: "0.5em",
-                  color: "rgba(255,255,255,0.85)",
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.3em",
+                  color: "rgba(255,255,255,0.3)",
                 }}
               >
-                S T O R E
+                LUXURY COUNTERFEIT · IRONIA ELEGANTE · VANDALISMO REFINADO
               </span>
-              <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.12)" }} />
-            </div>
-            <p className="body-lg max-w-xl mb-10">
-              Luxury Counterfeit. Ironia Elegante. Vandalismo Refinado. Feito no Brasil para o mundo.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/loja">
-                <a className="btn-primary">
-                  Ver Coleção
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </Link>
-              <Link href="/sobre">
-                <a className="btn-secondary">Nossa História</a>
-              </Link>
             </div>
           </div>
-        </div>
-
-        <div className="absolute bottom-8 right-8 flex flex-col items-center gap-2">
-          <div className="h-12 w-px" style={{ background: "linear-gradient(to bottom, transparent, #FF0066)" }} />
-          <span
-            style={{
-              fontSize: "0.5rem",
-              fontWeight: 700,
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.3)",
-              writingMode: "vertical-rl",
-            }}
-          >
-            SCROLL
-          </span>
         </div>
       </section>
 
       {/* ── TICKER ACID GREEN ── */}
-      <div className="ticker-wrap" style={{ background: "#A6FF00", padding: "0.6rem 0" }}>
+      <div
+        style={{
+          background: "#A6FF00",
+          overflow: "hidden",
+          padding: "0.75rem 0",
+          borderTop: "none",
+          borderBottom: "none",
+        }}
+      >
         <div className="ticker-track">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="ticker-item" style={{ color: "#000", fontWeight: 800 }}>
-              BOLSONIER STORE &nbsp;·&nbsp; O PIX É NOSSO &nbsp;·&nbsp; BOUTIQUE STREETWEAR &nbsp;·&nbsp; SAO PAULO / BRASIL &nbsp;·&nbsp; LUXURY COUNTERFEIT &nbsp;·&nbsp; INDEPENDENT BRAND &nbsp;·&nbsp;
+          {Array(3).fill(null).map((_, i) => (
+            <span key={i} className="ticker-content" style={{ color: "#000" }}>
+              O PIX É NOSSO &nbsp;·&nbsp; BOLSONIER STORE &nbsp;·&nbsp; BOUTIQUE STREETWEAR &nbsp;·&nbsp; FEITO NO BRASIL &nbsp;·&nbsp; EST. 24 &nbsp;·&nbsp; SAO PAULO &nbsp;·&nbsp; LUXURY COUNTERFEIT &nbsp;·&nbsp; NO PERMISSION NEEDED &nbsp;·&nbsp;
             </span>
           ))}
         </div>
       </div>
 
-      {/* ── CAROUSEL ── */}
-      <section style={{ background: "#000" }}>
-        <div className="container-shell pt-16 pb-6">
-          <div className="flex items-end justify-between mb-8">
+      {/* ── LOOKS DA COLEÇÃO — grid editorial 3 fotos ── */}
+      <section style={{ background: "#000", padding: "clamp(3rem, 6vw, 5rem) 0" }}>
+        <div className="container-shell">
+          {/* Cabeçalho da seção */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              marginBottom: "2rem",
+              flexWrap: "wrap",
+              gap: "1rem",
+            }}
+          >
             <div>
-              <div className="kicker mb-3">Coleção em Destaque</div>
+              <div className="kicker-pink" style={{ marginBottom: "0.75rem" }}>Looks da Coleção</div>
               <h2
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(3rem, 8vw, 7rem)",
+                  fontSize: "clamp(2.5rem, 6vw, 5rem)",
                   lineHeight: 0.92,
                   color: "#fff",
                 }}
               >
-                O PIX É NOSSO
-              </h2>
-            </div>
-            <Link href="/loja">
-              <a className="btn-secondary hidden md:inline-flex">Ver Todos</a>
-            </Link>
-          </div>
-        </div>
-        <EditorialCarousel />
-        <div className="container-shell pt-6 pb-16">
-          <Link href="/loja">
-            <a className="btn-primary md:hidden w-full justify-center">Ver Todos os Looks</a>
-          </Link>
-        </div>
-      </section>
-
-      {/* ── BRAND STATEMENT ── */}
-      <section className="section-space" style={{ background: "#0a0a0a" }}>
-        <div className="container-shell">
-          <div className="grid gap-16 md:grid-cols-2 items-center">
-            <div>
-              <div className="kicker mb-6">Sobre a Marca</div>
-              <h2
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(3rem, 8vw, 7rem)",
-                  lineHeight: 0.92,
-                  color: "#fff",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                VANDALISMO<br />
-                <span style={{ color: "#FF0066" }}>REFINADO</span>
-              </h2>
-              <p className="body-lg mb-6">
-                A BOLSONIER STORE nasceu da tensão entre o luxo e a rua. Entre a elegância e o caos. Entre o que é permitido e o que é necessário.
-              </p>
-              <p className="body-lg mb-10">
-                Cada peça é um manifesto. Cada estampa é uma declaração. Feito no Brasil, para quem não pede licença.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/sobre"><a className="btn-primary">Nossa História</a></Link>
-                <Link href="/loja"><a className="btn-secondary">Ver Coleção</a></Link>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
-                <img
-                  src="/art-statue.png"
-                  alt="O Pix É Nosso — Arte"
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-              <div className="absolute -bottom-4 -left-4 p-5" style={{ background: "#FF0066" }}>
-                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "#fff", letterSpacing: "0.05em" }}>
-                  FAZ PARTE DE<br />QUEM CONSTRÓI
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── MANIFESTO ── */}
-      <section className="section-space" style={{ background: "#000" }}>
-        <div className="container-shell">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="kicker-green mb-8">Manifesto</div>
-            <div
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "clamp(3rem, 8vw, 7rem)",
-                lineHeight: 1.05,
-                color: "#fff",
-                marginBottom: "3rem",
-              }}
-            >
-              LUXURY COUNTERFEIT<br />
-              IRONIA ELEGANTE<br />
-              <span style={{ color: "#A6FF00" }}>FEITO NO BRASIL</span>
-            </div>
-            <hr className="rule-green mb-12" />
-            <div className="grid gap-8 md:grid-cols-3">
-              {[
-                { label: "Vibrant", sub: "Energetic", color: "#FF0066" },
-                { label: "Bold", sub: "Unapologetic", color: "#fff" },
-                { label: "Made to Stand Out", sub: "Made to Last", color: "#A6FF00" },
-              ].map((item) => (
-                <div key={item.label} className="text-center">
-                  <div
-                    style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      fontSize: "clamp(2rem, 4vw, 3rem)",
-                      color: item.color,
-                      lineHeight: 1,
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {item.label}
-                  </div>
-                  <div className="kicker-muted mt-1">{item.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TICKER HOT PINK ── */}
-      <div className="ticker-wrap" style={{ background: "#FF0066", padding: "0.6rem 0" }}>
-        <div className="ticker-track">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="ticker-item" style={{ color: "#fff" }}>
-              BOLSONIER STORE &nbsp;·&nbsp; BOUTIQUE STREETWEAR &nbsp;·&nbsp; O PIX É NOSSO &nbsp;·&nbsp; EST. 24 &nbsp;·&nbsp; SAO PAULO / BRASIL &nbsp;·&nbsp; LUXURY COUNTERFEIT &nbsp;·&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── GRID DE LOOKS ── */}
-      <section className="section-space" style={{ background: "#0a0a0a" }}>
-        <div className="container-shell">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <div className="kicker mb-3">Looks da Coleção</div>
-              <h2
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(2rem, 5vw, 4rem)",
-                  lineHeight: 1,
-                  color: "#fff",
-                }}
-              >
-                O PIX É NOSSO,<br />
+                O PIX É NOSSO,{" "}
                 <span style={{ color: "#FF0066" }}>MY FRIEND</span>
               </h2>
             </div>
-            <Link href="/loja"><a className="btn-green hidden md:inline-flex">Ver Tudo</a></Link>
+            <Link href="/loja">
+              <a className="btn-green hidden md:inline-flex">Ver Tudo</a>
+            </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-px" style={{ background: "rgba(255,255,255,0.06)" }}>
+
+          {/* Grid editorial — 3 fotos lado a lado, altura fixa */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "2px",
+              height: "clamp(400px, 65vh, 700px)",
+            }}
+          >
             {[
-              { src: "/model-1.png", label: "Masculino Black", tag: "Oversized T-Shirt" },
-              { src: "/model-2.png", label: "Feminino Green", tag: "Oversized T-Shirt" },
-              { src: "/model-3.png", label: "Editorial SP", tag: "Oversized T-Shirt" },
+              { src: "/model-black.png", label: "Preto", tag: "Oversized T-Shirt" },
+              { src: "/model-green.png", label: "Verde", tag: "Oversized T-Shirt" },
+              { src: "/model-white.png", label: "Branco", tag: "Oversized T-Shirt" },
             ].map((item, i) => (
-              <div key={i} className="relative overflow-hidden group cursor-pointer" style={{ background: "#0a0a0a", aspectRatio: "3/4" }}>
+              <div
+                key={i}
+                className="group cursor-pointer"
+                style={{ position: "relative", overflow: "hidden", background: "#111" }}
+              >
                 <img
                   src={item.src}
                   alt={item.label}
@@ -280,43 +139,293 @@ export default function Home() {
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
-                    objectPosition: "top",
-                    transition: "transform 0.7s",
+                    objectPosition: "top center",
+                    transition: "transform 0.7s ease",
                   }}
                   className="group-hover:scale-105"
                 />
+                {/* Overlay no hover */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)" }}
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end"
+                  style={{
+                    background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%)",
+                    padding: "1.5rem",
+                  }}
                 >
-                  <div className="kicker-muted mb-1">{item.tag}</div>
-                  <div className="text-white font-semibold text-sm tracking-wide">{item.label}</div>
+                  <div
+                    style={{
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.25em",
+                      color: "#FF0066",
+                      marginBottom: "0.25rem",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {item.tag}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontSize: "1.25rem",
+                      color: "#fff",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    {item.label}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-6">
-            <Link href="/loja"><a className="btn-green md:hidden w-full justify-center">Ver Tudo</a></Link>
+
+          {/* Mobile: botão ver tudo */}
+          <div className="mt-6 md:hidden">
+            <Link href="/loja">
+              <a className="btn-green w-full justify-center">Ver Tudo</a>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── ART ── */}
-      <section className="section-space" style={{ background: "#000" }}>
+      {/* ── SEÇÃO ESTÁTUA — arte com batom ── */}
+      <section
+        style={{
+          background: "#000",
+          padding: "clamp(3rem, 6vw, 5rem) 0",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
         <div className="container-shell">
-          <div className="grid gap-12 md:grid-cols-2 items-center">
-            <div className="relative flex justify-center">
-              <div className="relative" style={{ maxWidth: "360px", width: "100%" }}>
-                <img src="/art-opix.png" alt="O Pix É Nosso — Arte Gráfica" style={{ width: "100%", height: "auto" }} />
-              </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "clamp(2rem, 5vw, 6rem)",
+              alignItems: "center",
+            }}
+            className="grid-cols-1 md:grid-cols-2"
+          >
+            {/* Arte da estátua */}
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src="/art-statue-main.png"
+                alt="Vandalismo Refinado"
+                style={{
+                  width: "100%",
+                  maxWidth: "420px",
+                  height: "auto",
+                  display: "block",
+                  /* multiply remove o fundo branco/xadrez da PNG */
+                  mixBlendMode: "multiply",
+                  filter: "contrast(1.1) brightness(0.9)",
+                }}
+              />
             </div>
+            {/* Texto */}
             <div>
-              <div className="kicker-green mb-6">Coleção Signature</div>
+              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>
+                Vandalismo Refinado
+              </div>
               <h2
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(3rem, 8vw, 7rem)",
+                  fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
                   lineHeight: 0.92,
+                  color: "#fff",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                FAZ PARTE DE<br />
+                <span style={{ color: "#FF0066" }}>QUEM CONSTRÓI</span><br />
+                NÃO DE QUEM<br />
+                OBSERVA.
+              </h2>
+              <p
+                style={{
+                  fontSize: "0.85rem",
+                  letterSpacing: "0.1em",
+                  color: "rgba(255,255,255,0.45)",
+                  lineHeight: 1.8,
+                  marginBottom: "2rem",
+                  textTransform: "uppercase",
+                }}
+              >
+                Luxury Counterfeit · Ironia Elegante<br />
+                Vandalismo Refinado · Feito no Brasil
+              </p>
+              <Link href="/loja">
+                <a className="btn-primary">Ver Coleção</a>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TICKER HOT PINK ── */}
+      <div
+        style={{
+          background: "#FF0066",
+          overflow: "hidden",
+          padding: "0.75rem 0",
+        }}
+      >
+        <div className="ticker-track">
+          {Array(3).fill(null).map((_, i) => (
+            <span key={i} className="ticker-content" style={{ color: "#fff" }}>
+              BOLSONIER STORE &nbsp;·&nbsp; BOUTIQUE STREETWEAR &nbsp;·&nbsp; O PIX É NOSSO &nbsp;·&nbsp; EST. 24 &nbsp;·&nbsp; SAO PAULO / BRASIL &nbsp;·&nbsp; LUXURY COUNTERFEIT &nbsp;·&nbsp; INDEPENDENT BRAND &nbsp;·&nbsp; LIMITED MENTALITY &nbsp;·&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── COLEÇÃO ATUAL — grid mosaico ── */}
+      <section style={{ background: "#000", padding: "clamp(3rem, 6vw, 5rem) 0" }}>
+        <div className="container-shell">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              marginBottom: "2rem",
+              flexWrap: "wrap",
+              gap: "1rem",
+            }}
+          >
+            <div>
+              <div className="kicker-pink" style={{ marginBottom: "0.5rem" }}>Coleção Atual</div>
+              <h2
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "clamp(2rem, 5vw, 4rem)",
+                  lineHeight: 0.92,
+                  color: "#fff",
+                }}
+              >
+                O PIX É NOSSO
+              </h2>
+            </div>
+            <div
+              style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "0.65rem",
+                letterSpacing: "0.2em",
+                color: "#FF0066",
+                border: "1px solid #FF0066",
+                padding: "0.3rem 0.75rem",
+              }}
+            >
+              EST. 24
+            </div>
+          </div>
+
+          {/* Linha 1: 3 fotos grandes */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "2px",
+              marginBottom: "2px",
+              height: "clamp(280px, 45vh, 500px)",
+            }}
+          >
+            {["/model-black.png", "/model-green.png", "/model-white.png"].map((src, i) => (
+              <div key={i} style={{ position: "relative", overflow: "hidden", background: "#111" }}>
+                <img
+                  src={src}
+                  alt={`Look ${i + 1}`}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "top center",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Linha 2: 4 fotos menores */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: "2px",
+              height: "clamp(180px, 28vh, 320px)",
+            }}
+          >
+            {["/model-yellow.png", "/model-pink.png", "/model-blue.png", "/model-navy.png"].map((src, i) => (
+              <div key={i} style={{ position: "relative", overflow: "hidden", background: "#111" }}>
+                <img
+                  src={src}
+                  alt={`Look ${i + 4}`}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "top center",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SEÇÃO GRAFFITI — O PIX É NOSSO signature ── */}
+      <section
+        style={{
+          background: "#000",
+          padding: "clamp(3rem, 6vw, 5rem) 0",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        <div className="container-shell">
+          <div
+            style={{
+              display: "grid",
+              gap: "clamp(2rem, 5vw, 6rem)",
+              alignItems: "center",
+            }}
+            className="grid-cols-1 md:grid-cols-2"
+          >
+            {/* Arte graffiti */}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div
+                style={{
+                  background: "#0a0a0a",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  padding: "2rem",
+                  maxWidth: "360px",
+                  width: "100%",
+                }}
+              >
+                <img
+                  src="/art-graffiti.png"
+                  alt="O Pix É Nosso — Arte Gráfica"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </div>
+            </div>
+            {/* Texto */}
+            <div>
+              <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>
+                Coleção Signature
+              </div>
+              <h2
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "clamp(3.5rem, 9vw, 8rem)",
+                  lineHeight: 0.88,
                   color: "#fff",
                   marginBottom: "1.5rem",
                 }}
@@ -324,10 +433,27 @@ export default function Home() {
                 O PIX<br />
                 <span style={{ color: "#A6FF00" }}>É NOSSO</span>
               </h2>
-              <p className="body-lg mb-4">
-                A coleção que virou manifesto. Disponível em múltiplas cores e cortes. Para quem constrói, não para quem observa.
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "rgba(255,255,255,0.55)",
+                  lineHeight: 1.8,
+                  marginBottom: "0.75rem",
+                }}
+              >
+                A coleção que virou manifesto. Disponível em múltiplas cores e cortes.
+                Para quem constrói, não para quem observa.
               </p>
-              <p className="body-lg mb-10">Feito no Brasil. Para o mundo.</p>
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "rgba(255,255,255,0.55)",
+                  lineHeight: 1.8,
+                  marginBottom: "2.5rem",
+                }}
+              >
+                Feito no Brasil. Para o mundo.
+              </p>
               <Link href="/loja">
                 <a className="btn-green">
                   Comprar Agora
@@ -341,12 +467,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA HOT PINK ── */}
-      <section className="section-space" style={{ background: "#FF0066" }}>
-        <div className="container-shell text-center">
-          <div className="kicker-muted mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>
-            BOLSONIER STORE · EST. 24 · SAO PAULO / BRASIL
-          </div>
+      {/* ── NOVAS PEÇAS CHEGANDO ── */}
+      <section
+        style={{
+          background: "#000",
+          padding: "clamp(5rem, 10vw, 9rem) 0",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          textAlign: "center",
+        }}
+      >
+        <div className="container-shell">
+          <div className="kicker-green" style={{ marginBottom: "1.5rem" }}>Em Breve</div>
           <h2
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
@@ -356,25 +487,28 @@ export default function Home() {
               marginBottom: "1.5rem",
             }}
           >
-            INDEPENDENT BRAND.<br />LIMITED MENTALITY.
+            NOVAS PEÇAS<br />
+            <span style={{ color: "#A6FF00" }}>CHEGANDO</span>
           </h2>
-          <p className="body-lg mb-10 max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.8)" }}>
-            No permission needed. Faça parte de quem constrói, não de quem observa.
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "rgba(255,255,255,0.5)",
+              maxWidth: "520px",
+              margin: "0 auto 3rem",
+              lineHeight: 1.8,
+            }}
+          >
+            Fique por dentro das novidades. Siga a BOLSONIER STORE no Instagram para ser o primeiro a saber.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/loja">
-              <a className="btn-primary" style={{ background: "#000", borderColor: "#000" }}>Ver Coleção</a>
-            </Link>
-            <a
-              href="https://www.instagram.com/euinelegivel/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{ borderColor: "rgba(255,255,255,0.5)", color: "#fff" }}
-            >
-              Seguir no Instagram
-            </a>
-          </div>
+          <a
+            href="https://www.instagram.com/euinelegivel/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-green"
+          >
+            Seguir no Instagram
+          </a>
         </div>
       </section>
 
