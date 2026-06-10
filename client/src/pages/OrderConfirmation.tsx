@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import BastilhaPaidExperience from "@/components/BastilhaPaidExperience";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { WHATSAPP_BASE_URL } from "@/lib/whatsapp";
@@ -85,11 +85,17 @@ interface Order {
   created_at: string;
 }
 
+// ─── Constantes de polling ────────────────────────────────────────────────────
+
+const POLL_INTERVAL_MS = 2000;           // 2 segundos entre cada consulta
+const POLL_TIMEOUT_MS  = 5 * 60 * 1000; // 5 minutos máximo
+
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function OrderConfirmation() {
   const params = useParams<{ order_number: string }>();
   const order_number = params.order_number;
+  const [, navigate] = useLocation();
 
   // Detectar query params de retorno
   const searchParams = new URLSearchParams(window.location.search);
@@ -103,21 +109,28 @@ export default function OrderConfirmation() {
   const [retryError, setRetryError] = useState<string | null>(null);
   // Easter egg: exibir experiência Bastilha apenas uma vez por visita
   const [showEasterEgg, setShowEasterEgg] = useState(true);
-  // Polling: aguardando confirmação de pagamento
-  const [polling, setPolling] = useState(false);
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const pollingCountRef = useRef(0);
-  const MAX_POLLS = 20; // 20 × 3s = 60s máximo
 
-  const fetchOrder = useCallback(async (silent = false) => {
-    if (!order_number) return;
+  // ── Estado de polling ──────────────────────────────────────────────────────
+  // polling: true enquanto o intervalo está ativo
+  const [polling, setPolling] = useState(false);
+  // pollingTimedOut: true após 5 minutos sem confirmação
+  const [pollingTimedOut, setPollingTimedOut] = useState(false);
+
+  const pollingRef     = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollingStartTs = useRef<number>(0);
+  // Evitar redirecionamento em loop
+  const redirectedRef  = useRef(false);
+
+  // ── fetchOrder ─────────────────────────────────────────────────────────────
+  const fetchOrder = useCallback(async (silent = false): Promise<Order | null> => {
+    if (!order_number) return null;
     if (!silent) setLoading(true);
     try {
       const res = await fetch(`/api/orders/${order_number}`);
       const data = await res.json();
       if (data.success && data.order) {
         setOrder(data.order);
-        return data.order;
+        return data.order as Order;
       } else {
         setError(data.error || "Pedido não encontrado.");
       }
@@ -129,48 +142,113 @@ export default function OrderConfirmation() {
     return null;
   }, [order_number]);
 
-  // Inicia polling quando payment=success e pedido ainda pendente
+  // ── stopPolling ────────────────────────────────────────────────────────────
+  const stopPolling = useCallback(() => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+    setPolling(false);
+  }, []);
+
+  // ── handlePaidDetected ─────────────────────────────────────────────────────
+  // Chamado quando o polling detecta pagamento confirmado
+  const handlePaidDetected = useCallback(() => {
+    stopPolling();
+    console.log("[OrderConfirmation] payment confirmed", order_number);
+
+    // Redirecionar para ?payment=success apenas se ainda não estiver nessa rota
+    if (!redirectedRef.current && paymentParam !== "success") {
+      redirectedRef.current = true;
+      navigate(`/pedido/${order_number}?payment=success`);
+    }
+  }, [stopPolling, order_number, paymentParam, navigate]);
+
+  // ── startPolling ───────────────────────────────────────────────────────────
   const startPolling = useCallback(() => {
-    if (pollingRef.current) return; // já rodando
+    if (pollingRef.current) return; // já rodando — não criar múltiplos intervals
     setPolling(true);
-    pollingCountRef.current = 0;
+    setPollingTimedOut(false);
+    pollingStartTs.current = Date.now();
+
+    console.log("[OrderConfirmation] polling payment status", order_number);
+
     pollingRef.current = setInterval(async () => {
-      pollingCountRef.current += 1;
+      // Verificar timeout de 5 minutos
+      if (Date.now() - pollingStartTs.current >= POLL_TIMEOUT_MS) {
+        stopPolling();
+        setPollingTimedOut(true);
+        return;
+      }
+
       const updated = await fetchOrder(true);
       const paid =
         updated?.payment_status === "paid" || updated?.order_status === "paid";
-      if (paid || pollingCountRef.current >= MAX_POLLS) {
-        clearInterval(pollingRef.current!);
-        pollingRef.current = null;
-        setPolling(false);
-      }
-    }, 3000);
-  }, [fetchOrder]);
 
-  // Limpa o intervalo ao desmontar
+      if (paid) {
+        handlePaidDetected();
+      }
+    }, POLL_INTERVAL_MS);
+  }, [fetchOrder, stopPolling, handlePaidDetected, order_number]);
+
+  // ── Limpar interval ao desmontar ───────────────────────────────────────────
   useEffect(() => {
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
   }, []);
 
+  // ── Carga inicial + decisão de polling ────────────────────────────────────
   useEffect(() => {
     fetchOrder().then((o) => {
-      // Se voltou da InfinityPay com payment=success mas ainda não está pago → polling
-      if (paymentParam === "success" && o) {
-        const paid = o.payment_status === "paid" || o.order_status === "paid";
-        if (!paid) startPolling();
+      if (!o) return;
+      const paid = o.payment_status === "paid" || o.order_status === "paid";
+      if (paid) return; // pedido já pago: nada a fazer
+
+      // Iniciar polling em qualquer pedido pendente:
+      // - voltou do Asaas Checkout com payment=success
+      // - ou pedido ainda está em awaiting_payment / pending (sem parâmetro)
+      const isPending =
+        o.payment_status === "pending" ||
+        o.order_status === "awaiting_payment" ||
+        o.order_status === "created";
+
+      if (paymentParam === "success" || isPending) {
+        startPolling();
       }
     });
-  }, [fetchOrder, paymentParam, startPolling]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Determina o endpoint de retry conforme o provedor do pedido
+  // ── Verificar status ao voltar ao foco (visibilitychange) ─────────────────
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      // Busca imediata ao voltar ao foco
+      fetchOrder(true).then((updated) => {
+        if (!updated) return;
+        const paid =
+          updated.payment_status === "paid" || updated.order_status === "paid";
+        if (paid) {
+          handlePaidDetected();
+        } else if (!pollingRef.current) {
+          // Se o polling havia parado (timeout), não reiniciar automaticamente
+          // mas atualizar o estado com os dados mais recentes
+        }
+      });
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [fetchOrder, handlePaidDetected]);
+
+  // ── Retry de pagamento ─────────────────────────────────────────────────────
+
   function getRetryEndpoint(provider?: string | null) {
     if (provider === "asaas") return "/api/payments/asaas/create";
     return "/api/payments/infinitepay/create";
   }
 
-  // Chamado apenas em caso de falha — botão de retry
   async function handleRetryPayment() {
     if (!order_number || !order) return;
     setRetrying(true);
@@ -342,18 +420,37 @@ export default function OrderConfirmation() {
             </div>
           )}
 
-          {/* Banner: payment=success (antes do webhook confirmar) */}
-          {paymentParam === "success" && !isPaid && (
+          {/* Banner: aguardando confirmação (polling ativo) */}
+          {!isPaid && polling && (
             <div className="flex items-start gap-2 bg-lime-900/40 border-2 border-lime-500 p-4 text-lime-300 text-sm">
-              {polling ? (
-                <Loader2 size={18} className="flex-shrink-0 mt-0.5 animate-spin" />
-              ) : (
-                <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" />
-              )}
+              <Loader2 size={18} className="flex-shrink-0 mt-0.5 animate-spin" />
+              <div className="space-y-1">
+                <span className="font-semibold block">
+                  Aguardando confirmação do pagamento...
+                </span>
+                <span className="text-lime-400/80 text-xs block">
+                  Estamos verificando seu pagamento automaticamente. Assim que o Asaas confirmar, esta tela será atualizada.
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Banner: payment=success mas polling parou sem confirmar */}
+          {!isPaid && !polling && paymentParam === "success" && !pollingTimedOut && (
+            <div className="flex items-start gap-2 bg-lime-900/40 border-2 border-lime-500 p-4 text-lime-300 text-sm">
+              <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" />
               <span className="font-semibold">
-                {polling
-                  ? "Aguardando confirmação do pagamento..."
-                  : "Pagamento enviado. Atualize a página se o status não mudar em breve."}
+                Pagamento enviado. Atualize a página se o status não mudar em breve.
+              </span>
+            </div>
+          )}
+
+          {/* Banner: timeout de polling (5 minutos sem confirmação) */}
+          {!isPaid && pollingTimedOut && (
+            <div className="flex items-start gap-2 bg-yellow-900/40 border-2 border-yellow-500 p-4 text-yellow-300 text-sm">
+              <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="font-semibold">
+                Pagamento ainda não confirmado. Você pode atualizar esta página em alguns instantes.
               </span>
             </div>
           )}
