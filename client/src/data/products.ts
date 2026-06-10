@@ -23,12 +23,7 @@ export interface Product {
   colors: ProductColor[];
   sizes: string[];
   featured: boolean;
-  isTestProduct?: boolean;
 }
-
-// ─── Flag de controle do produto de teste ─────────────────────────────────────
-// Mude para false para ocultar o produto de teste da loja sem removê-lo.
-export const SHOW_TEST_PRODUCT = true;
 
 export const products: Product[] = [
   {
@@ -103,37 +98,6 @@ export const products: Product[] = [
     ],
   sizes: ["P", "M", "G", "GG", "XGG"],
   featured: true,
-  },
-  // ─── PRODUTO DE TESTE — remover ou ocultar após validação ─────────────────
-  {
-    id: "produto-teste",
-    slug: "produto-teste",
-    name: "Produto Teste",
-    collection: "Teste",
-    price: 3.00,
-    priceDisplay: "R$ 3,00",
-    category: "teste",
-    description: "Produto interno para teste de pagamento. Não é uma peça real.",
-    details: [
-      "Produto de teste interno",
-      "Usado para validar fluxo de pagamento",
-      "Não será produzido nem enviado",
-    ],
-    colors: [
-      {
-        name: "Teste",
-        key: "teste",
-        hex: "#888888",
-        images: {
-          frente: "/placeholder-teste.png",
-          costas: "/placeholder-teste.png",
-          detalhe: "/placeholder-teste.png",
-        },
-      },
-    ],
-    sizes: ["Único"],
-    featured: false,
-    isTestProduct: true,
   },
 ];
 
