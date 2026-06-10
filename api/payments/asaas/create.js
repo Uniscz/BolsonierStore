@@ -80,6 +80,14 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
   // O número do pedido vai em externalReference, não aqui.
   const itemDescription = "Bolsonier Store"; // 15 chars — dentro do limite
 
+  // Log seguro antes de criar o checkout (sem dados sensíveis do cliente)
+  const siteUrl = process.env.PUBLIC_SITE_URL || "";
+  console.log(`[Asaas Checkout] callback enviado:`);
+  console.log(`[Asaas Checkout]   successUrl: ${siteUrl}/pedido/${order.order_number}?payment=success`);
+  console.log(`[Asaas Checkout]   cancelUrl:  ${siteUrl}/pedido/${order.order_number}?payment=cancelled`);
+  console.log(`[Asaas Checkout]   expiredUrl: ${siteUrl}/pedido/${order.order_number}?payment=expired`);
+  console.log(`[Asaas Checkout]   autoRedirect: true`);
+
   const checkoutPayload = {
     // billingTypes: permite Pix e cartão de crédito
     billingTypes: ["PIX", "CREDIT_CARD"],
@@ -96,11 +104,23 @@ async function createAsaasCheckout(order, asaasBase, asaasHeaders) {
         value: Number(order.total),
       },
     ],
-    // callback: redireciona para a página do pedido após pagamento
-    // cancelUrl é obrigatório pelo Asaas Checkout
+    // callback: redireciona para a página do pedido após pagamento.
+    // IMPORTANTE (documentação Asaas):
+    // - autoRedirect: true é o padrão quando o campo é omitido. Enviá-lo explicitamente
+    //   como true é equivalente a omiti-lo. O Asaas SEMPRE exibe a tela intermediária
+    //   "Pagamento confirmado" antes de redirecionar — isso é comportamento fixo da
+    //   plataforma e não pode ser suprimido via API. O autoRedirect controla apenas se
+    //   o redirecionamento ocorre automaticamente (true = 5s countdown) ou via botão
+    //   manual (false = botão "Acompanhar meu pedido").
+    // - expiredUrl: campo suportado pelo Checkout (confirmado no payload do webhook
+    //   CHECKOUT_EXPIRED). Redireciona o cliente se o checkout expirar.
+    // - cancelUrl: obrigatório pelo Asaas Checkout.
+    // - successUrl deve incluir o domínio completo cadastrado nas configurações
+    //   comerciais do Asaas (Configurações da conta → Informações).
     callback: {
       successUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}?payment=success`,
       cancelUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}?payment=cancelled`,
+      expiredUrl: `${process.env.PUBLIC_SITE_URL || ""}/pedido/${order.order_number}?payment=expired`,
       autoRedirect: true,
     },
   };
